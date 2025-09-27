@@ -6,9 +6,9 @@ public partial class MusicChoice : CanvasLayer
 	[Export] private VBoxContainer musicList;
 	[Export] private Button backButton;
 
-	private bool isOnBackButton = false;
-	private int selectedIndex = 0;
-	private MusicItem[] musicItems;
+	private bool _isOnBackButton = false;
+	private int _selectedIndex = 0;
+	private MusicItem[] _musicItems;
 
 	private double _lastMoveTime = 0;
 	private const double MoveDelay = 0.2;
@@ -16,16 +16,16 @@ public partial class MusicChoice : CanvasLayer
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		musicItems = new MusicItem[3];
+		_musicItems = new MusicItem[3];
 		for (int i = 0; i < 3; i++)
 		{
 			var item = Refs.Instance.MusicItemScene.Instantiate<MusicItem>();
-			item.Initialize($"Song {i + 1}", $"{i + 1} Players", $"{120 + i * 10} BPM", $"Difficulty {i + 1}", null);
+			item.Initialize($"Song {i + 1}", $"{i + 1} Players", $"{120 + i * 10} BPM", $"Difficulty {i + 1}", Refs.Instance.DefaultCoverImage);
 			musicList.AddChild(item);
-			musicItems[i] = item;
+			_musicItems[i] = item;
 		}
 
-		if (musicItems.Length > 0)
+		if (_musicItems.Length > 0)
 		{
 			CallDeferred(nameof(SetInitialSelection));
 		}
@@ -33,8 +33,8 @@ public partial class MusicChoice : CanvasLayer
 
 	private void SetInitialSelection()
 	{
-		musicItems[0].SetSelected(true);
-		musicItems[0].GrabFocus();
+		_musicItems[0].SetSelected(true);
+		_musicItems[0].GrabFocus();
 	}
 
 	public override void _Process(double delta)
@@ -59,7 +59,7 @@ public partial class MusicChoice : CanvasLayer
 		{
 			if (backButton.HasFocus()) return;
 
-			GD.Print($"Selected: {musicItems[selectedIndex].TitleLabel.Text}");
+			GD.Print($"Selected: {_musicItems[_selectedIndex].TitleLabel.Text}");
 			// Transition to game scene with selected music
 		}
 
@@ -67,39 +67,39 @@ public partial class MusicChoice : CanvasLayer
 
 	private void HandleUp()
 	{
-		if (isOnBackButton) return;
+		if (_isOnBackButton) return;
 
-		if (selectedIndex == 0)
+		if (_selectedIndex == 0)
 		{
 			// Move to back button from first music item
-			musicItems[selectedIndex].SetSelected(false);
+			_musicItems[_selectedIndex].SetSelected(false);
 			backButton.GrabFocus();
-			isOnBackButton = true;
+			_isOnBackButton = true;
 			return;
 		}
 
-		musicItems[selectedIndex].SetSelected(false);
-		selectedIndex--;
-		musicItems[selectedIndex].SetSelected(true);
-		musicItems[selectedIndex].GrabFocus();
+		_musicItems[_selectedIndex].SetSelected(false);
+		_selectedIndex--;
+		_musicItems[_selectedIndex].SetSelected(true);
+		_musicItems[_selectedIndex].GrabFocus();
 	}
 
 	private void HandleDown()
 	{
-		if (isOnBackButton)
+		if (_isOnBackButton)
 		{
 			// Move to first music item from back button
-			selectedIndex = 0;
-			musicItems[selectedIndex].SetSelected(true);
-			musicItems[selectedIndex].GrabFocus();
-			isOnBackButton = false;
+			_selectedIndex = 0;
+			_musicItems[_selectedIndex].SetSelected(true);
+			_musicItems[_selectedIndex].GrabFocus();
+			_isOnBackButton = false;
 			return;
 		}
 
-		musicItems[selectedIndex].SetSelected(false);
-		selectedIndex = (selectedIndex + 1) % musicItems.Length;
-		musicItems[selectedIndex].SetSelected(true);
-		musicItems[selectedIndex].GrabFocus();
+		_musicItems[_selectedIndex].SetSelected(false);
+		_selectedIndex = (_selectedIndex + 1) % _musicItems.Length;
+		_musicItems[_selectedIndex].SetSelected(true);
+		_musicItems[_selectedIndex].GrabFocus();
 	}
 
 	private void FocusNext(Control current)

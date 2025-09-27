@@ -15,6 +15,9 @@ public partial class Refs : Node
   [Export] public PackedScene MenuScene;
   [Export] public PackedScene MusicChoiceScene;
 
+  [ExportGroup("Textures")]
+  [Export] public Texture2D DefaultCoverImage;
+
   public override void _Ready()
   {
     if (Instance == null)

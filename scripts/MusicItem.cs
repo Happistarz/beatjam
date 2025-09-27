@@ -13,13 +13,8 @@ public partial class MusicItem : PanelContainer
 	[Export] private StyleBoxFlat normalStyle;
 	[Export] private StyleBoxFlat selectedStyle;
 
-	private bool isSelected = false;
-
-	public bool IsSelected { get => isSelected; }
-
 	public void SetSelected(bool selected)
 	{
-		isSelected = selected;
 		AddThemeStyleboxOverride("panel", selected ? selectedStyle : normalStyle);
 	}
 
@@ -29,6 +24,6 @@ public partial class MusicItem : PanelContainer
 		PlayersLabel.Text = players;
 		BPMLabel.Text = bpm;
 		DifficultyLabel.Text = difficulty;
-		// CoverImage.Texture = coverImage;
+		CoverImage.Texture = coverImage;
 	}
 }
