@@ -1,0 +1,29 @@
+{
+  "path": "track1.json",
+  "name": "Track 1",
+  "bpm": 120,
+  "players": [
+    {
+      "id": "player1",
+      "instrument": "guitar"
+    },
+    {
+      "id": "player2",
+      "instrument": "drums"
+    }
+  ],
+  "beats": {
+    "guitar": [
+      {"time": 0, "note": "H"},
+      {"time": 1, "note": "L"},
+      {"time": 2, "note": "HL"},
+      {"time": 3, "note": "L"}
+    ],
+    "drums": [
+      {"time": 0, "note": "H"},
+      {"time": 1, "note": "L"},
+      {"time": 2, "note": "HL"},
+      {"time": 3, "note": "L"}
+    ]
+  }
+}

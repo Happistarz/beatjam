@@ -1,0 +1,51 @@
+[gd_scene load_steps=5 format=3 uid="uid://gpyoqg66ke7t"]
+
+[ext_resource type="StyleBox" uid="uid://dr2d25bpj4xeh" path="res://assets/sprites/MusicItemPanelNormal.tres" id="1_tw4jc"]
+[ext_resource type="Script" path="res://scripts/MusicItem.cs" id="2_vvige"]
+[ext_resource type="StyleBox" uid="uid://b663lma36nwl7" path="res://assets/sprites/MusicItemPanelSelected.tres" id="3_h4ie8"]
+[ext_resource type="Texture2D" uid="uid://clbkegdmiiwqd" path="res://icon.svg" id="3_u8yar"]
+
+[node name="MusicItem" type="PanelContainer" node_paths=PackedStringArray("CoverImage", "TitleLabel", "PlayersLabel", "BPMLabel", "DifficultyLabel")]
+focus_mode = 2
+theme_override_styles/panel = ExtResource("1_tw4jc")
+script = ExtResource("2_vvige")
+CoverImage = NodePath("HBox/Icon")
+TitleLabel = NodePath("HBox/VBox/Title")
+PlayersLabel = NodePath("HBox/VBox/HBox/Players")
+BPMLabel = NodePath("HBox/VBox/HBox/BPM")
+DifficultyLabel = NodePath("HBox/VBox/HBox/Difficulty")
+normalStyle = ExtResource("1_tw4jc")
+selectedStyle = ExtResource("3_h4ie8")
+
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Icon" type="TextureRect" parent="HBox"]
+layout_mode = 2
+texture = ExtResource("3_u8yar")
+
+[node name="VBox" type="VBoxContainer" parent="HBox"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="HBox/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 31
+text = "SUPER COOL MUSIQUE"
+
+[node name="HBox" type="HBoxContainer" parent="HBox/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 70
+
+[node name="Players" type="Label" parent="HBox/VBox/HBox"]
+layout_mode = 2
+text = "2 Players"
+
+[node name="BPM" type="Label" parent="HBox/VBox/HBox"]
+layout_mode = 2
+text = "BPM: 120"
+
+[node name="Difficulty" type="Label" parent="HBox/VBox/HBox"]
+layout_mode = 2
+text = "Difficulty: Easy"

@@ -1,0 +1,65 @@
+[gd_scene load_steps=5 format=3 uid="uid://d1gv6jsucpwwt"]
+
+[ext_resource type="Texture2D" uid="uid://clbkegdmiiwqd" path="res://icon.svg" id="1_h56n0"]
+[ext_resource type="Script" path="res://scripts/Menu.cs" id="2_mt78r"]
+[ext_resource type="StyleBox" uid="uid://dr2d25bpj4xeh" path="res://assets/sprites/MusicItemPanelNormal.tres" id="3_4scwx"]
+[ext_resource type="StyleBox" uid="uid://b663lma36nwl7" path="res://assets/sprites/MusicItemPanelSelected.tres" id="3_v3gvb"]
+
+[node name="Root" type="Node2D"]
+
+[node name="Canvas" type="CanvasLayer" parent="."]
+
+[node name="Margin" type="MarginContainer" parent="Canvas"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 60
+theme_override_constants/margin_top = 60
+theme_override_constants/margin_right = 60
+theme_override_constants/margin_bottom = 60
+
+[node name="VBox" type="VBoxContainer" parent="Canvas/Margin"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 110
+
+[node name="Icon" type="TextureRect" parent="Canvas/Margin/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("1_h56n0")
+
+[node name="VBox" type="VBoxContainer" parent="Canvas/Margin/VBox" node_paths=PackedStringArray("StartButton", "QuitButton")]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 45
+script = ExtResource("2_mt78r")
+StartButton = NodePath("Start")
+QuitButton = NodePath("Quit")
+
+[node name="Start" type="Button" parent="Canvas/Margin/VBox/VBox"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../Quit")
+focus_neighbor_bottom = NodePath("../Quit")
+focus_next = NodePath("../Quit")
+theme_override_font_sizes/font_size = 51
+theme_override_styles/focus = ExtResource("3_v3gvb")
+theme_override_styles/normal = ExtResource("3_4scwx")
+text = "JAM"
+
+[node name="Quit" type="Button" parent="Canvas/Margin/VBox/VBox"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../Start")
+focus_neighbor_bottom = NodePath("../Start")
+focus_next = NodePath("../Start")
+theme_override_font_sizes/font_size = 51
+theme_override_styles/focus = ExtResource("3_v3gvb")
+theme_override_styles/normal = ExtResource("3_4scwx")
+text = "QUIT"
+
+[connection signal="pressed" from="Canvas/Margin/VBox/VBox/Start" to="Canvas/Margin/VBox/VBox" method="_on_start_pressed"]
+[connection signal="pressed" from="Canvas/Margin/VBox/VBox/Quit" to="Canvas/Margin/VBox/VBox" method="_on_quit_pressed"]
