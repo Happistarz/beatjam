@@ -60,7 +60,7 @@ public partial class MusicChoice : CanvasLayer
 			if (backButton.HasFocus()) return;
 
 			GD.Print($"Selected: {_musicItems[_selectedIndex].TitleLabel.Text}");
-			// Transition to game scene with selected music
+			GetTree().ChangeSceneToPacked(Refs.Instance.GameScene);
 		}
 
 	}

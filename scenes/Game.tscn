@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=3 uid="uid://dshp37wir2ocd"]
+
+[ext_resource type="Script" path="res://scripts/TrackController.cs" id="1_tqsud"]
+[ext_resource type="PackedScene" uid="uid://bmecde2u5i7xh" path="res://scenes/HitZone.tscn" id="4_7n1jp"]
+[ext_resource type="AudioStream" uid="uid://d2oebnlqwbqf" path="res://assets/music/track1.wav" id="5_xtjal"]
+
+[node name="Root" type="Node2D"]
+
+[node name="Camera" type="Camera2D" parent="."]
+anchor_mode = 0
+
+[node name="AudioPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_xtjal")
+
+[node name="Track" type="Node2D" parent="." node_paths=PackedStringArray("MusicPlayer")]
+script = ExtResource("1_tqsud")
+MusicPlayer = NodePath("../AudioPlayer")
+
+[node name="NoteLayer" type="Node2D" parent="Track"]
+
+[node name="HitZoneLayer" type="Node2D" parent="Track"]
+z_index = -1
+position = Vector2(320, 750)
+
+[node name="HitZone1" parent="Track/HitZoneLayer" node_paths=PackedStringArray("NoteContainer", "Track") instance=ExtResource("4_7n1jp")]
+position = Vector2(-150, 0)
+NoteContainer = NodePath("../../NoteLayer")
+Track = NodePath("../..")
+
+[node name="HitZone2" parent="Track/HitZoneLayer" node_paths=PackedStringArray("NoteContainer", "Track") instance=ExtResource("4_7n1jp")]
+NoteContainer = NodePath("../../NoteLayer")
+Track = NodePath("../..")
+NoteType = 1
+
+[node name="HitZone3" parent="Track/HitZoneLayer" node_paths=PackedStringArray("NoteContainer", "Track") instance=ExtResource("4_7n1jp")]
+position = Vector2(150, 0)
+NoteContainer = NodePath("../../NoteLayer")
+Track = NodePath("../..")
+NoteType = 2
