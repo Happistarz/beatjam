@@ -1,0 +1,12 @@
+Title=Track 1
+BPM=110
+Id=track1
+Difficulty=Medium
+Players 2
+-player1:Player 1:Guitar
+-player2:Player 2:Drums
+Beats 3
+; measure beat sixteenth player_index:notes,...
+-0 1 0 0:H,1:M
+-1 0 0 1:HL
+-3 2 2 0:HL,1:L

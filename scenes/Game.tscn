@@ -10,6 +10,7 @@
 anchor_mode = 0
 
 [node name="AudioPlayer" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
 stream = ExtResource("5_xtjal")
 
 [node name="Track" type="Node2D" parent="." node_paths=PackedStringArray("MusicPlayer")]
