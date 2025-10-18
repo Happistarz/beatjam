@@ -41,15 +41,15 @@ public class MusicData
     }
   }
 
-  public string Id;
-
-  public string Title;
-  public int BPM;
-  public AudioStream MusicStream;
-  public Texture2D CoverImage;
-  public DifficultyLevel Difficulty;
-  public List<Player> Players = new();
-  public Dictionary<PlayerRole, List<Note>> Notes = new();
+  public string Id { get; set; }
+  public string Title { get; set; }
+  public int BPM { get; set; }
+  public string Length { get; set; } // in format X 'm', Y 's'
+  public AudioStream MusicStream { get; set; }
+  public Texture2D CoverImage { get; set; }
+  public DifficultyLevel Difficulty { get; set; }
+  public List<Player> Players { get; set; } = new();
+  public Dictionary<PlayerRole, List<Note>> Notes { get; set; } = new();
 
   // pretty print
   public override string ToString()
@@ -64,5 +64,4 @@ public class MusicData
     var coverStr = CoverImage != null ? CoverImage.GetPath() : "null";
     return $"MusicData(Id={Id}, Title={Title}, BPM={BPM}, Difficulty={Difficulty}, Players=[{playersStr}], Notes={{\n{notesStr}}}, Music={musicStr}, Cover={coverStr})";
   }
-
 }

@@ -102,26 +102,34 @@ public partial class TracksLoader : Node
 
       var key = parts[0].Trim();
       var value = parts[1].Trim();
-      switch (key)
+      if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(value))
       {
-        case "Id":
-          track.Id = value;
-          break;
-        case "Title":
-          track.Title = value;
-          break;
-        case "BPM":
-          track.BPM = int.Parse(value);
-          break;
-        case "Difficulty":
-          if (Enum.TryParse<MusicData.DifficultyLevel>(value, out var difficulty))
+        GD.PrintErr("Invalid key or value in track file: " + line);
+        continue;
+      }
+
+      var property = track.GetType().GetProperty(key);
+      if (property != null && property.CanWrite)
+      {
+        try
+        {
+          object convertedValue;
+          if (property.PropertyType.IsEnum)
           {
-            track.Difficulty = difficulty;
+            convertedValue = Enum.Parse(property.PropertyType, value, ignoreCase: true);
           }
-          break;
-        default:
-          GD.PrintErr("Unknown key in track file: " + key);
-          break;
+          else
+          {
+            convertedValue = Convert.ChangeType(value, property.PropertyType);
+          }
+          property.SetValue(track, convertedValue);
+          continue;
+        }
+        catch (Exception ex)
+        {
+          GD.PrintErr("Failed to set property " + key + " with value " + value + ": " + ex.Message);
+          continue;
+        }
       }
     }
 
