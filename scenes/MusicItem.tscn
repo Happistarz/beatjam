@@ -22,8 +22,10 @@ layout_mode = 2
 theme_override_constants/separation = 20
 
 [node name="Icon" type="TextureRect" parent="HBox"]
+custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 texture = ExtResource("3_u8yar")
+expand_mode = 1
 
 [node name="VBox" type="VBoxContainer" parent="HBox"]
 layout_mode = 2
@@ -39,8 +41,10 @@ size_flags_vertical = 3
 theme_override_constants/separation = 70
 
 [node name="Players" type="Label" parent="HBox/VBox/HBox"]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
-text = "2 Players"
+text = "Player 1 (Guitar), Player 2 (Drums)"
+autowrap_mode = 2
 
 [node name="BPM" type="Label" parent="HBox/VBox/HBox"]
 layout_mode = 2
