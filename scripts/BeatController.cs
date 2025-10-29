@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using Godot;
 
@@ -15,8 +14,6 @@ public partial class BeatController : Node
 
 	[Export] public Timer BeatTimer;
 
-	[Signal] public delegate void BeatEventHandler(int measure, int beat, int sixteenth);
-
 	private int measureCounter = 0;
 	private int beatCounter = 0;
 	private int sixteenthCounter = 0;
@@ -25,11 +22,12 @@ public partial class BeatController : Node
 
 	private Dictionary<TimingInfo, List<MusicData.Note>> scheduledNotes = new();
 
-	private TrackController[] trackControllers = new TrackController[Refs.Instance.MaxPlayers]; // Cached references
-	private float sixteenthDuration;
+	private List<TrackController> trackControllers = new();
+	private float sixteenthDuration = 0f;
 
 	public override void _Ready()
 	{
+		trackControllers = new List<TrackController>(Refs.Instance.MaxPlayers); // Cached references
 		sixteenthDuration = 60f / (GameManager.Instance.CurrentTrack.BPM * 4f);
 		BeatTimer.WaitTime = sixteenthDuration;
 
@@ -42,10 +40,15 @@ public partial class BeatController : Node
 
 	private void CacheControllers()
 	{
+		trackControllers.Clear();
+
 		var trackNodes = GetTree().GetNodesInGroup("tracks");
-		for (int i = 0; i < trackControllers.Length; i++)
+		foreach (var node in trackNodes)
 		{
-			trackControllers[i] = trackNodes[i] as TrackController;
+			if (node is TrackController trackController)
+			{
+				trackControllers.Add(trackController);
+			}
 		}
 	}
 
@@ -112,7 +115,6 @@ public partial class BeatController : Node
 				measureCounter++;
 			}
 		}
-		EmitSignal(SignalName.Beat, measureCounter, beatCounter, sixteenthCounter);
 	}
 
 	private void CheckAndSpawnNotes()

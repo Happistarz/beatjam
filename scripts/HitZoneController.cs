@@ -13,10 +13,22 @@ public partial class HitZoneController : Sprite2D
 
 	[Signal] public delegate void NoteHitEventHandler(int noteType, int accuracy);
 
+	private ObjectPool<NoteController> _notePool;
+
 	private string inputAction;
 	public override void _Ready()
 	{
 		inputAction = Refs.Instance.GetInputAction(Track.Role, NoteType);
+		InitializePool();
+	}
+
+	private void InitializePool()
+	{
+		if (_notePool != null) return;
+
+		_notePool = new ObjectPool<NoteController>();
+		AddChild(_notePool);
+		_notePool.Initialize(Refs.Instance.NoteScene, initialSize: 10, maxSize: 50);
 	}
 
 	public override void _Process(double delta)
@@ -34,7 +46,7 @@ public partial class HitZoneController : Sprite2D
 
 			EmitSignal(SignalName.NoteHit, (int)NoteType, (int)accuracy);
 
-			note.QueueFree();
+			note.ReturnToPool();
 		}
 	}
 	
@@ -42,7 +54,7 @@ public partial class HitZoneController : Sprite2D
     {
         return NoteContainer.GetChildren()
 			.OfType<NoteController>()
-			.Where(n => n.NoteType == NoteType)
+			.Where(n => n.NoteType == NoteType && !n.hasPassed)
 			.OrderBy(n => Math.Abs(n.GlobalPosition.Y - GlobalPosition.Y))
 			.FirstOrDefault();
     }
@@ -51,8 +63,13 @@ public partial class HitZoneController : Sprite2D
 	{
 		if (speed < 0f) speed = Refs.Instance.NoteSpeed;
 
-		var note = Refs.Instance.NoteScene.Instantiate<NoteController>();
-		NoteContainer.CallDeferred("add_child", note);
-		note.Initialize(NoteType, new Vector2(GlobalPosition.X, StartY), speed);
+		var note = _notePool.Get();
+		NoteContainer.AddChild(note);
+		note.Initialize(NoteType, new Vector2(GlobalPosition.X, StartY), speed, _notePool);
+	}
+
+	public override void _ExitTree()
+	{
+		_notePool?.ReturnAll();
 	}
 }

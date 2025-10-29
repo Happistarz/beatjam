@@ -12,11 +12,6 @@ public partial class TrackController : Node2D
 	public override void _Ready()
 	{
 		AddToGroup("tracks");
-		BeatController.Connect(BeatController.SignalName.Beat, Callable.From<int, int, int>(OnBeat));
-	}
-
-	public void OnBeat(int measure, int beat, int sixteenth)
-	{
 	}
 	
 	public void SpawnNoteAtTiming(MusicData.Note note)
