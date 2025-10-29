@@ -1,13 +1,15 @@
 using System.Collections.Generic;
 using Godot;
 
+
 public partial class GameManager : Node
 {
   public static GameManager Instance { get; private set; }
 
-  public static float CurrentTime { get; set; } = 0f;
-
   public static List<MusicData> LoadedTracks { get; private set; } = new List<MusicData>();
+
+  #nullable enable
+  public MusicData? CurrentTrack { get; set; } = null;
 
   public override void _Ready()
   {
@@ -20,6 +22,7 @@ public partial class GameManager : Node
     Instance = this;
 
     LoadedTracks = TracksLoader.Instance.LoadAllTracks();
+    CurrentTrack = LoadedTracks.Count > 0 ? LoadedTracks[0] : null;
 
     SetPhysicsProcess(false);
   }
@@ -30,10 +33,5 @@ public partial class GameManager : Node
     {
       Instance = null;
     }
-  }
-
-  public override void _Process(double delta)
-  {
-    CurrentTime += (float)delta;
   }
 }

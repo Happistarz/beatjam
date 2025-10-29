@@ -11,12 +11,22 @@ public partial class Refs : Node
     Low
   }
 
+  public enum Accuracy
+  {
+    Perfect,
+    Great,
+    Miss
+  }
+
   [ExportGroup("Game Settings")]
   [Export] public int MaxPlayers = 4;
   [Export] public int MinPlayers = 1;
   [Export] public int DefaultBPM = 120;
   [Export] public string GameTitle = "BeatJam";
   [Export] public float NoteHitWindow = 0.2f; // seconds
+  [Export] public float NoteSpeed = 200f; // units per second
+  [Export] public float perfectThreshold = 10f; // units
+  [Export] public float greatThreshold = 30f; // units
 
   [ExportGroup("Scenes")]
   [Export] public PackedScene MusicItemScene;
@@ -65,6 +75,13 @@ public partial class Refs : Node
       (MusicData.PlayerRole.Drums, NoteType.Low) => INSTRU3_L,
       _ => ""
     };
+  }
+
+  public Accuracy GetNoteAccuracy(float distance)
+  {
+    if (distance <= perfectThreshold) return Accuracy.Perfect;
+    else if (distance <= greatThreshold) return Accuracy.Great;
+    else return Accuracy.Miss;
   }
   
   public override void _Ready()

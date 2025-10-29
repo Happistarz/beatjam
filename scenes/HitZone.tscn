@@ -3,15 +3,8 @@
 [ext_resource type="Texture2D" uid="uid://clbkegdmiiwqd" path="res://icon.svg" id="1_ksom0"]
 [ext_resource type="Script" path="res://scripts/HitZoneController.cs" id="2_m8joy"]
 
-[node name="HitZone" type="Sprite2D" node_paths=PackedStringArray("RandomNoteTimer")]
+[node name="HitZone" type="Sprite2D"]
 modulate = Color(0.02, 0.0363336, 1, 1)
 scale = Vector2(0.6, 0.6)
 texture = ExtResource("1_ksom0")
 script = ExtResource("2_m8joy")
-RandomNoteTimer = NodePath("RandomTimer")
-
-[node name="RandomTimer" type="Timer" parent="."]
-one_shot = true
-autostart = true
-
-[connection signal="timeout" from="RandomTimer" to="." method="_on_random_note_timer_timeout"]

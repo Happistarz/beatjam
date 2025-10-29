@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dshp37wir2ocd"]
+[gd_scene load_steps=5 format=3 uid="uid://dshp37wir2ocd"]
 
 [ext_resource type="Script" path="res://scripts/TrackController.cs" id="1_tqsud"]
 [ext_resource type="PackedScene" uid="uid://bmecde2u5i7xh" path="res://scenes/HitZone.tscn" id="4_7n1jp"]
-[ext_resource type="AudioStream" uid="uid://d2oebnlqwbqf" path="res://assets/musics/track1.wav" id="5_xtjal"]
+[ext_resource type="Script" path="res://scripts/BeatController.cs" id="4_ndt71"]
+[ext_resource type="AudioStream" uid="uid://df5g00o2vwyjm" path="res://assets/musics/track1.wav" id="5_xtjal"]
 
 [node name="Root" type="Node2D"]
 
@@ -13,9 +14,10 @@ anchor_mode = 0
 unique_name_in_owner = true
 stream = ExtResource("5_xtjal")
 
-[node name="Track" type="Node2D" parent="." node_paths=PackedStringArray("MusicPlayer")]
+[node name="Track" type="Node2D" parent="." node_paths=PackedStringArray("BeatController", "HitZones")]
 script = ExtResource("1_tqsud")
-MusicPlayer = NodePath("../AudioPlayer")
+BeatController = NodePath("../BeatController")
+HitZones = [NodePath("HitZoneLayer/HitZone1"), NodePath("HitZoneLayer/HitZone2"), NodePath("HitZoneLayer/HitZone3")]
 
 [node name="NoteLayer" type="Node2D" parent="Track"]
 
@@ -38,3 +40,13 @@ position = Vector2(150, 0)
 NoteContainer = NodePath("../../NoteLayer")
 Track = NodePath("../..")
 NoteType = 2
+
+[node name="BeatController" type="Node" parent="." node_paths=PackedStringArray("MusicPlayer", "BeatTimer")]
+script = ExtResource("4_ndt71")
+MusicPlayer = NodePath("../AudioPlayer")
+BeatTimer = NodePath("BeatTimer")
+
+[node name="BeatTimer" type="Timer" parent="BeatController"]
+unique_name_in_owner = true
+
+[connection signal="timeout" from="BeatController/BeatTimer" to="BeatController" method="_on_BeatTimer_timeout"]

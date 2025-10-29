@@ -1,46 +1,58 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Godot;
 
 public partial class HitZoneController : Sprite2D
 {
-	[Export] public Timer RandomNoteTimer;
 	[Export] public Node2D NoteContainer;
 
 	[Export] public TrackController Track;
 	[Export] public Refs.NoteType NoteType;
 
-	private string inputAction;
-	private List<NoteController> notes;
+	[Export] public float StartY = -50f;
 
+	[Signal] public delegate void NoteHitEventHandler(int noteType, int accuracy);
+
+	private string inputAction;
 	public override void _Ready()
 	{
 		inputAction = Refs.Instance.GetInputAction(Track.Role, NoteType);
-		notes = new List<NoteController>();
 	}
 
 	public override void _Process(double delta)
 	{
-		if (notes.Count < 1) return;
-		if (notes.First().hasPassed) notes.RemoveAt(0);
+		if (NoteContainer.GetChildren().Count < 1) return;
 
 		if (Input.IsActionJustPressed(inputAction))
 		{
-			var note = notes.FirstOrDefault();
+			var note = GetClosestNote();
+			if (note == null) return;
+
+			var distance = Math.Abs(note.GlobalPosition.Y - GlobalPosition.Y);
+			var accuracy = Refs.Instance.GetNoteAccuracy(distance);
+			GD.Print($"Note distance: {distance:F1}, Accuracy: {accuracy}");
+
+			EmitSignal(SignalName.NoteHit, (int)NoteType, (int)accuracy);
+
 			note.QueueFree();
-			notes.RemoveAt(0);
 		}
 	}
+	
+	private NoteController GetClosestNote()
+    {
+        return NoteContainer.GetChildren()
+			.OfType<NoteController>()
+			.Where(n => n.NoteType == NoteType)
+			.OrderBy(n => Math.Abs(n.GlobalPosition.Y - GlobalPosition.Y))
+			.FirstOrDefault();
+    }
 
-	public void _on_random_note_timer_timeout()
+	public void SpawnNote(float speed = -1f)
 	{
+		if (speed < 0f) speed = Refs.Instance.NoteSpeed;
+
 		var note = Refs.Instance.NoteScene.Instantiate<NoteController>();
 		NoteContainer.CallDeferred("add_child", note);
-		note.Initialize(NoteType, new Vector2(GlobalPosition.X, note.StartY));
-		notes.Add(note);
-
-		RandomNoteTimer.WaitTime = (float)GD.RandRange(0.5, 1.5);
-		RandomNoteTimer.Start();
+		note.Initialize(NoteType, new Vector2(GlobalPosition.X, StartY), speed);
 	}
 }
