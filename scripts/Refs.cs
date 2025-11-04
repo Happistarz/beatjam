@@ -41,7 +41,7 @@ public partial class Refs : Node
 
   [ExportGroup("Configs")]
   [Export] public string TracksDirectory = "res://tracks/";
-  [Export] public string AudioDirectory = "res://assets/music/";
+  [Export] public string AudioDirectory = "res://assets/musics/";
   [Export] public string CoverDirectory = "res://assets/covers/";
 
   [ExportGroup("Inputs")]
