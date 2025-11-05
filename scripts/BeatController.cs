@@ -174,23 +174,10 @@ public partial class BeatController : Node
 
 	private void OnMetronomeClick()
 	{
-		// Pitch mapping:
-		// Mesure 1: 1.2, 1.0, 1.2, 1.0
-		// Mesure 2: cycle 1.2, 1.0, 0.9 across 8 clicks (2 notes/beat)
-		float pitch;
-		if (metronomeMeasuresElapsed == 0)
-		{
-			pitch = (metronomeBeatsElapsed % 2 == 0) ? 1.2f : 1.0f;
-		}
-		else
-		{
-			// Mesure 2: motif 1,3,1,3 ... (8 clics): 1.2f puis 0.9f en alternance
-			pitch = (metronomeBeatsElapsed % 2 == 0) ? 1.2f : 0.9f;
-		}
-		MetronomeClickPlayer.PitchScale = pitch;
+		MetronomeClickPlayer.PitchScale = (metronomeBeatsElapsed % 2 == 0) ? 1.2f : 1.0f;
+
 		MetronomeClickPlayer.Play();
 
-		// Mesure 0: 4 clics (noires), Mesure 1: 8 clics (croches = 2/beat)
 		int beatsInThisMeasure = (metronomeMeasuresElapsed == 1) ? 8 : 4;
 
 		metronomeBeatsElapsed++;
@@ -264,11 +251,4 @@ public partial class BeatController : Node
 		}
 		return MusicData.PlayerRole.Guitar;
 	}
-
-	// TODO:
-	// faire le leadOffset pour spawner les notes en avance (en fonction de la vitesse des notes et du BPM)
-	// leadOffset = (noteSpeed / (BPM / 60)) * 4;
-	// spawn les vrais notes en fonction de la track data
-	// test le hit avec les vraies notes
-	// fix le timing des notes sur le beat si besoin
 }

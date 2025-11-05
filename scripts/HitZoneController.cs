@@ -42,7 +42,7 @@ public partial class HitZoneController : Sprite2D
 
 			var distance = Math.Abs(note.GlobalPosition.Y - GlobalPosition.Y);
 			var accuracy = Refs.Instance.GetNoteAccuracy(distance);
-			GD.Print($"Note distance: {distance:F1}, Accuracy: {accuracy}");
+			GD.Print($"Accuracy: {accuracy}");
 
 			EmitSignal(SignalName.NoteHit, (int)NoteType, (int)accuracy);
 
