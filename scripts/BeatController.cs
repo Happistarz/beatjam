@@ -3,252 +3,247 @@ using Godot;
 
 public partial class BeatController : Node
 {
-	private struct TimingInfo
-	{
-		public int Measure;
-		public int Beat;
-		public int Sixteenth;
-	}
+    private struct TimingInfo
+    {
+        public int Measure;
+        public int Beat;
+        public int Sixteenth;
+    }
 
-	[Export] public AudioStreamPlayer MusicPlayer;
-	[Export] public AudioStreamPlayer MetronomeClickPlayer;
+    [Export]
+    public AudioStreamPlayer MusicPlayer;
 
-	[Export] public Timer BeatTimer;
-	[Export] public Timer DelayStartTimer;
+    [Export]
+    public AudioStreamPlayer MetronomeClickPlayer;
 
-	private int measureCounter = 0;
-	private int beatCounter = 0;
-	private int sixteenthCounter = 0;
+    [Export]
+    public Timer BeatTimer;
 
-	private bool inMetronomeMode = false;
-	private const int METRONOME_START_MEASURES = 2;
-	private int metronomeMeasuresElapsed = 0;
-	private int metronomeBeatsElapsed = 0;
+    [Export]
+    public Timer DelayStartTimer;
 
-	private float leadOffset = 0f;
+    private int measureCounter = 0;
+    private int beatCounter = 0;
+    private int sixteenthCounter = 0;
 
-	private Dictionary<TimingInfo, List<MusicData.Note>> scheduledNotes = new();
+    private bool inMetronomeMode = false;
+    private const int METRONOME_START_MEASURES = 2;
+    private int metronomeMeasuresElapsed = 0;
+    private int metronomeBeatsElapsed = 0;
 
-	private List<TrackController> trackControllers = new();
-	private float sixteenthDuration = 0f;
-	private float beatDuration = 0f;
+    private float leadOffset = 0f;
 
-	public override void _Ready()
-	{
-		trackControllers = new List<TrackController>(Refs.Instance.MaxPlayers); // Cached references
-		beatDuration = 60f / GameManager.Instance.CurrentTrack.BPM;
-		sixteenthDuration = beatDuration / 4f;
+    private Dictionary<TimingInfo, List<MusicData.Note>> scheduledNotes = new();
 
-		BeatTimer.Autostart = false;
-		BeatTimer.OneShot = false;
+    public List<TrackController> trackControllers = new();
+    private float sixteenthDuration = 0f;
+    private float beatDuration = 0f;
 
-		CacheControllers();
+    public override void _Ready()
+    {
+        trackControllers = new List<TrackController>(Refs.Instance.MaxPlayers); // Cached references
+        beatDuration = 60f / GameManager.Instance.CurrentTrack.BPM;
+        sixteenthDuration = beatDuration / 4f;
 
-		CalculateLeadOffset();
-		PrepareUpcomingNotes();
-		DelayStartTimer.Start();
-	}
+        BeatTimer.Autostart = false;
+        BeatTimer.OneShot = false;
 
-	private void CacheControllers()
-	{
-		trackControllers.Clear();
+        CalculateLeadOffset();
+        PrepareUpcomingNotes();
+    }
 
-		var trackNodes = GetTree().GetNodesInGroup("tracks");
-		foreach (var node in trackNodes)
-		{
-			if (node is TrackController trackController)
-			{
-				trackControllers.Add(trackController);
-			}
-		}
-	}
+    private void CalculateLeadOffset()
+    {
+        const float noteDistance = 800f;
 
-	private void CalculateLeadOffset()
-	{
-		const float noteDistance = 800f;
+        float travelTime = noteDistance / Refs.Instance.NoteSpeed;
 
-		float travelTime = noteDistance / Refs.Instance.NoteSpeed;
+        leadOffset = travelTime;
+    }
 
-		leadOffset = travelTime;
-	}
+    private void PrepareUpcomingNotes()
+    {
+        if (GameManager.Instance.CurrentTrack?.Notes == null)
+            return;
 
-	private void PrepareUpcomingNotes()
-	{
-		if (GameManager.Instance.CurrentTrack?.Notes == null) return;
+        scheduledNotes.Clear();
 
-		scheduledNotes.Clear();
+        foreach (var playerNotes in GameManager.Instance.CurrentTrack.Notes)
+        {
+            foreach (var note in playerNotes.Value)
+            {
+                var timing = new TimingInfo
+                {
+                    Measure = note.Measure,
+                    Beat = note.Beat,
+                    Sixteenth = note.Sixteenth,
+                };
 
-		foreach (var playerNotes in GameManager.Instance.CurrentTrack.Notes)
-		{
-			foreach (var note in playerNotes.Value)
-			{
-				var timing = new TimingInfo
-				{
-					Measure = note.Measure,
-					Beat = note.Beat,
-					Sixteenth = note.Sixteenth
-				};
+                if (!scheduledNotes.ContainsKey(timing))
+                {
+                    scheduledNotes[timing] = new List<MusicData.Note>();
+                }
+                scheduledNotes[timing].Add(note);
+            }
+        }
+    }
 
-				if (!scheduledNotes.ContainsKey(timing))
-				{
-					scheduledNotes[timing] = new List<MusicData.Note>();
-				}
-				scheduledNotes[timing].Add(note);
-			}
-		}
-	}
+    public void StartGame()
+    {
+        DelayStartTimer.Start();
+    }
 
-	private void StartMetronomeMode()
-	{
-		StopTrack();
-		inMetronomeMode = true;
-		metronomeMeasuresElapsed = 0;
-		metronomeBeatsElapsed = 0;
+    private void StartMetronomeMode()
+    {
+        StopTrack();
+        inMetronomeMode = true;
+        metronomeMeasuresElapsed = 0;
+        metronomeBeatsElapsed = 0;
 
-		BeatTimer.Stop();
-		BeatTimer.WaitTime = beatDuration;
-		BeatTimer.Start();
-	}
+        BeatTimer.Stop();
+        BeatTimer.WaitTime = beatDuration;
+        BeatTimer.Start();
+    }
 
-	public void StartTrack()
-	{
-		inMetronomeMode = false;
+    public void StartTrack()
+    {
+        inMetronomeMode = false;
 
-		BeatTimer.Stop();
-		BeatTimer.WaitTime = sixteenthDuration;
-		BeatTimer.Start();
+        BeatTimer.Stop();
+        BeatTimer.WaitTime = sixteenthDuration;
+        BeatTimer.Start();
 
-		MusicPlayer.Play();
+        MusicPlayer.Play();
 
-		measureCounter = 0;
-		beatCounter = 0;
-		sixteenthCounter = 0;
-	}
+        measureCounter = 0;
+        beatCounter = 0;
+        sixteenthCounter = 0;
+    }
 
-	public void StopTrack()
-	{
-		MusicPlayer.Stop();
-		BeatTimer.Stop();
+    public void StopTrack()
+    {
+        MusicPlayer.Stop();
+        BeatTimer.Stop();
 
-		measureCounter = 0;
-		beatCounter = 0;
-		sixteenthCounter = 0;
+        measureCounter = 0;
+        beatCounter = 0;
+        sixteenthCounter = 0;
 
-		metronomeMeasuresElapsed = 0;
-		metronomeBeatsElapsed = 0;
-	}
+        metronomeMeasuresElapsed = 0;
+        metronomeBeatsElapsed = 0;
+    }
 
-	public void _on_DelayStartTimer_timeout()
-	{
-		StartMetronomeMode();
-		DelayStartTimer.Stop();
-	}
+    public void _on_DelayStartTimer_timeout()
+    {
+        StartMetronomeMode();
+        DelayStartTimer.Stop();
+    }
 
-	public void _on_BeatTimer_timeout()
-	{
-		if (inMetronomeMode)
-		{
-			OnMetronomeClick();
-			return;
-		}
+    public void _on_BeatTimer_timeout()
+    {
+        if (inMetronomeMode)
+        {
+            OnMetronomeClick();
+            return;
+        }
 
-		CheckAndSpawnNotes();
+        CheckAndSpawnNotes();
 
-		sixteenthCounter++;
-		if (sixteenthCounter >= 4)
-		{
-			sixteenthCounter = 0;
-			beatCounter++;
-			if (beatCounter >= 4)
-			{
-				beatCounter = 0;
-				measureCounter++;
-			}
-		}
-	}
+        sixteenthCounter++;
+        if (sixteenthCounter >= 4)
+        {
+            sixteenthCounter = 0;
+            beatCounter++;
+            if (beatCounter >= 4)
+            {
+                beatCounter = 0;
+                measureCounter++;
+            }
+        }
+    }
 
-	private void _on_MusicPlayer_finished()
-	{
-		StopTrack();
-	}
+    private void _on_MusicPlayer_finished()
+    {
+        StopTrack();
+    }
 
-	private void OnMetronomeClick()
-	{
-		MetronomeClickPlayer.PitchScale = (metronomeBeatsElapsed % 2 == 0) ? 1.2f : 1.0f;
+    private void OnMetronomeClick()
+    {
+        MetronomeClickPlayer.PitchScale = (metronomeBeatsElapsed % 2 == 0) ? 1.2f : 1.0f;
 
-		MetronomeClickPlayer.Play();
+        MetronomeClickPlayer.Play();
 
-		int beatsInThisMeasure = (metronomeMeasuresElapsed == 1) ? 8 : 4;
+        int beatsInThisMeasure = (metronomeMeasuresElapsed == 1) ? 8 : 4;
 
-		metronomeBeatsElapsed++;
+        metronomeBeatsElapsed++;
 
-		if (metronomeBeatsElapsed >= beatsInThisMeasure)
-		{
-			metronomeBeatsElapsed = 0;
-			metronomeMeasuresElapsed++;
+        if (metronomeBeatsElapsed >= beatsInThisMeasure)
+        {
+            metronomeBeatsElapsed = 0;
+            metronomeMeasuresElapsed++;
 
-			if (metronomeMeasuresElapsed >= METRONOME_START_MEASURES)
-			{
-				BeatTimer.Stop();
-				MetronomeClickPlayer.Stop();
-				StartTrack();
-				return;
-			}
+            if (metronomeMeasuresElapsed >= METRONOME_START_MEASURES)
+            {
+                BeatTimer.Stop();
+                MetronomeClickPlayer.Stop();
+                StartTrack();
+                return;
+            }
 
-			int nextBeatsInMeasure = (metronomeMeasuresElapsed == 1) ? 8 : 4;
-			BeatTimer.WaitTime = (nextBeatsInMeasure == 8) ? beatDuration / 2f : beatDuration;
-		}
-	}
+            int nextBeatsInMeasure = (metronomeMeasuresElapsed == 1) ? 8 : 4;
+            BeatTimer.WaitTime = (nextBeatsInMeasure == 8) ? beatDuration / 2f : beatDuration;
+        }
+    }
 
-	private void CheckAndSpawnNotes()
-	{
-		float currentTime = MusicPlayer.GetPlaybackPosition();
-		float targetTime = currentTime + leadOffset;
+    private void CheckAndSpawnNotes()
+    {
+        float currentTime = MusicPlayer.GetPlaybackPosition();
+        float targetTime = currentTime + leadOffset;
 
-		int targetSixteenth = Mathf.FloorToInt(targetTime / sixteenthDuration);
+        int targetSixteenth = Mathf.FloorToInt(targetTime / sixteenthDuration);
 
-		int targetMeasure = targetSixteenth / 16;
-		int targetBeat = targetSixteenth % 16 / 4;
-		int targetSixteenthInBeat = targetSixteenth % 4;
+        int targetMeasure = targetSixteenth / 16;
+        int targetBeat = targetSixteenth % 16 / 4;
+        int targetSixteenthInBeat = targetSixteenth % 4;
 
-		var timing = new TimingInfo
-		{
-			Measure = targetMeasure,
-			Beat = targetBeat,
-			Sixteenth = targetSixteenthInBeat
-		};
+        var timing = new TimingInfo
+        {
+            Measure = targetMeasure,
+            Beat = targetBeat,
+            Sixteenth = targetSixteenthInBeat,
+        };
 
-		if (scheduledNotes.TryGetValue(timing, out var notes))
-		{
-			foreach (var note in notes)
-			{
-				SpawnNotesForTiming(note);
-			}
-			scheduledNotes.Remove(timing);
-		}
-	}
+        if (scheduledNotes.TryGetValue(timing, out var notes))
+        {
+            foreach (var note in notes)
+            {
+                SpawnNotesForTiming(note);
+            }
+            scheduledNotes.Remove(timing);
+        }
+    }
 
-	private void SpawnNotesForTiming(MusicData.Note note)
-	{
-		foreach (TrackController trackController in trackControllers)
-		{
-			if (trackController != null && trackController.Role == GetPlayerRoleFromNote(note))
-			{
-				trackController.SpawnNoteAtTiming(note);
-				break;
-			}
-		}
-	}
+    private void SpawnNotesForTiming(MusicData.Note note)
+    {
+        foreach (TrackController trackController in trackControllers)
+        {
+            if (trackController != null && trackController.Role == GetPlayerRoleFromNote(note))
+            {
+                trackController.SpawnNoteAtTiming(note);
+                break;
+            }
+        }
+    }
 
-	private MusicData.PlayerRole GetPlayerRoleFromNote(MusicData.Note note)
-	{
-		foreach (var playerNotes in GameManager.Instance.CurrentTrack.Notes)
-		{
-			if (playerNotes.Value.Contains(note))
-			{
-				return playerNotes.Key;
-			}
-		}
-		return MusicData.PlayerRole.Guitar;
-	}
+    private MusicData.PlayerRole GetPlayerRoleFromNote(MusicData.Note note)
+    {
+        foreach (var playerNotes in GameManager.Instance.CurrentTrack.Notes)
+        {
+            if (playerNotes.Value.Contains(note))
+            {
+                return playerNotes.Key;
+            }
+        }
+        return MusicData.PlayerRole.Guitar;
+    }
 }

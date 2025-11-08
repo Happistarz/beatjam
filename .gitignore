@@ -28,3 +28,6 @@ export_presets.cfg
 
 # Logs
 *.log
+
+# User settings
+.config/
