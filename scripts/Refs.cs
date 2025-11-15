@@ -92,46 +92,19 @@ public partial class Refs : Node
     [Export]
     public string UI_SELECT = "ui_select";
 
-    [Export]
-    public string INSTRU1_H = "INSTRU1_H";
-
-    [Export]
-    public string INSTRU1_M = "INSTRU1_M";
-
-    [Export]
-    public string INSTRU1_L = "INSTRU1_L";
-
-    [Export]
-    public string INSTRU2_H = "INSTRU2_H";
-
-    [Export]
-    public string INSTRU2_M = "INSTRU2_M";
-
-    [Export]
-    public string INSTRU2_L = "INSTRU2_L";
-
-    [Export]
-    public string INSTRU3_H = "INSTRU3_H";
-
-    [Export]
-    public string INSTRU3_M = "INSTRU3_M";
-
-    [Export]
-    public string INSTRU3_L = "INSTRU3_L";
-
-    public string GetInputAction(MusicData.PlayerRole role, NoteType noteType)
+    public static string GetInputAction(MusicData.PlayerRole role, NoteType noteType)
     {
         return (role, noteType) switch
         {
-            (MusicData.PlayerRole.Guitar, NoteType.High) => INSTRU1_H,
-            (MusicData.PlayerRole.Guitar, NoteType.Medium) => INSTRU1_M,
-            (MusicData.PlayerRole.Guitar, NoteType.Low) => INSTRU1_L,
-            (MusicData.PlayerRole.Bass, NoteType.High) => INSTRU2_H,
-            (MusicData.PlayerRole.Bass, NoteType.Medium) => INSTRU2_M,
-            (MusicData.PlayerRole.Bass, NoteType.Low) => INSTRU2_L,
-            (MusicData.PlayerRole.Drums, NoteType.High) => INSTRU3_H,
-            (MusicData.PlayerRole.Drums, NoteType.Medium) => INSTRU3_M,
-            (MusicData.PlayerRole.Drums, NoteType.Low) => INSTRU3_L,
+            (MusicData.PlayerRole.Guitar, NoteType.High) => "INSTRU1_H",
+            (MusicData.PlayerRole.Guitar, NoteType.Medium) => "INSTRU1_M",
+            (MusicData.PlayerRole.Guitar, NoteType.Low) => "INSTRU1_L",
+            (MusicData.PlayerRole.Bass, NoteType.High) => "INSTRU2_H",
+            (MusicData.PlayerRole.Bass, NoteType.Medium) => "INSTRU2_M",
+            (MusicData.PlayerRole.Bass, NoteType.Low) => "INSTRU2_L",
+            (MusicData.PlayerRole.Drums, NoteType.High) => "INSTRU3_H",
+            (MusicData.PlayerRole.Drums, NoteType.Medium) => "INSTRU3_M",
+            (MusicData.PlayerRole.Drums, NoteType.Low) => "INSTRU3_L",
             _ => "",
         };
     }

@@ -17,6 +17,11 @@ public partial class NoteController : Sprite2D
 
     private ObjectPool<NoteController> _pool;
 
+    public override void _Ready()
+    {
+        DeleteTimer.WaitTime = (ThresholdY - GlobalPosition.Y) / Speed;
+    }
+
     public override void _Process(double delta)
     {
         // Move the note downwards
@@ -38,13 +43,17 @@ public partial class NoteController : Sprite2D
     {
         NoteType = type;
         GlobalPosition = position;
-        Speed = speed > 0 ? speed : Refs.Instance.NoteSpeed;
+        Speed = speed;
 
         _pool = pool;
         hasPassed = false;
         ProcessMode = ProcessModeEnum.Inherit;
         Visible = true;
-        DeleteTimer.Stop();
+
+        if (DeleteTimer != null && !DeleteTimer.IsStopped())
+        {
+            DeleteTimer.Start();
+        }
     }
 
     public void ReturnToPool()
