@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Godot;
 
-public partial class HitZoneController : Sprite2D
+public partial class HitZoneController : TextureRect
 {
     [Export]
     public Node2D NoteContainer;
@@ -25,9 +25,16 @@ public partial class HitZoneController : Sprite2D
 
 	public override void _Ready()
 	{
-		inputAction = Refs.Instance.GetInputAction(Track.Role, NoteType);
 		InitializePool();
 	}
+
+    public void Initialize()
+    {
+        if (Track == null)
+            return;
+
+        inputAction = Refs.GetInputAction(Track.Role, NoteType);
+    }
 
 	private void InitializePool()
 	{

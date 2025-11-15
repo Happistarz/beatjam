@@ -1,21 +1,16 @@
 using System.Linq;
 using Godot;
 
-public partial class TrackController : Node2D
+public partial class TrackController : Control
 {
-    [Export]
-    public BeatController BeatController;
-
     [Export]
     public MusicData.PlayerRole Role;
 
     [Export]
     public HitZoneController[] HitZones;
 
-    public override void _Ready()
-    {
-        BeatController.trackControllers.Add(this);
-    }
+    [Export]
+    public Node2D NoteContainer;
 
     public void SpawnNoteAtTiming(MusicData.Note note)
     {

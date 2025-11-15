@@ -3,8 +3,13 @@
 [ext_resource type="Texture2D" uid="uid://clbkegdmiiwqd" path="res://icon.svg" id="1_ksom0"]
 [ext_resource type="Script" path="res://scripts/HitZoneController.cs" id="2_m8joy"]
 
-[node name="HitZone" type="Sprite2D"]
+[node name="HitZone" type="TextureRect"]
 modulate = Color(0.02, 0.0363336, 1, 1)
-scale = Vector2(0.6, 0.6)
+custom_minimum_size = Vector2(64, 64)
+offset_right = 64.0
+offset_bottom = 64.0
+pivot_offset = Vector2(32, 32)
 texture = ExtResource("1_ksom0")
+expand_mode = 1
 script = ExtResource("2_m8joy")
+StartY = -600.0

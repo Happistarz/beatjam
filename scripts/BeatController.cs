@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 public partial class BeatController : Node
@@ -22,6 +24,9 @@ public partial class BeatController : Node
     [Export]
     public Timer DelayStartTimer;
 
+    [Export]
+    public TrackSet TrackSet;
+
     private int measureCounter = 0;
     private int beatCounter = 0;
     private int sixteenthCounter = 0;
@@ -35,30 +40,36 @@ public partial class BeatController : Node
 
     private Dictionary<TimingInfo, List<MusicData.Note>> scheduledNotes = new();
 
-    public List<TrackController> trackControllers = new();
     private float sixteenthDuration = 0f;
     private float beatDuration = 0f;
 
+    private int lastSpawnedSixteenth = -1;
+
     public override void _Ready()
     {
-        trackControllers = new List<TrackController>(Refs.Instance.MaxPlayers); // Cached references
         beatDuration = 60f / GameManager.Instance.CurrentTrack.BPM;
         sixteenthDuration = beatDuration / 4f;
 
         BeatTimer.Autostart = false;
         BeatTimer.OneShot = false;
 
-        CalculateLeadOffset();
         PrepareUpcomingNotes();
+        StartGame();
     }
 
-    private void CalculateLeadOffset()
+    public void CalculateLeadOffset()
     {
-        const float noteDistance = 800f;
+        float noteSpeed = Refs.Instance.NoteSpeed;
+        float noteDistance = 800f;
 
-        float travelTime = noteDistance / Refs.Instance.NoteSpeed;
+        var hitzone = TrackSet.TrackControllers.FirstOrDefault()?.HitZones.FirstOrDefault();
+        if (hitzone != null)
+        {
+            // Distance du spawn (StartY négatif vers le haut) jusqu’au centre visuel de frappe
+            noteDistance = Math.Abs(hitzone.StartY) + (hitzone.Size.Y * 0.5f);
+        }
 
-        leadOffset = travelTime;
+        leadOffset = noteDistance / noteSpeed;
     }
 
     private void PrepareUpcomingNotes()
@@ -200,50 +211,33 @@ public partial class BeatController : Node
         float currentTime = MusicPlayer.GetPlaybackPosition();
         float targetTime = currentTime + leadOffset;
 
-        int targetSixteenth = Mathf.FloorToInt(targetTime / sixteenthDuration);
+        int maxSixteenthToSpawn = Mathf.FloorToInt(targetTime / sixteenthDuration);
 
-        int targetMeasure = targetSixteenth / 16;
-        int targetBeat = targetSixteenth % 16 / 4;
-        int targetSixteenthInBeat = targetSixteenth % 4;
+        if (lastSpawnedSixteenth < 0)
+            lastSpawnedSixteenth = maxSixteenthToSpawn - 1;
 
-        var timing = new TimingInfo
+        while (lastSpawnedSixteenth < maxSixteenthToSpawn)
         {
-            Measure = targetMeasure,
-            Beat = targetBeat,
-            Sixteenth = targetSixteenthInBeat,
-        };
+            lastSpawnedSixteenth++;
 
-        if (scheduledNotes.TryGetValue(timing, out var notes))
-        {
-            foreach (var note in notes)
+            int measure = lastSpawnedSixteenth / 16;
+            int beat = lastSpawnedSixteenth % 16 / 4;
+            int sixteenthInBeat = lastSpawnedSixteenth % 4;
+
+            var timing = new TimingInfo
             {
-                SpawnNotesForTiming(note);
-            }
-            scheduledNotes.Remove(timing);
-        }
-    }
+                Measure = measure,
+                Beat = beat,
+                Sixteenth = sixteenthInBeat,
+            };
 
-    private void SpawnNotesForTiming(MusicData.Note note)
-    {
-        foreach (TrackController trackController in trackControllers)
-        {
-            if (trackController != null && trackController.Role == GetPlayerRoleFromNote(note))
+            if (scheduledNotes.TryGetValue(timing, out var notes))
             {
-                trackController.SpawnNoteAtTiming(note);
-                break;
+                foreach (var note in notes)
+                    TrackSet.SpawnNotesForTiming(note);
+
+                scheduledNotes.Remove(timing);
             }
         }
-    }
-
-    private MusicData.PlayerRole GetPlayerRoleFromNote(MusicData.Note note)
-    {
-        foreach (var playerNotes in GameManager.Instance.CurrentTrack.Notes)
-        {
-            if (playerNotes.Value.Contains(note))
-            {
-                return playerNotes.Key;
-            }
-        }
-        return MusicData.PlayerRole.Guitar;
     }
 }
