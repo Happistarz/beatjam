@@ -21,10 +21,21 @@ public partial class GameManager : Node
         Instance = this;
 
         LoadedTracks = TracksLoader.Instance.LoadAllTracks();
-        CurrentTrack = LoadedTracks.Count > 0 ? LoadedTracks[0] : null;
+        CurrentTrack = LoadedTracks.Count > 0
+            ? LoadedTracks[0]
+            : null;
 
         SetPhysicsProcess(false);
     }
+
+    public override void _Process(double delta)
+    {
+        if (Input.IsActionJustPressed("QUIT"))
+        {
+            ReturnToMainMenu();
+        }
+    }
+
 
     public override void _ExitTree()
     {
@@ -32,5 +43,10 @@ public partial class GameManager : Node
         {
             Instance = null;
         }
+    }
+
+    public void ReturnToMainMenu()
+    {
+        GetTree().ChangeSceneToPacked(Refs.Instance.MenuScene);
     }
 }
