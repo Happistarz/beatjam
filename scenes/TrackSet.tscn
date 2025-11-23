@@ -15,18 +15,14 @@ TracksHitZoneContainer = NodePath("HitZoneLayer/Margin/Tracks")
 layer = 0
 
 [node name="Margin" type="MarginContainer" parent="HitZoneLayer"]
-anchors_preset = 14
-anchor_top = 0.5
+anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 0.5
-offset_top = -324.0
-offset_bottom = 206.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 30
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 30
-theme_override_constants/margin_bottom = 30
+theme_override_constants/margin_left = 153
+theme_override_constants/margin_right = 153
+theme_override_constants/margin_bottom = 72
 
 [node name="Tracks" type="HBoxContainer" parent="HitZoneLayer/Margin"]
 layout_mode = 2

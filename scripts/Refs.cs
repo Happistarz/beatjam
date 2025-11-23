@@ -60,6 +60,9 @@ public partial class Refs : Node
     public PackedScene TrackScene;
 
     [Export]
+    public PackedScene HitZoneLayerScene;
+
+    [Export]
     public PackedScene NoteScene;
 
     [ExportGroup("Textures")]
