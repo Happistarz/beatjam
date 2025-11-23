@@ -27,23 +27,23 @@ public partial class TrackSet : Node2D
 
     private void InitTrack(MusicData.PlayerRole role)
     {
-        var track = Refs.Instance.TrackScene.Instantiate<TrackController>();
-        track.Role = role;
+        var trackScene = Refs.Instance.TrackScene.Instantiate();
+        var trackController = trackScene.GetChild<TrackController>(0);
+        trackController.Role = role;
 
         var trackNoteContainer = new Node2D { Name = $"NoteContainer_{role}" };
         TracksNoteContainer.AddChild(trackNoteContainer);
-        track.NoteContainer = trackNoteContainer;
+        trackController.NoteContainer = trackNoteContainer;
 
-        foreach (HitZoneController hitZone in track.HitZones)
+        foreach (var hitZone in trackController.HitZones)
         {
             hitZone.NoteContainer = trackNoteContainer;
-            hitZone.Track = track;
 
             hitZone.Initialize();
         }
 
-        TracksHitZoneContainer.AddChild(track);
-        TrackControllers.Add(track);
+        TracksHitZoneContainer.AddChild(trackScene);
+        TrackControllers.Add(trackController);
     }
 
     public void SpawnNotesForTiming(MusicData.Note note)
