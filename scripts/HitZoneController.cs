@@ -30,6 +30,8 @@ public partial class HitZoneController : TextureRect
     public override void _Ready()
     {
         InitializePool();
+
+        CustomMinimumSize = new Vector2(Refs.Instance.MinimumNoteSize, Refs.Instance.MinimumNoteSize);
     }
 
     public void Initialize()

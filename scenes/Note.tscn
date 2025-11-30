@@ -4,7 +4,6 @@
 [ext_resource type="Script" path="res://scripts/NoteController.cs" id="2_yslok"]
 
 [node name="Note" type="Sprite2D" node_paths=PackedStringArray("DeleteTimer")]
-scale = Vector2(0.5, 0.5)
 texture = ExtResource("1_xry48")
 script = ExtResource("2_yslok")
 DeleteTimer = NodePath("DeleteTimer")

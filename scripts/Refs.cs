@@ -43,6 +43,9 @@ public partial class Refs : Node
     [Export]
     public float greatThreshold = 30f; // units
 
+    [Export]
+    public int MinimumNoteSize = 128; // pixels
+
     [ExportGroup("Scenes")]
     [Export]
     public PackedScene MusicItemScene;
