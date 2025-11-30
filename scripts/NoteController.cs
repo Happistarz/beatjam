@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using Godot;
 
 public partial class NoteController : Sprite2D
@@ -20,6 +19,9 @@ public partial class NoteController : Sprite2D
     public override void _Ready()
     {
         DeleteTimer.WaitTime = (ThresholdY - GlobalPosition.Y) / Speed;
+
+        var scale = Refs.Instance.MinimumNoteSize / Texture.GetSize().Y;
+        Scale = new Vector2(scale, scale);
     }
 
     public override void _Process(double delta)
