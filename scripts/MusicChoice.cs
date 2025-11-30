@@ -15,19 +15,19 @@ public partial class MusicChoice : CanvasLayer
     private double _lastMoveTime = 0;
     private const double MoveDelay = 0.2;
 
-    // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        _musicItems = new MusicItem[3];
-        for (int i = 0; i < 3; i++)
+        _musicItems = new MusicItem[GameManager.LoadedTracks.Count];
+        for (int i = 0; i < GameManager.LoadedTracks.Count; i++)
         {
+            var track = GameManager.LoadedTracks[i];
             var item = Refs.Instance.MusicItemScene.Instantiate<MusicItem>();
             item.Initialize(
-                $"Song {i + 1}",
-                $"{i + 1} Players",
-                $"{120 + i * 10} BPM",
-                $"Difficulty {i + 1}",
-                Refs.Instance.DefaultCoverImage
+                track.Title,
+                $"{track.Players.Count} Players",
+                $"{track.BPM} BPM",
+                track.Length,
+                track.CoverImage ?? Refs.Instance.DefaultCoverImage
             );
             musicList.AddChild(item);
             _musicItems[i] = item;
