@@ -3,13 +3,6 @@ using Godot;
 
 public class MusicData
 {
-    public enum DifficultyLevel
-    {
-        Easy,
-        Medium,
-        Hard,
-    }
-
     public enum PlayerRole
     {
         Guitar,
@@ -48,7 +41,6 @@ public class MusicData
     public string Length { get; set; } // in format X 'm', Y 's'
     public AudioStream MusicStream { get; set; }
     public Texture2D CoverImage { get; set; }
-    public DifficultyLevel Difficulty { get; set; }
     public List<Player> Players { get; set; } = new();
     public Dictionary<PlayerRole, List<Note>> Notes { get; set; } = new();
 
@@ -63,6 +55,6 @@ public class MusicData
         }
         var musicStr = MusicStream != null ? MusicStream.GetPath() : "null";
         var coverStr = CoverImage != null ? CoverImage.GetPath() : "null";
-        return $"MusicData(Id={Id}, Title={Title}, BPM={BPM}, Difficulty={Difficulty}, Players=[{playersStr}], Notes={{\n{notesStr}}}, Music={musicStr}, Cover={coverStr})";
+        return $"MusicData(Id={Id}, Title={Title}, BPM={BPM}, Length={Length}, Players=[{playersStr}], Notes={{\n{notesStr}}}, Music={musicStr}, Cover={coverStr})";
     }
 }

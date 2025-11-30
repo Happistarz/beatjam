@@ -1,7 +1,7 @@
 Title=Track 1
 BPM=110
 Id=track1
-Difficulty=Medium
+Length=2m04s
 Players 2
 -player1:Player 1:Guitar
 -player2:Player 2:Drums

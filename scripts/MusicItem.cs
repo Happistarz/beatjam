@@ -16,7 +16,7 @@ public partial class MusicItem : PanelContainer
     public Label BPMLabel;
 
     [Export]
-    public Label DifficultyLabel;
+    public Label TrackLengthLabel;
 
     [ExportGroup("Styles")]
     [Export]
@@ -34,14 +34,14 @@ public partial class MusicItem : PanelContainer
         string title,
         string players,
         string bpm,
-        string difficulty,
+        string trackLength,
         Texture2D coverImage
     )
     {
         TitleLabel.Text = title;
         PlayersLabel.Text = players;
         BPMLabel.Text = bpm;
-        DifficultyLabel.Text = difficulty;
+        TrackLengthLabel.Text = trackLength;
         CoverImage.Texture = coverImage;
     }
 }

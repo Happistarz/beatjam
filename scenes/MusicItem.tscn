@@ -5,7 +5,7 @@
 [ext_resource type="StyleBox" uid="uid://b663lma36nwl7" path="res://assets/sprites/MusicItemPanelSelected.tres" id="3_h4ie8"]
 [ext_resource type="Texture2D" uid="uid://clbkegdmiiwqd" path="res://icon.svg" id="3_u8yar"]
 
-[node name="MusicItem" type="PanelContainer" node_paths=PackedStringArray("CoverImage", "TitleLabel", "PlayersLabel", "BPMLabel", "DifficultyLabel")]
+[node name="MusicItem" type="PanelContainer" node_paths=PackedStringArray("CoverImage", "TitleLabel", "PlayersLabel", "BPMLabel", "TrackLengthLabel")]
 focus_mode = 2
 theme_override_styles/panel = ExtResource("1_tw4jc")
 script = ExtResource("2_vvige")
@@ -13,7 +13,7 @@ CoverImage = NodePath("HBox/Icon")
 TitleLabel = NodePath("HBox/VBox/Title")
 PlayersLabel = NodePath("HBox/VBox/HBox/Players")
 BPMLabel = NodePath("HBox/VBox/HBox/BPM")
-DifficultyLabel = NodePath("HBox/VBox/HBox/Difficulty")
+TrackLengthLabel = NodePath("HBox/VBox/HBox/TrackLength")
 normalStyle = ExtResource("1_tw4jc")
 selectedStyle = ExtResource("3_h4ie8")
 
@@ -50,6 +50,6 @@ autowrap_mode = 2
 layout_mode = 2
 text = "BPM: 120"
 
-[node name="Difficulty" type="Label" parent="HBox/VBox/HBox"]
+[node name="TrackLength" type="Label" parent="HBox/VBox/HBox"]
 layout_mode = 2
-text = "Difficulty: Easy"
+text = "Length: 1m"
