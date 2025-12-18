@@ -4,6 +4,8 @@ using Godot;
 
 public partial class HitZoneController : TextureRect
 {
+    [Export] public Control SpawnPoint;
+
     [Export]
     public Node2D NoteContainer;
 
@@ -94,13 +96,34 @@ public partial class HitZoneController : TextureRect
         if (speed < 0f)
             speed = Refs.Instance.NoteSpeed;
 
+        if (SpawnPoint == null)
+        {
+            GD.PrintErr("HitZoneController.SpawnNote: SpawnPoint is null.");
+            return;
+        }
+
+        if (NoteContainer == null)
+        {
+            GD.PrintErr("HitZoneController.SpawnNote: NoteContainer is null.");
+            return;
+        }
+
         var note = _notePool.Get();
         NoteContainer.AddChild(note);
 
-        var spawnPosition = new Vector2(GlobalPosition.X + Size.X / 2, GlobalPosition.Y + StartY);
+        // Use canvas-global position of the spawn point (UI)
+        Vector2 spawnCanvasGlobal = SpawnPoint.GetGlobalTransformWithCanvas().Origin;
 
-        note.Initialize(NoteType, NoteContainer.ToLocal(spawnPosition), speed, _notePool);
+        // Place the note directly at that canvas-global position
+        note.GlobalPosition = spawnCanvasGlobal;
+
+        // Then initialize movement
+        note.Initialize(NoteType, note.GlobalPosition, speed, _notePool);
+
+        // Debug: print both positions to verify they match
+        GD.Print($"SpawnPoint canvas global: {spawnCanvasGlobal} | Note global: {note.GlobalPosition}");
     }
+
 
     public override void _ExitTree()
     {

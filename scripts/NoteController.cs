@@ -2,32 +2,30 @@ using Godot;
 
 public partial class NoteController : Sprite2D
 {
-    [Export]
-    public Timer DeleteTimer;
+    [Export] public Timer DeleteTimer;
+    [Export] public Refs.NoteType NoteType;
+    [Export] public float ThresholdY = 775f;
 
-    [Export]
-    public Refs.NoteType NoteType;
+    [Export] public float Speed = 200f;
 
-    [Export]
-    public float ThresholdY = 775f;
-
-    private float Speed = 200f;
     public bool hasPassed = false;
 
     private ObjectPool<NoteController> _pool;
 
     public override void _Ready()
     {
-        DeleteTimer.WaitTime = (ThresholdY - GlobalPosition.Y) / Speed;
+        // Defensive: avoid null deref if not assigned in editor
+        if (DeleteTimer != null)
+            DeleteTimer.Stop();
 
-        var scale = Refs.Instance.MinimumNoteSize / Texture.GetSize().Y;
-        Scale = new Vector2(scale, scale);
+        ApplyVisualScale();
+        ProcessMode = ProcessModeEnum.Disabled;
+        Visible = false;
     }
 
     public override void _Process(double delta)
     {
-        // Move the note downwards
-        GlobalPosition += new Vector2(0, Speed * (float)delta);
+        GlobalPosition += new Vector2(0f, Speed * (float)delta);
 
         if (GlobalPosition.Y > ThresholdY && !hasPassed)
         {
@@ -38,28 +36,59 @@ public partial class NoteController : Sprite2D
 
     public void Initialize(
         Refs.NoteType type,
-        Vector2 position,
+        Vector2 globalPosition,
         float speed,
         ObjectPool<NoteController> pool
     )
     {
         NoteType = type;
-        GlobalPosition = position;
+        GlobalPosition = globalPosition;
         Speed = speed;
-
         _pool = pool;
-        hasPassed = false;
-        ProcessMode = ProcessModeEnum.Inherit;
-        Visible = true;
 
-        if (DeleteTimer != null && !DeleteTimer.IsStopped())
-        {
-            DeleteTimer.Start();
-        }
+        hasPassed = false;
+        Visible = true;
+        ProcessMode = ProcessModeEnum.Inherit;
+
+        ApplyVisualScale();
+        StartDeleteTimer();
+    }
+
+    private void ApplyVisualScale()
+    {
+        if (Texture == null || Refs.Instance == null)
+            return;
+
+        // Target size in pixels on screen
+        float targetPx = Refs.Instance.MinimumNoteSize;
+
+        Vector2 texSize = Texture.GetSize();
+        float denom = Mathf.Max(1f, Mathf.Max(texSize.X, texSize.Y));
+        float s = targetPx / denom;
+
+        Scale = new Vector2(s, s);
+    }
+
+    private void StartDeleteTimer()
+    {
+        if (DeleteTimer == null)
+            return;
+
+        DeleteTimer.Stop();
+
+        // Compute remaining travel time from current position to threshold
+        float remaining = ThresholdY - GlobalPosition.Y;
+        float seconds = remaining / Mathf.Max(1f, Speed);
+
+        DeleteTimer.WaitTime = Mathf.Max(0.01f, seconds);
+        DeleteTimer.Start();
     }
 
     public void ReturnToPool()
     {
+        if (DeleteTimer != null)
+            DeleteTimer.Stop();
+
         if (_pool == null)
         {
             GD.PrintErr("NoteController: Pool reference is null!");
@@ -67,7 +96,9 @@ public partial class NoteController : Sprite2D
             return;
         }
 
-        DeleteTimer.Stop();
+        Visible = false;
+        ProcessMode = ProcessModeEnum.Disabled;
+
         _pool.Return(this);
     }
 
@@ -78,9 +109,12 @@ public partial class NoteController : Sprite2D
 
     public void Reset()
     {
-        DeleteTimer.Stop();
+        if (DeleteTimer != null)
+            DeleteTimer.Stop();
+
         hasPassed = false;
         _pool = null;
+        Visible = false;
         ProcessMode = ProcessModeEnum.Disabled;
     }
 }

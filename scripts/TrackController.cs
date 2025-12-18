@@ -3,6 +3,8 @@ using Godot;
 
 public partial class TrackController : Control
 {
+    [Export] public Control NoteSpawnPoint;
+
     [Export]
     public MusicData.PlayerRole Role;
 
