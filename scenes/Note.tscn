@@ -1,10 +1,11 @@
 [gd_scene load_steps=3 format=3 uid="uid://cwvclsrdqkwrq"]
 
-[ext_resource type="Texture2D" uid="uid://clbkegdmiiwqd" path="res://icon.svg" id="1_xry48"]
+[ext_resource type="Texture2D" uid="uid://cbyfetcf4y84x" path="res://assets/sprites/T_NoteButton.png" id="1_djpc7"]
 [ext_resource type="Script" path="res://scripts/NoteController.cs" id="2_yslok"]
 
 [node name="Note" type="Sprite2D" node_paths=PackedStringArray("DeleteTimer")]
-texture = ExtResource("1_xry48")
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("1_djpc7")
 script = ExtResource("2_yslok")
 DeleteTimer = NodePath("DeleteTimer")
 

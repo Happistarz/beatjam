@@ -9,6 +9,13 @@
 
 [node name="Canvas" type="CanvasLayer" parent="."]
 
+[node name="Background" type="ColorRect" parent="Canvas"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="Margin" type="MarginContainer" parent="Canvas"]
 anchors_preset = 15
 anchor_right = 1.0

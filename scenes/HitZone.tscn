@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bmecde2u5i7xh"]
 
-[ext_resource type="Texture2D" uid="uid://clbkegdmiiwqd" path="res://icon.svg" id="1_ksom0"]
+[ext_resource type="Texture2D" uid="uid://yegugtac5da7" path="res://assets/sprites/T_HitZone.png" id="1_xbuf5"]
 [ext_resource type="Script" path="res://scripts/HitZoneController.cs" id="2_m8joy"]
 
 [node name="HitZone" type="TextureRect"]
@@ -9,7 +9,7 @@ custom_minimum_size = Vector2(128, 128)
 offset_right = 64.0
 offset_bottom = 64.0
 pivot_offset = Vector2(32, 32)
-texture = ExtResource("1_ksom0")
+texture = ExtResource("1_xbuf5")
 expand_mode = 1
 script = ExtResource("2_m8joy")
 StartY = -600.0

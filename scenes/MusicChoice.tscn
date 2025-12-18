@@ -9,6 +9,13 @@ script = ExtResource("1_3gu7p")
 musicList = NodePath("Margin/VBoxContainer/VBox")
 backButton = NodePath("Margin/VBoxContainer/Back")
 
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="Margin" type="MarginContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
