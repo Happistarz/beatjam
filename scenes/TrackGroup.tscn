@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3 uid="uid://bdcpnpk451uuy"]
+
+[ext_resource type="Script" path="res://scripts/TrackSet.cs" id="1_kqmkr"]
+
+[node name="TrackGroup" type="Control" node_paths=PackedStringArray("TracksNoteContainer", "TracksHitZoneContainer")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_kqmkr")
+TracksNoteContainer = NodePath("NoteLayer")
+TracksHitZoneContainer = NodePath("TracksRow")
+
+[node name="TracksRow" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="NoteLayer" type="Control" parent="."]
+anchors_preset = 0
+
+[node name="Notes" type="Control" parent="NoteLayer"]
+anchors_preset = 0

@@ -1,21 +1,35 @@
 using System.Collections.Generic;
 using Godot;
 
-public partial class TrackSet : Node2D
+public partial class TrackSet : Control
 {
-    [Export]
-    public Node2D TracksNoteContainer { get; set; }
+    [Export] public Control TracksNoteContainer;
+    [Export] public Control TracksHitZoneContainer;
+    [Export] public BeatController BeatController;
 
-    [Export]
-    public Control TracksHitZoneContainer { get; set; }
-
-    [Export]
-    public BeatController BeatController { get; set; }
-
-    public List<TrackController> TrackControllers { get; private set; }
+    public List<TrackController> TrackControllers { get; private set; } = new();
 
     public override void _Ready()
     {
+        // Validate exported references early
+        if (TracksNoteContainer == null)
+        {
+            GD.PushError("TrackSet: TracksNoteContainer is not assigned.");
+            return;
+        }
+
+        if (TracksHitZoneContainer == null)
+        {
+            GD.PushError("TrackSet: TracksHitZoneContainer is not assigned.");
+            return;
+        }
+
+        if (BeatController == null)
+        {
+            GD.PushError("TrackSet: BeatController is not assigned.");
+            return;
+        }
+
         TrackControllers = new List<TrackController>(Refs.Instance.MaxPlayers);
 
         InitTrack(MusicData.PlayerRole.Drums);
@@ -27,46 +41,126 @@ public partial class TrackSet : Node2D
 
     private void InitTrack(MusicData.PlayerRole role)
     {
-        var trackScene = Refs.Instance.TrackScene.Instantiate();
-        var trackController = trackScene.GetChild<TrackController>(0);
-        trackController.Role = role;
-
-        var trackNoteContainer = new Node2D { Name = $"NoteContainer_{role}" };
-        TracksNoteContainer.AddChild(trackNoteContainer);
-        trackController.NoteContainer = trackNoteContainer;
-
-        foreach (var hitZone in trackController.HitZones)
+        if (Refs.Instance == null)
         {
-            hitZone.NoteContainer = trackNoteContainer;
-
-            hitZone.Initialize();
+            GD.PushError("TrackSet: Refs.Instance is null.");
+            return;
         }
 
+        if (Refs.Instance.TrackScene == null)
+        {
+            GD.PushError("TrackSet: Refs.Instance.TrackScene is null.");
+            return;
+        }
+
+        Node trackScene = Refs.Instance.TrackScene.Instantiate();
+        if (trackScene == null)
+        {
+            GD.PushError("TrackSet: Failed to instantiate TrackScene.");
+            return;
+        }
+
+        // Try to locate TrackController in the instantiated scene
+        TrackController trackController = null;
+
+        // Most robust: find by type in the subtree
+        foreach (Node child in trackScene.GetChildren())
+        {
+            if (child is TrackController tc)
+            {
+                trackController = tc;
+                break;
+            }
+        }
+
+        // Fallback: root itself could be the controller
+        if (trackController == null && trackScene is TrackController rootTc)
+            trackController = rootTc;
+
+        if (trackController == null)
+        {
+            GD.PushError("TrackSet: No TrackController found in TrackScene instance.");
+            trackScene.QueueFree();
+            return;
+        }
+
+        trackController.Role = role;
+
+        // Create a per-track note container (Node2D) under the (now Control) note layer
+        var trackNoteContainer = new Node2D
+        {
+            Name = "NoteContainer_" + role.ToString()
+        };
+
+        TracksNoteContainer.AddChild(trackNoteContainer);
+
+        // Ensure it starts at origin of the note layer
+        trackNoteContainer.Position = Vector2.Zero;
+
+        trackController.NoteContainer = trackNoteContainer;
+
+        // Initialize hit zones and wire note container
+        if (trackController.HitZones != null)
+        {
+            foreach (var hitZone in trackController.HitZones)
+            {
+                if (hitZone == null)
+                    continue;
+
+                hitZone.NoteContainer = trackNoteContainer;
+                hitZone.Initialize();
+            }
+        }
+
+        // Add the track UI under the hit zone container
         TracksHitZoneContainer.AddChild(trackScene);
+
+        // If the instantiated root is a Control, make it cooperate with containers
+        if (trackScene is Control trackRootControl)
+        {
+            trackRootControl.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+            trackRootControl.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
+
+        }
+
         TrackControllers.Add(trackController);
     }
 
     public void SpawnNotesForTiming(MusicData.Note note)
     {
+        if (TrackControllers == null || TrackControllers.Count == 0)
+            return;
+
+        var targetRole = GetPlayerRoleFromNote(note);
+
         foreach (TrackController trackController in TrackControllers)
         {
-            if (trackController != null && trackController.Role == GetPlayerRoleFromNote(note))
-            {
-                trackController.SpawnNoteAtTiming(note);
-                break;
-            }
+            if (trackController == null)
+                continue;
+
+            if (trackController.Role != targetRole)
+                continue;
+
+            trackController.SpawnNoteAtTiming(note);
+            break;
         }
     }
 
     private static MusicData.PlayerRole GetPlayerRoleFromNote(MusicData.Note note)
     {
+        // Defensive defaults
+        if (GameManager.Instance == null || GameManager.Instance.CurrentTrack == null)
+            return MusicData.PlayerRole.Guitar;
+
+        if (GameManager.Instance.CurrentTrack.Notes == null)
+            return MusicData.PlayerRole.Guitar;
+
         foreach (var playerNotes in GameManager.Instance.CurrentTrack.Notes)
         {
-            if (playerNotes.Value.Contains(note))
-            {
+            if (playerNotes.Value != null && playerNotes.Value.Contains(note))
                 return playerNotes.Key;
-            }
         }
+
         return MusicData.PlayerRole.Guitar;
     }
 }

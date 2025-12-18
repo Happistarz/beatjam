@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://dshp37wir2ocd"]
 
 [ext_resource type="Script" path="res://scripts/Background.cs" id="1_t8q8t"]
-[ext_resource type="PackedScene" uid="uid://bdcpnpk451uuy" path="res://scenes/TrackSet.tscn" id="3_jg4e7"]
+[ext_resource type="PackedScene" uid="uid://bdcpnpk451uuy" path="res://scenes/TrackGroup.tscn" id="3_jg4e7"]
 [ext_resource type="Script" path="res://scripts/BeatController.cs" id="4_ndt71"]
 [ext_resource type="AudioStream" uid="uid://dqhnvufhnpfes" path="res://assets/sounds/metronome.wav" id="5_61aba"]
 [ext_resource type="AudioStream" uid="uid://df5g00o2vwyjm" path="res://assets/musics/track1.wav" id="5_xtjal"]
@@ -27,16 +27,12 @@ stream = ExtResource("5_xtjal")
 stream = ExtResource("5_61aba")
 volume_db = -6.604
 
-[node name="Tracks" parent="." node_paths=PackedStringArray("BeatController") instance=ExtResource("3_jg4e7")]
-BeatController = NodePath("../BeatController")
-
-[node name="BeatController" type="Node" parent="." node_paths=PackedStringArray("MusicPlayer", "MetronomeClickPlayer", "BeatTimer", "DelayStartTimer", "TrackSet")]
+[node name="BeatController" type="Node" parent="." node_paths=PackedStringArray("MusicPlayer", "MetronomeClickPlayer", "BeatTimer", "DelayStartTimer")]
 script = ExtResource("4_ndt71")
 MusicPlayer = NodePath("../MusicPlayer")
 MetronomeClickPlayer = NodePath("../MetronomeClick")
 BeatTimer = NodePath("BeatTimer")
 DelayStartTimer = NodePath("DelayStartTimer")
-TrackSet = NodePath("../Tracks")
 
 [node name="BeatTimer" type="Timer" parent="BeatController"]
 unique_name_in_owner = true
@@ -44,6 +40,44 @@ unique_name_in_owner = true
 [node name="DelayStartTimer" type="Timer" parent="BeatController"]
 wait_time = 2.0
 one_shot = true
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="UIRoot" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScreenMargin" type="MarginContainer" parent="UI/UIRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 150
+theme_override_constants/margin_top = 150
+theme_override_constants/margin_right = 150
+theme_override_constants/margin_bottom = 0
+
+[node name="Control" type="Control" parent="UI/UIRoot/ScreenMargin"]
+layout_mode = 2
+
+[node name="TrackGroup" parent="UI/UIRoot/ScreenMargin/Control" node_paths=PackedStringArray("BeatController") instance=ExtResource("3_jg4e7")]
+layout_mode = 1
+BeatController = NodePath("../../../../../BeatController")
+
+[node name="ColorRect" type="ColorRect" parent="UI/UIRoot/ScreenMargin/Control/TrackGroup"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.643137, 0, 0.654902, 0.423529)
 
 [connection signal="finished" from="MusicPlayer" to="BeatController" method="_on_MusicPlayer_finished"]
 [connection signal="timeout" from="BeatController/BeatTimer" to="BeatController" method="_on_BeatTimer_timeout"]

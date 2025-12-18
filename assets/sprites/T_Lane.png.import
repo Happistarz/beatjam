@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dvl8rkwfq4vwr"
-path="res://.godot/imported/T_ScreenPart.png-195926dffccc8f28b71b85021cc9e61b.ctex"
+uid="uid://bcfiav58jiqri"
+path="res://.godot/imported/T_Lane.png-3e5bb3d5257f9f68f5c395b456760735.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/T_ScreenPart.png"
-dest_files=["res://.godot/imported/T_ScreenPart.png-195926dffccc8f28b71b85021cc9e61b.ctex"]
+source_file="res://assets/sprites/T_Lane.png"
+dest_files=["res://.godot/imported/T_Lane.png-3e5bb3d5257f9f68f5c395b456760735.ctex"]
 
 [params]
 

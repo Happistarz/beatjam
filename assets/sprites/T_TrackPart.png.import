@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://clpkml4ff5uj2"
-path="res://.godot/imported/T_TrackCut.png-79f2035ab90f0772ee782e94a2fc2846.ctex"
+uid="uid://dvl8rkwfq4vwr"
+path="res://.godot/imported/T_TrackPart.png-636fec07b3760ece5a76394dab506482.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/T_TrackCut.png"
-dest_files=["res://.godot/imported/T_TrackCut.png-79f2035ab90f0772ee782e94a2fc2846.ctex"]
+source_file="res://assets/sprites/T_TrackPart.png"
+dest_files=["res://.godot/imported/T_TrackPart.png-636fec07b3760ece5a76394dab506482.ctex"]
 
 [params]
 
