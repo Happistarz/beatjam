@@ -2,11 +2,8 @@ using Godot;
 
 public partial class MusicChoice : CanvasLayer
 {
-    [Export]
-    private VBoxContainer musicList;
-
-    [Export]
-    private Button backButton;
+    [Export] private VBoxContainer musicList;
+    [Export] private Button backButton;
 
     private bool _isOnBackButton = false;
     private int _selectedIndex = 0;
@@ -18,10 +15,12 @@ public partial class MusicChoice : CanvasLayer
     public override void _Ready()
     {
         _musicItems = new MusicItem[GameManager.LoadedTracks.Count];
+
         for (int i = 0; i < GameManager.LoadedTracks.Count; i++)
         {
             var track = GameManager.LoadedTracks[i];
             var item = Refs.Instance.MusicItemScene.Instantiate<MusicItem>();
+
             item.Initialize(
                 track.Title,
                 $"{track.Players.Count} Players",
@@ -29,19 +28,21 @@ public partial class MusicChoice : CanvasLayer
                 track.Length,
                 track.CoverImage ?? Refs.Instance.DefaultCoverImage
             );
+
             musicList.AddChild(item);
             _musicItems[i] = item;
         }
 
         if (_musicItems.Length > 0)
-        {
             CallDeferred(nameof(SetInitialSelection));
-        }
+        else
+            backButton?.GrabFocus();
     }
 
     private void SetInitialSelection()
     {
-        _musicItems[0].SetSelected(true);
+        _selectedIndex = 0;
+        _isOnBackButton = false;
         _musicItems[0].GrabFocus();
     }
 
@@ -65,7 +66,7 @@ public partial class MusicChoice : CanvasLayer
 
         if (Input.IsActionJustPressed("ui_accept"))
         {
-            if (backButton.HasFocus())
+            if (_isOnBackButton || (backButton != null && backButton.HasFocus()))
                 return;
 
             GD.Print($"Selected: {_musicItems[_selectedIndex].TitleLabel.Text}");
@@ -75,66 +76,38 @@ public partial class MusicChoice : CanvasLayer
 
     private void HandleUp()
     {
+        if (_musicItems == null || _musicItems.Length == 0)
+            return;
+
         if (_isOnBackButton)
             return;
 
         if (_selectedIndex == 0)
         {
-            // Move to back button from first music item
-            _musicItems[_selectedIndex].SetSelected(false);
-            backButton.GrabFocus();
+            backButton?.GrabFocus();
             _isOnBackButton = true;
             return;
         }
 
-        _musicItems[_selectedIndex].SetSelected(false);
         _selectedIndex--;
-        _musicItems[_selectedIndex].SetSelected(true);
         _musicItems[_selectedIndex].GrabFocus();
     }
 
     private void HandleDown()
     {
+        if (_musicItems == null || _musicItems.Length == 0)
+            return;
+
         if (_isOnBackButton)
         {
-            // Move to first music item from back button
             _selectedIndex = 0;
-            _musicItems[_selectedIndex].SetSelected(true);
-            _musicItems[_selectedIndex].GrabFocus();
             _isOnBackButton = false;
+            _musicItems[_selectedIndex].GrabFocus();
             return;
         }
 
-        _musicItems[_selectedIndex].SetSelected(false);
         _selectedIndex = (_selectedIndex + 1) % _musicItems.Length;
-        _musicItems[_selectedIndex].SetSelected(true);
         _musicItems[_selectedIndex].GrabFocus();
-    }
-
-    private void FocusNext(Control current)
-    {
-        int index = GetIndex(current);
-        int next = (index + 1) % musicList.GetChildCount();
-        if (musicList.GetChild(next) is Control nextControl)
-            nextControl.GrabFocus();
-    }
-
-    private void FocusPrevious(Control current)
-    {
-        int index = GetIndex(current);
-        int prev = (index - 1 + musicList.GetChildCount()) % musicList.GetChildCount();
-        if (musicList.GetChild(prev) is Control prevControl)
-            prevControl.GrabFocus();
-    }
-
-    private int GetIndex(Node node)
-    {
-        for (int i = 0; i < musicList.GetChildCount(); i++)
-        {
-            if (musicList.GetChild(i) == node)
-                return i;
-        }
-        return -1;
     }
 
     public void _on_back_pressed()

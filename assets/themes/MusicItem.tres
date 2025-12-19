@@ -1,0 +1,17 @@
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://cegplvu7wf4yn"]
+
+[ext_resource type="Texture2D" uid="uid://dc14f2s1fvlb7" path="res://assets/sprites/UI/T_Panel1.png" id="1_yy002"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hmiec"]
+texture = ExtResource("1_yy002")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jor22"]
+texture = ExtResource("1_yy002")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_peuso"]
+texture = ExtResource("1_yy002")
+
+[resource]
+Button/styles/hover = SubResource("StyleBoxTexture_hmiec")
+Button/styles/normal = SubResource("StyleBoxTexture_jor22")
+Button/styles/pressed = SubResource("StyleBoxTexture_peuso")

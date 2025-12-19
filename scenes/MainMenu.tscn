@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://clbkegdmiiwqd" path="res://icon.svg" id="1_h56n0"]
 [ext_resource type="Script" path="res://scripts/Menu.cs" id="2_mt78r"]
-[ext_resource type="Theme" uid="uid://b3mx5wnjix7mj" path="res://assets/themes/menu_button.tres" id="3_p705b"]
+[ext_resource type="Theme" uid="uid://b3mx5wnjix7mj" path="res://assets/themes/MenuButton.tres" id="3_p705b"]
 
 [node name="Root" type="Node2D"]
 

@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://nupmxxrlb5by"]
+[gd_scene load_steps=3 format=3 uid="uid://nupmxxrlb5by"]
 
 [ext_resource type="Script" path="res://scripts/MusicChoice.cs" id="1_3gu7p"]
-[ext_resource type="StyleBox" uid="uid://dr2d25bpj4xeh" path="res://assets/sprites/UI/MusicItemPanelNormal.tres" id="2_c8wxg"]
-[ext_resource type="StyleBox" uid="uid://b663lma36nwl7" path="res://assets/sprites/UI/MusicItemPanelSelected.tres" id="2_iyyta"]
+[ext_resource type="Theme" uid="uid://b3mx5wnjix7mj" path="res://assets/themes/MenuButton.tres" id="2_u8d5o"]
 
 [node name="Control" type="CanvasLayer" node_paths=PackedStringArray("musicList", "backButton")]
 script = ExtResource("1_3gu7p")
@@ -35,11 +34,12 @@ layout_mode = 2
 theme_override_constants/separation = 45
 
 [node name="Back" type="Button" parent="Margin/VBoxContainer"]
+custom_minimum_size = Vector2(452, 147)
 layout_mode = 2
-size_flags_vertical = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = ExtResource("2_u8d5o")
 theme_override_font_sizes/font_size = 36
-theme_override_styles/focus = ExtResource("2_iyyta")
-theme_override_styles/normal = ExtResource("2_c8wxg")
 text = "BACK"
 
 [node name="VBox" type="VBoxContainer" parent="Margin/VBoxContainer"]

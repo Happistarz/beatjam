@@ -1,47 +1,21 @@
 using Godot;
 
-public partial class MusicItem : PanelContainer
+public partial class MusicItem : Button
 {
     [ExportGroup("UI Elements")]
-    [Export]
-    public TextureRect CoverImage;
+    [Export] public TextureRect CoverImage;
 
-    [Export]
-    public Label TitleLabel;
+    [Export] public Label TitleLabel;
+    [Export] public Label PlayersLabel;
+    [Export] public Label BPMLabel;
+    [Export] public Label TrackLengthLabel;
 
-    [Export]
-    public Label PlayersLabel;
-
-    [Export]
-    public Label BPMLabel;
-
-    [Export]
-    public Label TrackLengthLabel;
-
-    [ExportGroup("Styles")]
-    [Export]
-    private StyleBoxFlat normalStyle;
-
-    [Export]
-    private StyleBoxFlat selectedStyle;
-
-    public void SetSelected(bool selected)
+    public void Initialize(string title, string players, string bpm, string trackLength, Texture2D coverImage)
     {
-        AddThemeStyleboxOverride("panel", selected ? selectedStyle : normalStyle);
-    }
-
-    public void Initialize(
-        string title,
-        string players,
-        string bpm,
-        string trackLength,
-        Texture2D coverImage
-    )
-    {
-        TitleLabel.Text = title;
-        PlayersLabel.Text = players;
-        BPMLabel.Text = bpm;
-        TrackLengthLabel.Text = trackLength;
-        CoverImage.Texture = coverImage;
+        if (TitleLabel != null) TitleLabel.Text = title;
+        if (PlayersLabel != null) PlayersLabel.Text = players;
+        if (BPMLabel != null) BPMLabel.Text = bpm;
+        if (TrackLengthLabel != null) TrackLengthLabel.Text = trackLength;
+        if (CoverImage != null) CoverImage.Texture = coverImage;
     }
 }
