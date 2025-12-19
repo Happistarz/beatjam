@@ -44,7 +44,7 @@ public partial class Refs : Node
     public float greatThreshold = 30f; // units
 
     [Export]
-    public int MinimumNoteSize = 64; // pixels
+    public int MinimumNoteSize = 80; // pixels
 
     [ExportGroup("Scenes")]
     [Export]

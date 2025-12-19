@@ -4,10 +4,8 @@ using Godot;
 
 public partial class HitZoneController : TextureRect
 {
+    [Export] public Control NoteContainer;
     [Export] public Control SpawnPoint;
-
-    [Export]
-    public Node2D NoteContainer;
 
     [Export]
     public TrackController Track;
@@ -96,34 +94,33 @@ public partial class HitZoneController : TextureRect
         if (speed < 0f)
             speed = Refs.Instance.NoteSpeed;
 
-        if (SpawnPoint == null)
-        {
-            GD.PrintErr("HitZoneController.SpawnNote: SpawnPoint is null.");
-            return;
-        }
-
         if (NoteContainer == null)
         {
             GD.PrintErr("HitZoneController.SpawnNote: NoteContainer is null.");
             return;
         }
 
+        if (SpawnPoint == null)
+        {
+            GD.PrintErr("HitZoneController.SpawnNote: SpawnPoint is null.");
+            return;
+        }
+
         var note = _notePool.Get();
+        if (note == null)
+            return;
+
         NoteContainer.AddChild(note);
 
-        // Use canvas-global position of the spawn point (UI)
-        Vector2 spawnCanvasGlobal = SpawnPoint.GetGlobalTransformWithCanvas().Origin;
+        // SpawnPoint global canvas position
+        Vector2 spawnGlobal = SpawnPoint.GetGlobalTransformWithCanvas().Origin;
 
-        // Place the note directly at that canvas-global position
-        note.GlobalPosition = spawnCanvasGlobal;
+        // Convert to NoteContainer local space
+        Transform2D inv = NoteContainer.GetGlobalTransformWithCanvas().AffineInverse();
+        Vector2 spawnLocal = inv * spawnGlobal;
 
-        // Then initialize movement
-        note.Initialize(NoteType, note.GlobalPosition, speed, _notePool);
-
-        // Debug: print both positions to verify they match
-        GD.Print($"SpawnPoint canvas global: {spawnCanvasGlobal} | Note global: {note.GlobalPosition}");
+        note.Initialize(NoteType, spawnLocal, speed, _notePool);
     }
-
 
     public override void _ExitTree()
     {

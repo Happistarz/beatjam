@@ -99,7 +99,7 @@ public partial class TrackSet : Control
 
         trackController.NoteContainer = trackNoteContainer;
 
-        // Initialize hit zones and wire note container
+        // Notes are now UI: use the shared Control container
         if (trackController.HitZones != null)
         {
             foreach (var hitZone in trackController.HitZones)
@@ -107,7 +107,7 @@ public partial class TrackSet : Control
                 if (hitZone == null)
                     continue;
 
-                hitZone.NoteContainer = trackNoteContainer;
+                hitZone.NoteContainer = TracksNoteContainer;
                 hitZone.Initialize();
             }
         }

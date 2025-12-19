@@ -1,45 +1,40 @@
 using System.Collections.Generic;
 using Godot;
 
-public partial class ObjectPool<T> : Node
-    where T : Node2D
+public partial class ObjectPool<T> : Node where T : Node
 {
-    private readonly Stack<T> _availableObjects = new();
-    private readonly HashSet<T> _activeObjects = new();
+    private readonly Stack<T> _available = new();
+    private readonly HashSet<T> _active = new();
 
-    private PackedScene _objectScene;
+    private PackedScene _scene;
     private int _maxSize = 10;
 
-    public int AvailableCount => _availableObjects.Count;
-    public int ActiveCount => _activeObjects.Count;
-    public int TotalCount => _availableObjects.Count + _activeObjects.Count;
-
-    public void Initialize(PackedScene objectScene, int initialSize = 5, int maxSize = 20)
+    public void Initialize(PackedScene scene, int initialSize = 5, int maxSize = 20)
     {
-        _objectScene = objectScene;
+        _scene = scene;
         _maxSize = maxSize;
 
         for (int i = 0; i < initialSize; i++)
-        {
-            CreateNewObject();
-        }
-
-        // Ensure the pool does not exceed the maximum size
-        while (_availableObjects.Count > _maxSize)
-        {
-            var obj = _availableObjects.Pop();
-            obj.QueueFree();
-            _activeObjects.Remove(obj);
-        }
+            CreateNew();
     }
 
-    private T CreateNewObject()
+    private T CreateNew()
     {
-        var obj = _objectScene.Instantiate<T>();
+        if (_scene == null)
+        {
+            GD.PrintErr("ObjectPool: Initialize() not called.");
+            return null;
+        }
+
+        var obj = _scene.Instantiate<T>();
+
         obj.ProcessMode = ProcessModeEnum.Disabled;
-        obj.Visible = false;
+
+        if (obj is CanvasItem ci)
+            ci.Visible = false;
+
         AddChild(obj);
-        _availableObjects.Push(obj);
+        _available.Push(obj);
         return obj;
     }
 
@@ -47,76 +42,79 @@ public partial class ObjectPool<T> : Node
     {
         T obj;
 
-        if (_availableObjects.Count > 0)
+        if (_available.Count > 0)
         {
-            obj = _availableObjects.Pop();
+            obj = _available.Pop();
         }
         else
         {
-            obj = CreateNewObject();
-            _availableObjects.Pop();
+            obj = CreateNew();
+            if (obj == null)
+                return null;
+
+            // CreateNew already pushed it to available
+            _available.Pop();
         }
 
-        RemoveChild(obj);
+        if (obj.GetParent() == this)
+            RemoveChild(obj);
 
         obj.ProcessMode = ProcessModeEnum.Inherit;
-        obj.Visible = true;
 
-        _activeObjects.Add(obj);
+        if (obj is CanvasItem ci)
+            ci.Visible = true;
 
+        _active.Add(obj);
         return obj;
     }
 
     public void Return(T obj)
     {
-        if (!_activeObjects.Contains(obj))
+        if (obj == null)
+            return;
+
+        if (!_active.Contains(obj))
         {
-            GD.PrintErr("Attempted to return an object that does not belong to the pool.");
+            GD.PrintErr("ObjectPool: Returning object not owned by pool.");
             return;
         }
 
-        _activeObjects.Remove(obj);
+        _active.Remove(obj);
 
-        if (obj.GetParent() != this)
-        {
-            obj.GetParent()?.RemoveChild(obj);
-        }
+        var parent = obj.GetParent();
+        if (parent != null && parent != this)
+            parent.RemoveChild(obj);
 
         obj.ProcessMode = ProcessModeEnum.Disabled;
-        obj.Visible = false;
 
-        AddChild(obj);
+        if (obj is CanvasItem ci)
+            ci.Visible = false;
 
-        if (_availableObjects.Count < _maxSize)
-        {
-            _availableObjects.Push(obj);
-        }
+        if (obj.GetParent() != this)
+            AddChild(obj);
+
+        if (_available.Count < _maxSize)
+            _available.Push(obj);
         else
-        {
             obj.QueueFree();
-        }
     }
 
     public void ReturnAll()
     {
-        foreach (var obj in _activeObjects)
-        {
-            Return(obj);
-        }
+        var list = new List<T>(_active);
+        for (int i = 0; i < list.Count; i++)
+            Return(list[i]);
     }
 
     public void Clear()
     {
         ReturnAll();
 
-        while (_availableObjects.Count > 0)
-        {
-            var obj = _availableObjects.Pop();
-            obj.QueueFree();
-        }
+        while (_available.Count > 0)
+            _available.Pop().QueueFree();
 
-        _availableObjects.Clear();
-        _activeObjects.Clear();
+        _available.Clear();
+        _active.Clear();
     }
 
     public override void _ExitTree()
