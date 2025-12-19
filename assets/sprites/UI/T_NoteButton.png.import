@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://yegugtac5da7"
-path="res://.godot/imported/T_HitZone.png-c39deca50493fbe53ded97e75d863c3b.ctex"
+uid="uid://cbyfetcf4y84x"
+path="res://.godot/imported/T_NoteButton.png-2945f54c910adc53d2c07a597631f21d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/T_HitZone.png"
-dest_files=["res://.godot/imported/T_HitZone.png-c39deca50493fbe53ded97e75d863c3b.ctex"]
+source_file="res://assets/sprites/UI/T_NoteButton.png"
+dest_files=["res://.godot/imported/T_NoteButton.png-2945f54c910adc53d2c07a597631f21d.ctex"]
 
 [params]
 

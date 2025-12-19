@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://21w4bmctppar"
-path="res://.godot/imported/T_Panel2.png-61a2875eadb1ed742492e4e8b268460f.ctex"
+uid="uid://bcfiav58jiqri"
+path="res://.godot/imported/T_Lane.png-a949f8ad2d87abbd43768afa9345a6d2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/T_Panel2.png"
-dest_files=["res://.godot/imported/T_Panel2.png-61a2875eadb1ed742492e4e8b268460f.ctex"]
+source_file="res://assets/sprites/UI/T_Lane.png"
+dest_files=["res://.godot/imported/T_Lane.png-a949f8ad2d87abbd43768afa9345a6d2.ctex"]
 
 [params]
 

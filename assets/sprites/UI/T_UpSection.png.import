@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bcfiav58jiqri"
-path="res://.godot/imported/T_Lane.png-3e5bb3d5257f9f68f5c395b456760735.ctex"
+uid="uid://b2dn3lirhirbs"
+path="res://.godot/imported/T_UpSection.png-09d5cb8e4b2770586c8fda45199074c9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/T_Lane.png"
-dest_files=["res://.godot/imported/T_Lane.png-3e5bb3d5257f9f68f5c395b456760735.ctex"]
+source_file="res://assets/sprites/UI/T_UpSection.png"
+dest_files=["res://.godot/imported/T_UpSection.png-09d5cb8e4b2770586c8fda45199074c9.ctex"]
 
 [params]
 

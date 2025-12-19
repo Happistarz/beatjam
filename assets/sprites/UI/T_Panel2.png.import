@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b415ooogcfhwj"
-path="res://.godot/imported/T_HorizontalLine.png-5278ff050403e356c68a364ae40b427f.ctex"
+uid="uid://21w4bmctppar"
+path="res://.godot/imported/T_Panel2.png-6aa0793f50db6db4bcc239d19adfb380.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/T_HorizontalLine.png"
-dest_files=["res://.godot/imported/T_HorizontalLine.png-5278ff050403e356c68a364ae40b427f.ctex"]
+source_file="res://assets/sprites/UI/T_Panel2.png"
+dest_files=["res://.godot/imported/T_Panel2.png-6aa0793f50db6db4bcc239d19adfb380.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://sul4e87l7wk4"
-path="res://.godot/imported/T_Panel3.png-34047c328312c320e625c37cf28ef165.ctex"
+uid="uid://jrfmf4fxq8qj"
+path="res://.godot/imported/T_Placeholder_Frog.png-7d9b59a174afd85c9ff8bbfed9576254.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/T_Panel3.png"
-dest_files=["res://.godot/imported/T_Panel3.png-34047c328312c320e625c37cf28ef165.ctex"]
+source_file="res://assets/sprites/Characters/T_Placeholder_Frog.png"
+dest_files=["res://.godot/imported/T_Placeholder_Frog.png-7d9b59a174afd85c9ff8bbfed9576254.ctex"]
 
 [params]
 

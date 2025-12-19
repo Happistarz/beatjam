@@ -1,12 +1,12 @@
 [gd_scene load_steps=3 format=3 uid="uid://cwvclsrdqkwrq"]
 
-[ext_resource type="Texture2D" uid="uid://cbyfetcf4y84x" path="res://assets/sprites/T_NoteButton.png" id="1_djpc7"]
+[ext_resource type="Texture2D" uid="uid://cbyfetcf4y84x" path="res://assets/sprites/UI/T_NoteButton.png" id="1_dfvwq"]
 [ext_resource type="Script" path="res://scripts/NoteController.cs" id="2_yslok"]
 
 [node name="Note" type="TextureRect" node_paths=PackedStringArray("DeleteTimer")]
 offset_right = 75.0
 offset_bottom = 73.0
-texture = ExtResource("1_djpc7")
+texture = ExtResource("1_dfvwq")
 script = ExtResource("2_yslok")
 DeleteTimer = NodePath("DeleteTimer")
 

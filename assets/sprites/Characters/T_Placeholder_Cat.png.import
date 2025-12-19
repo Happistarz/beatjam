@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cbyfetcf4y84x"
-path="res://.godot/imported/T_NoteButton.png-269b18aedd68da6fb8045d91b20525c9.ctex"
+uid="uid://l2bi8pg0c6e3"
+path="res://.godot/imported/T_Placeholder_Cat.png-4325d80060f824a2437291346ffd7699.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/T_NoteButton.png"
-dest_files=["res://.godot/imported/T_NoteButton.png-269b18aedd68da6fb8045d91b20525c9.ctex"]
+source_file="res://assets/sprites/Characters/T_Placeholder_Cat.png"
+dest_files=["res://.godot/imported/T_Placeholder_Cat.png-4325d80060f824a2437291346ffd7699.ctex"]
 
 [params]
 

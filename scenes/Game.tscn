@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://dshp37wir2ocd"]
+[gd_scene load_steps=8 format=3 uid="uid://dshp37wir2ocd"]
 
 [ext_resource type="Script" path="res://scripts/Background.cs" id="1_t8q8t"]
 [ext_resource type="PackedScene" uid="uid://bdcpnpk451uuy" path="res://scenes/TrackSet.tscn" id="3_jg4e7"]
 [ext_resource type="Script" path="res://scripts/BeatController.cs" id="4_ndt71"]
 [ext_resource type="AudioStream" uid="uid://dqhnvufhnpfes" path="res://assets/sounds/metronome.wav" id="5_61aba"]
+[ext_resource type="Texture2D" uid="uid://b2dn3lirhirbs" path="res://assets/sprites/UI/T_UpSection.png" id="5_e2u5f"]
 [ext_resource type="AudioStream" uid="uid://df5g00o2vwyjm" path="res://assets/musics/track1.wav" id="5_xtjal"]
 
 [sub_resource type="ImageTexture" id="ImageTexture_rn71e"]
@@ -52,6 +53,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="Menu" type="TextureRect" parent="UI/UIRoot"]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 168.0
+texture = ExtResource("5_e2u5f")
+
 [node name="ScreenMargin" type="MarginContainer" parent="UI/UIRoot"]
 layout_mode = 1
 anchors_preset = 15
@@ -70,16 +77,6 @@ layout_mode = 2
 [node name="TrackSet" parent="UI/UIRoot/ScreenMargin/Control" node_paths=PackedStringArray("BeatController") instance=ExtResource("3_jg4e7")]
 layout_mode = 1
 BeatController = NodePath("../../../../../BeatController")
-
-[node name="ColorRect" type="ColorRect" parent="UI/UIRoot/ScreenMargin/Control/TrackSet"]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.643137, 0, 0.654902, 0.423529)
 
 [connection signal="finished" from="MusicPlayer" to="BeatController" method="_on_MusicPlayer_finished"]
 [connection signal="timeout" from="BeatController/BeatTimer" to="BeatController" method="_on_BeatTimer_timeout"]
