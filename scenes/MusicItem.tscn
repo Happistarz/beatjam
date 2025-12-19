@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://gpyoqg66ke7t"]
 
-[ext_resource type="StyleBox" uid="uid://dr2d25bpj4xeh" path="res://assets/sprites/MusicItemPanelNormal.tres" id="1_tw4jc"]
+[ext_resource type="StyleBox" uid="uid://dr2d25bpj4xeh" path="res://assets/sprites/UI/MusicItemPanelNormal.tres" id="1_tw4jc"]
 [ext_resource type="Script" path="res://scripts/MusicItem.cs" id="2_vvige"]
-[ext_resource type="StyleBox" uid="uid://b663lma36nwl7" path="res://assets/sprites/MusicItemPanelSelected.tres" id="3_h4ie8"]
+[ext_resource type="StyleBox" uid="uid://b663lma36nwl7" path="res://assets/sprites/UI/MusicItemPanelSelected.tres" id="3_h4ie8"]
 [ext_resource type="Texture2D" uid="uid://clbkegdmiiwqd" path="res://icon.svg" id="3_u8yar"]
 
 [node name="MusicItem" type="PanelContainer" node_paths=PackedStringArray("CoverImage", "TitleLabel", "PlayersLabel", "BPMLabel", "TrackLengthLabel")]
