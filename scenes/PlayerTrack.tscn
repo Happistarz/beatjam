@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bw7dihkehcs4k"]
 
 [ext_resource type="PackedScene" uid="uid://bav1l5rl8w1r6" path="res://scenes/TrackUI.tscn" id="1_jxbbf"]
-[ext_resource type="Texture2D" uid="uid://jrfmf4fxq8qj" path="res://assets/sprites/Characters/T_Placeholder_Frog.png" id="2_g4tco"]
+[ext_resource type="Texture2D" uid="uid://bbvibx8se5thn" path="res://assets/sprites/Characters/T_Elephant_Idle.png" id="2_2brhv"]
 
 [node name="PlayerTrack" type="Control"]
 layout_mode = 3
@@ -20,14 +20,13 @@ offset_bottom = 740.0
 grow_vertical = 1
 
 [node name="CharacterAnimation" type="TextureRect" parent="."]
-custom_minimum_size = Vector2(300, 300)
+custom_minimum_size = Vector2(350, 350)
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 40.0
-offset_top = -300.0
-offset_right = 340.0
+offset_top = -350.0
+offset_right = 350.0
 grow_vertical = 0
-texture = ExtResource("2_g4tco")
+texture = ExtResource("2_2brhv")
 expand_mode = 1

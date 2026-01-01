@@ -1,8 +1,12 @@
-[gd_resource type="Theme" load_steps=5 format=3 uid="uid://cegplvu7wf4yn"]
+[gd_resource type="Theme" load_steps=7 format=3 uid="uid://cegplvu7wf4yn"]
 
+[ext_resource type="Texture2D" uid="uid://bi5xv74if1nl4" path="res://assets/sprites/UI/T_Panel1_Focus.png" id="1_yqb7e"]
 [ext_resource type="Texture2D" uid="uid://dc14f2s1fvlb7" path="res://assets/sprites/UI/T_Panel1.png" id="1_yy002"]
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hmiec"]
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_s58my"]
+texture = ExtResource("1_yqb7e")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_42lxu"]
 texture = ExtResource("1_yy002")
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jor22"]
@@ -12,6 +16,7 @@ texture = ExtResource("1_yy002")
 texture = ExtResource("1_yy002")
 
 [resource]
-Button/styles/hover = SubResource("StyleBoxTexture_hmiec")
+Button/styles/focus = SubResource("StyleBoxTexture_s58my")
+Button/styles/hover = SubResource("StyleBoxTexture_42lxu")
 Button/styles/normal = SubResource("StyleBoxTexture_jor22")
 Button/styles/pressed = SubResource("StyleBoxTexture_peuso")

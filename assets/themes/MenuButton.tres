@@ -1,12 +1,15 @@
-[gd_resource type="Theme" load_steps=6 format=3 uid="uid://b3mx5wnjix7mj"]
+[gd_resource type="Theme" load_steps=8 format=3 uid="uid://b3mx5wnjix7mj"]
 
 [ext_resource type="Texture2D" uid="uid://ce7fyu7fok1u3" path="res://assets/sprites/UI/T_MenuButton.png" id="1_lfneq"]
+[ext_resource type="Texture2D" uid="uid://gu73dbq1w5bm" path="res://assets/sprites/UI/T_MenuButtonScribble.png" id="1_mk8ht"]
 [ext_resource type="Texture2D" uid="uid://vxp6prax65ae" path="res://assets/sprites/UI/T_MenuButton_Pushed.png" id="2_aa30b"]
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_gn20q"]
-texture = ExtResource("2_aa30b")
-axis_stretch_horizontal = 1
-axis_stretch_vertical = 1
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7v8nl"]
+texture = ExtResource("1_mk8ht")
+modulate_color = Color(0.976597, 0.686578, 0.434137, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_qwjjg"]
+texture = ExtResource("1_lfneq")
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_44obw"]
 texture = ExtResource("1_lfneq")
@@ -19,7 +22,12 @@ axis_stretch_horizontal = 1
 axis_stretch_vertical = 1
 
 [resource]
+Button/colors/font_color = Color(0, 0, 0, 1)
+Button/colors/font_focus_color = Color(0, 0, 0, 1)
+Button/colors/font_hover_color = Color(0, 0, 0, 1)
+Button/colors/font_pressed_color = Color(0, 0, 0, 1)
 Button/icons/icon = null
-Button/styles/hover = SubResource("StyleBoxTexture_gn20q")
+Button/styles/focus = SubResource("StyleBoxTexture_7v8nl")
+Button/styles/hover = SubResource("StyleBoxTexture_qwjjg")
 Button/styles/normal = SubResource("StyleBoxTexture_44obw")
 Button/styles/pressed = SubResource("StyleBoxTexture_hhtw4")
