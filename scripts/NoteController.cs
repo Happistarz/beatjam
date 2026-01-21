@@ -6,6 +6,8 @@ public partial class NoteController : TextureRect
 
     [Export] public Refs.NoteType NoteType;
 
+    public MusicData.PlayerRole PlayerRole;
+
     [Export] public float ThresholdY = 775f;
 
     private float _speed = 200f;
@@ -42,12 +44,14 @@ public partial class NoteController : TextureRect
 
     public void Initialize(
         Refs.NoteType type,
+        MusicData.PlayerRole role,
         Vector2 localPositionInContainer,
         float speed,
         ObjectPool<NoteController> pool
     )
     {
         NoteType = type;
+        PlayerRole = role;
         _speed = speed;
         _pool = pool;
 

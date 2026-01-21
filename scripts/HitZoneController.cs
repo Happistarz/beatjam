@@ -84,7 +84,7 @@ public partial class HitZoneController : TextureRect
         return NoteContainer
             .GetChildren()
             .OfType<NoteController>()
-            .Where(n => n.NoteType == NoteType && !n.hasPassed)
+            .Where(n => n.NoteType == NoteType && n.PlayerRole == Track.Role && !n.hasPassed)
             .OrderBy(n => Math.Abs(n.GlobalPosition.Y - GlobalPosition.Y - Size.Y / 2))
             .FirstOrDefault();
     }
@@ -119,7 +119,7 @@ public partial class HitZoneController : TextureRect
         Transform2D inv = NoteContainer.GetGlobalTransformWithCanvas().AffineInverse();
         Vector2 spawnLocal = inv * spawnGlobal;
 
-        note.Initialize(NoteType, spawnLocal, speed, _notePool);
+        note.Initialize(NoteType, Track.Role, spawnLocal, speed, _notePool);
     }
 
     public override void _ExitTree()
