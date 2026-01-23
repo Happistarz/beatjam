@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dshp37wir2ocd"]
+[gd_scene load_steps=9 format=3 uid="uid://dshp37wir2ocd"]
 
 [ext_resource type="Script" path="res://scripts/Background.cs" id="1_t8q8t"]
 [ext_resource type="PackedScene" uid="uid://bdcpnpk451uuy" path="res://scenes/TrackSet.tscn" id="3_jg4e7"]
@@ -161,6 +161,40 @@ layout_mode = 2
 [node name="TrackSet" parent="UI/UIRoot/ScreenMargin/Control" node_paths=PackedStringArray("BeatController") instance=ExtResource("3_jg4e7")]
 layout_mode = 1
 BeatController = NodePath("../../../../../BeatController")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/UIRoot"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 138.0
+grow_horizontal = 2
+theme_override_constants/separation = 235
+alignment = 1
+
+[node name="ScoreLabel" type="Label" parent="UI/UIRoot/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 101
+text = "uij,ij,d"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ComboLabel" type="Label" parent="UI/UIRoot/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 101
+text = "bullshit"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScoreController" type="Node2D" parent="." node_paths=PackedStringArray("ScoreLabel", "ComboLabel")]
+script = ExtResource("7_mwub6")
+ScoreLabel = NodePath("../UI/UIRoot/HBoxContainer/ScoreLabel")
+ComboLabel = NodePath("../UI/UIRoot/HBoxContainer/ComboLabel")
 
 [connection signal="finished" from="MusicPlayer" to="BeatController" method="_on_MusicPlayer_finished"]
 [connection signal="timeout" from="BeatController/BeatTimer" to="BeatController" method="_on_BeatTimer_timeout"]

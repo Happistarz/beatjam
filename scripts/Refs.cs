@@ -154,6 +154,17 @@ public partial class Refs : Node
             _ => null
         };
     }
+    
+    public static int GetScoreForAccuracy(Accuracy accuracy)
+    {
+        return accuracy switch
+        {
+            Accuracy.Perfect => 100,
+            Accuracy.Great => 50,
+            Accuracy.Miss => 0,
+            _ => 0,
+        };
+    }
 
     public override void _Ready()
     {
