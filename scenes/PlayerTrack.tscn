@@ -1,15 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://bw7dihkehcs4k"]
+[gd_scene load_steps=5 format=3 uid="uid://bw7dihkehcs4k"]
 
 [ext_resource type="PackedScene" uid="uid://bav1l5rl8w1r6" path="res://scenes/TrackUI.tscn" id="1_jxbbf"]
-[ext_resource type="Texture2D" uid="uid://bbvibx8se5thn" path="res://assets/sprites/Characters/T_Elephant_Idle.png" id="2_2brhv"]
+[ext_resource type="Script" path="res://scripts/PlayerTrack.cs" id="1_o8pkt"]
+[ext_resource type="Texture2D" uid="uid://bbvibx8se5thn" path="res://assets/sprites/Characters/Elephant/T_Elephant_Idle.png" id="2_2brhv"]
+[ext_resource type="Script" path="res://scripts/CharacterAnimation.cs" id="4_o8gei"]
 
-[node name="PlayerTrack" type="Control"]
+[node name="PlayerTrack" type="Control" node_paths=PackedStringArray("TrackUI", "CharacterAnimation")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 550.0
 offset_bottom = 930.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+script = ExtResource("1_o8pkt")
+TrackUI = NodePath("TrackUI")
+CharacterAnimation = NodePath("CharacterAnimation")
 
 [node name="TrackUI" parent="." instance=ExtResource("1_jxbbf")]
 layout_mode = 1
@@ -30,3 +35,4 @@ offset_bottom = 35.0
 grow_vertical = 0
 texture = ExtResource("2_2brhv")
 expand_mode = 1
+script = ExtResource("4_o8gei")

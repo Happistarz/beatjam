@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bbvibx8se5thn"
-path="res://.godot/imported/T_Elephant_Idle.png-a9f6493f80e9eefcdd4421036db3e732.ctex"
+uid="uid://djmbc8v6muxtl"
+path="res://.godot/imported/T_Frog_Grooving1.png-e8f2f67cad885537b2abe2a9657e66ad.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Characters/T_Elephant_Idle.png"
-dest_files=["res://.godot/imported/T_Elephant_Idle.png-a9f6493f80e9eefcdd4421036db3e732.ctex"]
+source_file="res://assets/sprites/Characters/Frog/T_Frog_Grooving1.png"
+dest_files=["res://.godot/imported/T_Frog_Grooving1.png-e8f2f67cad885537b2abe2a9657e66ad.ctex"]
 
 [params]
 

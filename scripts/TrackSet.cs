@@ -30,76 +30,82 @@ public partial class TrackSet : Control
             return;
         }
 
-        TrackControllers = new List<TrackController>(Refs.Instance.MaxPlayers);
-
-        InitTrack(MusicData.PlayerRole.Drums);
-        InitTrack(MusicData.PlayerRole.Guitar);
-        InitTrack(MusicData.PlayerRole.Bass);
-
-        BeatController.CalculateLeadOffset();
-    }
-
-    private void InitTrack(MusicData.PlayerRole role)
-    {
         if (Refs.Instance == null)
         {
             GD.PushError("TrackSet: Refs.Instance is null.");
             return;
         }
 
-        if (Refs.Instance.TrackScene == null)
+        TrackControllers = new List<TrackController>(Refs.Instance.MaxPlayers);
+
+        InitTrack(MusicData.PlayerRole.Drums);
+        InitTrack(MusicData.PlayerRole.Guitar);
+        InitTrack(MusicData.PlayerRole.Keyboard);
+
+        BeatController.CalculateLeadOffset();
+    }
+
+    private void InitTrack(MusicData.PlayerRole role)
+    {
+        if (Refs.Instance == null || Refs.Instance.TrackScene == null)
         {
-            GD.PushError("TrackSet: Refs.Instance.TrackScene is null.");
+            GD.PushError("TrackSet: Refs.Instance or TrackScene is null.");
             return;
         }
 
-        Node trackScene = Refs.Instance.TrackScene.Instantiate();
-        if (trackScene == null)
+        var trackSceneRoot = Refs.Instance.TrackScene.Instantiate();
+        if (trackSceneRoot == null)
         {
             GD.PushError("TrackSet: Failed to instantiate TrackScene.");
             return;
         }
 
-        // Try to locate TrackController in the instantiated scene
-        TrackController trackController = null;
+        // Find PlayerTrack (prefer root; fallback to a named child)
+        var playerTrack = trackSceneRoot as PlayerTrack;
+        if (playerTrack == null)
+            playerTrack = trackSceneRoot.FindChild("PlayerTrack", true, false) as PlayerTrack;
 
-        // Most robust: find by type in the subtree
-        foreach (Node child in trackScene.GetChildren())
+        if (playerTrack == null)
         {
-            if (child is TrackController tc)
-            {
-                trackController = tc;
-                break;
-            }
-        }
-
-        // Fallback: root itself could be the controller
-        if (trackController == null && trackScene is TrackController rootTc)
-            trackController = rootTc;
-
-        if (trackController == null)
-        {
-            GD.PushError("TrackSet: No TrackController found in TrackScene instance.");
-            trackScene.QueueFree();
+            GD.PushError("TrackSet: No PlayerTrack found in TrackScene instance.");
+            trackSceneRoot.QueueFree();
             return;
         }
 
-        trackController.Role = role;
+        // IMPORTANT: Set Role before adding to the scene tree so PlayerTrack._Ready() uses the correct value
+        playerTrack.Role = role;
 
-        // Create a per-track note container (Node2D) under the (now Control) note layer
+        // Add to the UI container first, so any initialization that relies on being in the tree works correctly
+        TracksHitZoneContainer.AddChild(trackSceneRoot);
+
+        // Ensure layout cooperation for UI
+        if (trackSceneRoot is Control trackRootControl)
+        {
+            trackRootControl.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+            trackRootControl.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
+        }
+
+        // Get TrackController from PlayerTrack
+        var trackController = playerTrack.TrackUI;
+        if (trackController == null)
+        {
+            GD.PushError("TrackSet: PlayerTrack.TrackUI is null.");
+            trackSceneRoot.QueueFree();
+            return;
+        }
+
+        // Create a per-track note container (Node2D) under the shared note layer
         var trackNoteContainer = new Node2D
         {
-            Name = "NoteContainer_" + role.ToString()
+            Name = "NoteContainer_" + role
         };
 
         TracksNoteContainer.AddChild(trackNoteContainer);
-
-        // Ensure it starts at origin of the note layer
         trackNoteContainer.Position = Vector2.Zero;
 
         trackController.NoteContainer = trackNoteContainer;
 
-        // Notes are now UI: use the shared Control container
+        // Initialize hit zones after the track has been added to the tree
         if (trackController.HitZones != null)
         {
             foreach (var hitZone in trackController.HitZones)
@@ -112,17 +118,6 @@ public partial class TrackSet : Control
             }
         }
 
-        // Add the track UI under the hit zone container
-        TracksHitZoneContainer.AddChild(trackScene);
-
-        // If the instantiated root is a Control, make it cooperate with containers
-        if (trackScene is Control trackRootControl)
-        {
-            trackRootControl.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-            trackRootControl.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
-
-        }
-
         TrackControllers.Add(trackController);
     }
 
@@ -133,7 +128,7 @@ public partial class TrackSet : Control
 
         var targetRole = GetPlayerRoleFromNote(note);
 
-        foreach (TrackController trackController in TrackControllers)
+        foreach (var trackController in TrackControllers)
         {
             if (trackController == null)
                 continue;

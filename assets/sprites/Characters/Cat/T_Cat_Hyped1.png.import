@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bl67vm2o2pqju"
-path="res://.godot/imported/T_Cat_Hyped1.png-64e55e2d95b73f86524d06df486d545c.ctex"
+path="res://.godot/imported/T_Cat_Hyped1.png-586509e9bce85311705522147981f799.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Characters/T_Cat_Hyped1.png"
-dest_files=["res://.godot/imported/T_Cat_Hyped1.png-64e55e2d95b73f86524d06df486d545c.ctex"]
+source_file="res://assets/sprites/Characters/Cat/T_Cat_Hyped1.png"
+dest_files=["res://.godot/imported/T_Cat_Hyped1.png-586509e9bce85311705522147981f799.ctex"]
 
 [params]
 

@@ -10,6 +10,7 @@
 [sub_resource type="ImageTexture" id="ImageTexture_rn71e"]
 
 [node name="Root" type="Node2D"]
+position = Vector2(0, 1)
 
 [node name="Background" type="Sprite2D" parent="."]
 z_index = -100

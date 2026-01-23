@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://6gwc2dlqlf5m"
-path="res://.godot/imported/T_Elephant_Angry.png-f763247af88e468a79f04be467559be8.ctex"
+uid="uid://bweysu0vnqhsh"
+path="res://.godot/imported/T_Cat_Angry.png-c54fd79841c16f9e7a40808746ac430b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Characters/T_Elephant_Angry.png"
-dest_files=["res://.godot/imported/T_Elephant_Angry.png-f763247af88e468a79f04be467559be8.ctex"]
+source_file="res://assets/sprites/Characters/Cat/T_Cat_Angry.png"
+dest_files=["res://.godot/imported/T_Cat_Angry.png-c54fd79841c16f9e7a40808746ac430b.ctex"]
 
 [params]
 

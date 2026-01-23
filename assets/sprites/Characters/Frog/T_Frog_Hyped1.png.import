@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c6e11y8qqy4tj"
-path="res://.godot/imported/T_Cat_Shameful.png-b928d7db3127279cdece0a0d6efb9525.ctex"
+uid="uid://cnur1lt86ebpi"
+path="res://.godot/imported/T_Frog_Hyped1.png-87205da6eabb9ab8ddcdf15559d77876.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Characters/T_Cat_Shameful.png"
-dest_files=["res://.godot/imported/T_Cat_Shameful.png-b928d7db3127279cdece0a0d6efb9525.ctex"]
+source_file="res://assets/sprites/Characters/Frog/T_Frog_Hyped1.png"
+dest_files=["res://.godot/imported/T_Frog_Hyped1.png-87205da6eabb9ab8ddcdf15559d77876.ctex"]
 
 [params]
 

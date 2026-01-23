@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://n7bsk1cykgr"
-path="res://.godot/imported/T_Cat_Grooving1.png-99a8f25af605bb347631db717af6199f.ctex"
+uid="uid://c6e11y8qqy4tj"
+path="res://.godot/imported/T_Cat_Shameful.png-cf473b5b839dc3f2ed9467f9c3318f3d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Characters/T_Cat_Grooving1.png"
-dest_files=["res://.godot/imported/T_Cat_Grooving1.png-99a8f25af605bb347631db717af6199f.ctex"]
+source_file="res://assets/sprites/Characters/Cat/T_Cat_Shameful.png"
+dest_files=["res://.godot/imported/T_Cat_Shameful.png-cf473b5b839dc3f2ed9467f9c3318f3d.ctex"]
 
 [params]
 

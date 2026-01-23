@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cyc37kn2roqgr"
-path="res://.godot/imported/T_Cat_Grooving2.png-91efb37cc1d98d0aee203bc177dde38d.ctex"
+uid="uid://cobkbsd364obj"
+path="res://.godot/imported/T_Frog_Shameful.png-b6b9612f482f12c08340d5405b5c99ec.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Characters/T_Cat_Grooving2.png"
-dest_files=["res://.godot/imported/T_Cat_Grooving2.png-91efb37cc1d98d0aee203bc177dde38d.ctex"]
+source_file="res://assets/sprites/Characters/Frog/T_Frog_Shameful.png"
+dest_files=["res://.godot/imported/T_Frog_Shameful.png-b6b9612f482f12c08340d5405b5c99ec.ctex"]
 
 [params]
 

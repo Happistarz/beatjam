@@ -7,7 +7,7 @@ public class MusicData
     {
         Guitar,
         Drums,
-        Bass,
+        Keyboard,
     }
 
     public struct Player

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ccmfa12s0ak5a"
-path="res://.godot/imported/T_Frog_Hyped2.png-80e2ba4587716f86ae68cac13f375703.ctex"
+uid="uid://n7bsk1cykgr"
+path="res://.godot/imported/T_Cat_Grooving1.png-9f721b90b177167dc604db92bc46a1e0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Characters/T_Frog_Hyped2.png"
-dest_files=["res://.godot/imported/T_Frog_Hyped2.png-80e2ba4587716f86ae68cac13f375703.ctex"]
+source_file="res://assets/sprites/Characters/Cat/T_Cat_Grooving1.png"
+dest_files=["res://.godot/imported/T_Cat_Grooving1.png-9f721b90b177167dc604db92bc46a1e0.ctex"]
 
 [params]
 

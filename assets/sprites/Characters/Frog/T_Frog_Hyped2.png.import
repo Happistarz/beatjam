@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://n2q5orels4fm"
-path="res://.godot/imported/T_Placeholder_Elephant.png-b6998fee210c915987db13df57d5cc22.ctex"
+uid="uid://ccmfa12s0ak5a"
+path="res://.godot/imported/T_Frog_Hyped2.png-8c7b34488f3651eea59ddee5f8acc050.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Characters/T_Placeholder_Elephant.png"
-dest_files=["res://.godot/imported/T_Placeholder_Elephant.png-b6998fee210c915987db13df57d5cc22.ctex"]
+source_file="res://assets/sprites/Characters/Frog/T_Frog_Hyped2.png"
+dest_files=["res://.godot/imported/T_Frog_Hyped2.png-8c7b34488f3651eea59ddee5f8acc050.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://l2bi8pg0c6e3"
-path="res://.godot/imported/T_Placeholder_Cat.png-4325d80060f824a2437291346ffd7699.ctex"
+uid="uid://bbvibx8se5thn"
+path="res://.godot/imported/T_Elephant_Idle.png-fb819694dd71faad54fb33fd1659fb18.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Characters/T_Placeholder_Cat.png"
-dest_files=["res://.godot/imported/T_Placeholder_Cat.png-4325d80060f824a2437291346ffd7699.ctex"]
+source_file="res://assets/sprites/Characters/Elephant/T_Elephant_Idle.png"
+dest_files=["res://.godot/imported/T_Elephant_Idle.png-fb819694dd71faad54fb33fd1659fb18.ctex"]
 
 [params]
 

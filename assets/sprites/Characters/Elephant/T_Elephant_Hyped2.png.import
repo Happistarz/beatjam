@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bbnc6w15nyee1"
-path="res://.godot/imported/T_Elephant_Grooving2.png-11c4fda628fbe310365e42aa904970fd.ctex"
+uid="uid://b7rbi0mpcmr3h"
+path="res://.godot/imported/T_Elephant_Hyped2.png-532ffb4203f6e08ecb002becd94f2929.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Characters/T_Elephant_Grooving2.png"
-dest_files=["res://.godot/imported/T_Elephant_Grooving2.png-11c4fda628fbe310365e42aa904970fd.ctex"]
+source_file="res://assets/sprites/Characters/Elephant/T_Elephant_Hyped2.png"
+dest_files=["res://.godot/imported/T_Elephant_Hyped2.png-532ffb4203f6e08ecb002becd94f2929.ctex"]
 
 [params]
 

@@ -3,16 +3,10 @@ using Godot;
 
 public partial class TrackController : Control
 {
-    [Export] public Control NoteSpawnPoint;
+    public MusicData.PlayerRole Role { get; set; }
 
-    [Export]
-    public MusicData.PlayerRole Role;
-
-    [Export]
-    public HitZoneController[] HitZones;
-
-    [Export]
-    public Node2D NoteContainer;
+    [Export] public HitZoneController[] HitZones;
+    [Export] public Node2D NoteContainer;
 
     public void SpawnNoteAtTiming(MusicData.Note note)
     {
