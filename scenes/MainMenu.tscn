@@ -1,6 +1,5 @@
-[gd_scene load_steps=5 format=3 uid="uid://d1gv6jsucpwwt"]
+[gd_scene load_steps=4 format=3 uid="uid://d1gv6jsucpwwt"]
 
-[ext_resource type="Texture2D" uid="uid://clbkegdmiiwqd" path="res://icon.svg" id="1_h56n0"]
 [ext_resource type="Script" path="res://scripts/Menu.cs" id="2_mt78r"]
 [ext_resource type="Theme" uid="uid://b3mx5wnjix7mj" path="res://assets/themes/MenuButton.tres" id="3_p705b"]
 [ext_resource type="FontFile" uid="uid://c6o17tyd6p8eg" path="res://assets/fonts/kindergarten.ttf" id="4_acnyw"]
@@ -34,11 +33,13 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 110
 
-[node name="Icon" type="TextureRect" parent="Canvas/Margin/VBox"]
+[node name="Label" type="Label" parent="Canvas/Margin/VBox"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-texture = ExtResource("1_h56n0")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_acnyw")
+theme_override_font_sizes/font_size = 200
+text = "BEATJAM"
+horizontal_alignment = 1
 
 [node name="VBox" type="VBoxContainer" parent="Canvas/Margin/VBox" node_paths=PackedStringArray("StartButton", "QuitButton")]
 layout_mode = 2
