@@ -10,11 +10,35 @@ public partial class NoteController : TextureRect
     // Size = lane width * ratio
     [Export] public float SizeRatioFromLane = 0.25f;
 
+    // Texture shown when the note is pushed (hit)
+    [Export] public Texture2D HitTexture;
+
+    // How long to keep the pushed state visible before returning to pool
+    [Export] public float HitFeedbackSeconds = 0.08f;
+
+    private Texture2D _defaultTexture;
+
     private float _speed = 200f;
     private float _missThresholdCenterGlobalY = 1000f;
 
-    public bool hasPassed = false;
     private ObjectPool<NoteController> _pool;
+
+    public bool HasPassed { get; private set; } = false;
+
+    // When false, gameplay code should ignore this note (cannot be hit again)
+    public bool IsTouchable => _state == NoteState.Active;
+
+    private enum NoteState
+    {
+        Inactive, // In pool / not in use
+        Active,   // Moving and can be hit
+        Pushed,   // Hit feedback; cannot be hit; waiting to be returned
+    }
+
+    private NoteState _state = NoteState.Inactive;
+
+    private bool _pushedCountdownActive = false;
+    private double _pushedRemaining = 0.0;
 
     public override void _Ready()
     {
@@ -24,21 +48,43 @@ public partial class NoteController : TextureRect
         StretchMode = StretchModeEnum.KeepAspectCentered;
         ExpandMode = ExpandModeEnum.IgnoreSize;
 
+        _defaultTexture = Texture;
+
         if (DeleteTimer != null)
             DeleteTimer.Stop();
 
         Visible = false;
         ProcessMode = ProcessModeEnum.Disabled;
+
+        _state = NoteState.Inactive;
     }
 
     public override void _Process(double delta)
     {
+        if (_state == NoteState.Pushed)
+        {
+            // Stay visible for a short feedback duration, then return to pool
+            if (_pushedCountdownActive)
+            {
+                _pushedRemaining -= delta;
+                if (_pushedRemaining <= 0.0)
+                {
+                    _pushedCountdownActive = false;
+                    ReturnToPool(force: true);
+                }
+            }
+            return;
+        }
+
+        if (_state != NoteState.Active)
+            return;
+
         Position += new Vector2(0f, _speed * (float)delta);
 
-        if (!hasPassed && GetCenterGlobalY() > _missThresholdCenterGlobalY)
+        if (!HasPassed && GetCenterGlobalY() > _missThresholdCenterGlobalY)
         {
-            hasPassed = true;
-            ReturnToPool();
+            HasPassed = true;
+            ReturnToPool(force: true);
         }
     }
 
@@ -55,16 +101,23 @@ public partial class NoteController : TextureRect
         PlayerRole = role;
         _speed = speed;
         _pool = pool;
-
         _missThresholdCenterGlobalY = missThresholdCenterGlobalY;
 
-        hasPassed = false;
+        HasPassed = false;
+
+        RestoreDefaultTexture();
+
+        _pushedCountdownActive = false;
+        _pushedRemaining = 0.0;
+
         Visible = true;
         ProcessMode = ProcessModeEnum.Inherit;
 
+        _state = NoteState.Active;
+
         ApplySizeFromLane();
 
-        // Center + optional X offset
+        // Center the note at spawn position
         Position = new Vector2(
             localSpawnPosition.X - Size.X * 0.5f,
             localSpawnPosition.Y - Size.Y * 0.5f
@@ -76,6 +129,93 @@ public partial class NoteController : TextureRect
     public float GetCenterGlobalY()
     {
         return GlobalPosition.Y + Size.Y * 0.5f;
+    }
+
+    // Call this when the player successfully hits the note.
+    // After calling this, the note becomes untouchable and will return to pool after HitFeedbackSeconds.
+    public void MarkPushed()
+    {
+        if (_state != NoteState.Active)
+            return;
+
+        // Prevent any further hit detection / interactions
+        _state = NoteState.Pushed;
+
+        // Stop miss timer: we're handling removal ourselves now
+        if (DeleteTimer != null)
+            DeleteTimer.Stop();
+
+        HasPassed = true;
+
+        // Swap texture for feedback
+        if (HitTexture != null)
+            Texture = HitTexture;
+
+        // If duration is zero, return immediately
+        if (HitFeedbackSeconds <= 0f)
+        {
+            ReturnToPool(force: true);
+            return;
+        }
+
+        _pushedCountdownActive = true;
+        _pushedRemaining = HitFeedbackSeconds;
+    }
+
+    // Use force=true for miss / pushed completion. Use force=false if you want to avoid
+    // prematurely returning while pushed.
+    public void ReturnToPool(bool force = false)
+    {
+        // While pushed, ignore non-forced returns (prevents immediate disappearance on hit)
+        if (_state == NoteState.Pushed && !force)
+            return;
+
+        if (DeleteTimer != null)
+            DeleteTimer.Stop();
+
+        Visible = false;
+        ProcessMode = ProcessModeEnum.Disabled;
+
+        RestoreDefaultTexture();
+
+        _pushedCountdownActive = false;
+        _pushedRemaining = 0.0;
+
+        _state = NoteState.Inactive;
+
+        if (_pool == null)
+        {
+            QueueFree();
+            return;
+        }
+
+        _pool.Return(this);
+    }
+
+    public void _on_delete_timer_timeout()
+    {
+        // Miss path: force return
+        HasPassed = true;
+        ReturnToPool(force: true);
+    }
+
+    public void Reset()
+    {
+        if (DeleteTimer != null)
+            DeleteTimer.Stop();
+
+        HasPassed = false;
+        _pool = null;
+
+        _pushedCountdownActive = false;
+        _pushedRemaining = 0.0;
+
+        Visible = false;
+        ProcessMode = ProcessModeEnum.Disabled;
+
+        RestoreDefaultTexture();
+
+        _state = NoteState.Inactive;
     }
 
     private void ApplySizeFromLane()
@@ -111,37 +251,12 @@ public partial class NoteController : TextureRect
         DeleteTimer.Start();
     }
 
-    public void ReturnToPool()
+    private void RestoreDefaultTexture()
     {
-        if (DeleteTimer != null)
-            DeleteTimer.Stop();
+        if (_defaultTexture == null)
+            _defaultTexture = Texture;
 
-        Visible = false;
-        ProcessMode = ProcessModeEnum.Disabled;
-
-        if (_pool == null)
-        {
-            QueueFree();
-            return;
-        }
-
-        _pool.Return(this);
-    }
-
-    public void _on_delete_timer_timeout()
-    {
-        hasPassed = true;
-        ReturnToPool();
-    }
-
-    public void Reset()
-    {
-        if (DeleteTimer != null)
-            DeleteTimer.Stop();
-
-        hasPassed = false;
-        _pool = null;
-        Visible = false;
-        ProcessMode = ProcessModeEnum.Disabled;
+        if (_defaultTexture != null && _state != NoteState.Pushed)
+            Texture = _defaultTexture;
     }
 }

@@ -68,7 +68,8 @@ public partial class HitZoneController : TextureRect
 
             EmitSignal(SignalName.NoteHit, (int)NoteType, (int)accuracy);
 
-            note.ReturnToPool();
+            // Mark as pushed to show feedback and prevent re-hits, then return to pool after a short delay
+            note.MarkPushed();
         }
     }
 
@@ -79,7 +80,11 @@ public partial class HitZoneController : TextureRect
         return NoteContainer
             .GetChildren()
             .OfType<NoteController>()
-            .Where(n => n.NoteType == NoteType && !n.hasPassed)
+            .Where(n =>
+                n.NoteType == NoteType &&
+                !n.HasPassed &&
+                n.IsTouchable
+            )
             .OrderBy(n => Math.Abs(n.GetCenterGlobalY() - hitLineY))
             .FirstOrDefault();
     }
