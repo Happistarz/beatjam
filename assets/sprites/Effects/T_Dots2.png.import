@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dy0au7j646pju"
-path="res://.godot/imported/star1.png-642a18a3c6fa895a950fe1a9cb92b3a9.ctex"
+uid="uid://limujamsneo0"
+path="res://.godot/imported/T_Dots2.png-e7e82ac77a199a71a94d57ecdc069626.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Effects/star1.png"
-dest_files=["res://.godot/imported/star1.png-642a18a3c6fa895a950fe1a9cb92b3a9.ctex"]
+source_file="res://assets/sprites/Effects/T_Dots2.png"
+dest_files=["res://.godot/imported/T_Dots2.png-e7e82ac77a199a71a94d57ecdc069626.ctex"]
 
 [params]
 

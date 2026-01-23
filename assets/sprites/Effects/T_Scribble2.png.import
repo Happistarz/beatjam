@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bflwlknq5b36y"
-path="res://.godot/imported/dots2.png-45e7ddb06a537b92ea59eeccc9630543.ctex"
+uid="uid://dr1ay2ij2qk3w"
+path="res://.godot/imported/T_Scribble2.png-c09ad6d280f2c2aebf67917d692c1dfa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Effects/dots2.png"
-dest_files=["res://.godot/imported/dots2.png-45e7ddb06a537b92ea59eeccc9630543.ctex"]
+source_file="res://assets/sprites/Effects/T_Scribble2.png"
+dest_files=["res://.godot/imported/T_Scribble2.png-c09ad6d280f2c2aebf67917d692c1dfa.ctex"]
 
 [params]
 

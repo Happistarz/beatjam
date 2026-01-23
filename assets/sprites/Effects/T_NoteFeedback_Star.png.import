@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c1hpruelgncaj"
-path="res://.godot/imported/notes1.png-299cfbde0f2f656627e5408d856a5033.ctex"
+uid="uid://cw4cfrup5fra5"
+path="res://.godot/imported/T_NoteFeedback_Star.png-021703d86417cb33c446fc7a0a9359f0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Effects/notes1.png"
-dest_files=["res://.godot/imported/notes1.png-299cfbde0f2f656627e5408d856a5033.ctex"]
+source_file="res://assets/sprites/Effects/T_NoteFeedback_Star.png"
+dest_files=["res://.godot/imported/T_NoteFeedback_Star.png-021703d86417cb33c446fc7a0a9359f0.ctex"]
 
 [params]
 

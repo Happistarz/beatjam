@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c8jd4vnsixbw1"
-path="res://.godot/imported/scribble1.png-12752ebe7292a18445dbb593597af504.ctex"
+uid="uid://ctxi54rk6n34y"
+path="res://.godot/imported/T_LittleStar1.png-5b65f388b1a722d87470312e7f9c407e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Effects/scribble1.png"
-dest_files=["res://.godot/imported/scribble1.png-12752ebe7292a18445dbb593597af504.ctex"]
+source_file="res://assets/sprites/Effects/T_LittleStar1.png"
+dest_files=["res://.godot/imported/T_LittleStar1.png-5b65f388b1a722d87470312e7f9c407e.ctex"]
 
 [params]
 

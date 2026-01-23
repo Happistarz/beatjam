@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cjm2du33bnj76"
-path="res://.godot/imported/scribble2.png-1f93fcf6883b06c80d9f29f5794f5b84.ctex"
+uid="uid://bwynexilhd5kw"
+path="res://.godot/imported/T_SmallLines2.png-1f6ef4fadc43407c44a816cf4ffefab6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Effects/scribble2.png"
-dest_files=["res://.godot/imported/scribble2.png-1f93fcf6883b06c80d9f29f5794f5b84.ctex"]
+source_file="res://assets/sprites/Effects/T_SmallLines2.png"
+dest_files=["res://.godot/imported/T_SmallLines2.png-1f6ef4fadc43407c44a816cf4ffefab6.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://g14hogljfqn8"
-path="res://.godot/imported/little_star2.png-6d344b07ee517a13374aa621b69ebcdf.ctex"
+uid="uid://if7gcc10jhbp"
+path="res://.godot/imported/T_SmallLines1.png-68027f3453dee76ea619b5e036fabf48.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Effects/little_star2.png"
-dest_files=["res://.godot/imported/little_star2.png-6d344b07ee517a13374aa621b69ebcdf.ctex"]
+source_file="res://assets/sprites/Effects/T_SmallLines1.png"
+dest_files=["res://.godot/imported/T_SmallLines1.png-68027f3453dee76ea619b5e036fabf48.ctex"]
 
 [params]
 
