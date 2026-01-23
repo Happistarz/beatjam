@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bbvibx8se5thn" path="res://assets/sprites/Characters/T_Elephant_Idle.png" id="2_2brhv"]
 
 [node name="PlayerTrack" type="Control"]
-custom_minimum_size = Vector2(0, 1080)
+custom_minimum_size = Vector2(650, 1080)
 layout_mode = 3
 anchors_preset = 0
 offset_right = 650.0

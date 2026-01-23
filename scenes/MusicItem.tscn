@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://gpyoqg66ke7t"]
+[gd_scene load_steps=5 format=3 uid="uid://gpyoqg66ke7t"]
 
 [ext_resource type="Theme" uid="uid://cegplvu7wf4yn" path="res://assets/themes/MusicItem.tres" id="1_bn07e"]
 [ext_resource type="Script" path="res://scripts/MusicItem.cs" id="2_vvige"]
 [ext_resource type="Texture2D" uid="uid://clbkegdmiiwqd" path="res://icon.svg" id="3_u8yar"]
+[ext_resource type="FontFile" uid="uid://c6o17tyd6p8eg" path="res://assets/fonts/kindergarten.ttf" id="4_acs75"]
 
 [node name="MusicItem" type="Button" node_paths=PackedStringArray("CoverImage", "TitleLabel", "PlayersLabel", "BPMLabel", "TrackLengthLabel")]
 custom_minimum_size = Vector2(600, 400)
@@ -13,19 +14,19 @@ size_flags_vertical = 4
 theme = ExtResource("1_bn07e")
 script = ExtResource("2_vvige")
 CoverImage = NodePath("HBoxContainer/Icon")
-TitleLabel = NodePath("HBoxContainer/VBoxContainer/Title")
-PlayersLabel = NodePath("HBoxContainer/VBoxContainer/Players")
-BPMLabel = NodePath("HBoxContainer/VBoxContainer/BPM")
-TrackLengthLabel = NodePath("HBoxContainer/VBoxContainer/TrackLength")
+TitleLabel = NodePath("HBoxContainer/Icon/VBoxContainer/Title")
+PlayersLabel = NodePath("HBoxContainer/Icon/VBoxContainer/Players")
+BPMLabel = NodePath("HBoxContainer/Icon/VBoxContainer/BPM")
+TrackLengthLabel = NodePath("HBoxContainer/Icon/VBoxContainer/TrackLength")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 28.0
+offset_left = 40.0
 offset_top = 114.0
-offset_right = -61.0
+offset_right = -60.0
 offset_bottom = -158.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -37,28 +38,38 @@ texture = ExtResource("3_u8yar")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Icon"]
 layout_mode = 2
+offset_left = 150.0
+offset_right = 480.0
+offset_bottom = 200.0
 
-[node name="Title" type="Label" parent="HBoxContainer/VBoxContainer"]
+[node name="Title" type="Label" parent="HBoxContainer/Icon/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 31
-text = "SUPER COOL MUSIQUE"
+theme_override_fonts/font = ExtResource("4_acs75")
+theme_override_font_sizes/font_size = 60
+text = "Title"
 
-[node name="Players" type="Label" parent="HBoxContainer/VBoxContainer"]
-custom_minimum_size = Vector2(150, 0)
+[node name="Players" type="Label" parent="HBoxContainer/Icon/VBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_acs75")
+theme_override_font_sizes/font_size = 25
 text = "Player 1 (Guitar), Player 2 (Drums)"
 autowrap_mode = 2
 
-[node name="BPM" type="Label" parent="HBoxContainer/VBoxContainer"]
+[node name="BPM" type="Label" parent="HBoxContainer/Icon/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_acs75")
+theme_override_font_sizes/font_size = 20
 text = "BPM: 120"
 
-[node name="TrackLength" type="Label" parent="HBoxContainer/VBoxContainer"]
+[node name="TrackLength" type="Label" parent="HBoxContainer/Icon/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_acs75")
+theme_override_font_sizes/font_size = 20
 text = "Length: 1m"

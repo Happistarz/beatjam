@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://nupmxxrlb5by"]
+[gd_scene load_steps=4 format=3 uid="uid://nupmxxrlb5by"]
 
 [ext_resource type="Script" path="res://scripts/MusicChoice.cs" id="1_3gu7p"]
 [ext_resource type="Theme" uid="uid://b3mx5wnjix7mj" path="res://assets/themes/MenuButton.tres" id="2_u8d5o"]
+[ext_resource type="FontFile" uid="uid://c6o17tyd6p8eg" path="res://assets/fonts/kindergarten.ttf" id="3_7kqyt"]
 
 [node name="Control" type="CanvasLayer" node_paths=PackedStringArray("musicList", "backButton")]
 script = ExtResource("1_3gu7p")
@@ -39,7 +40,8 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme = ExtResource("2_u8d5o")
-theme_override_font_sizes/font_size = 36
+theme_override_fonts/font = ExtResource("3_7kqyt")
+theme_override_font_sizes/font_size = 60
 text = "BACK"
 
 [node name="VBox" type="VBoxContainer" parent="Margin/VBoxContainer"]
