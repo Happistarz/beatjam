@@ -3,16 +3,17 @@ using Godot;
 public partial class NoteController : TextureRect
 {
     [Export] public Timer DeleteTimer;
-
     [Export] public Refs.NoteType NoteType;
 
     public MusicData.PlayerRole PlayerRole;
 
-    [Export] public float ThresholdY = 775f;
+    // Size = lane width * ratio
+    [Export] public float SizeRatioFromLane = 0.25f;
 
     private float _speed = 200f;
-    public bool hasPassed = false;
+    private float _missThresholdCenterGlobalY = 1000f;
 
+    public bool hasPassed = false;
     private ObjectPool<NoteController> _pool;
 
     public override void _Ready()
@@ -34,8 +35,7 @@ public partial class NoteController : TextureRect
     {
         Position += new Vector2(0f, _speed * (float)delta);
 
-        // ThresholdY is in canvas coordinates; GlobalPosition.Y is also canvas coordinates for Control
-        if (GlobalPosition.Y > ThresholdY && !hasPassed)
+        if (!hasPassed && GetCenterGlobalY() > _missThresholdCenterGlobalY)
         {
             hasPassed = true;
             ReturnToPool();
@@ -45,9 +45,10 @@ public partial class NoteController : TextureRect
     public void Initialize(
         Refs.NoteType type,
         MusicData.PlayerRole role,
-        Vector2 localPositionInContainer,
+        Vector2 localSpawnPosition,
         float speed,
-        ObjectPool<NoteController> pool
+        ObjectPool<NoteController> pool,
+        float missThresholdCenterGlobalY
     )
     {
         NoteType = type;
@@ -55,24 +56,43 @@ public partial class NoteController : TextureRect
         _speed = speed;
         _pool = pool;
 
+        _missThresholdCenterGlobalY = missThresholdCenterGlobalY;
+
         hasPassed = false;
         Visible = true;
         ProcessMode = ProcessModeEnum.Inherit;
 
-        ApplySize();
+        ApplySizeFromLane();
 
-        // Center the note on the spawn point
-        Position = localPositionInContainer - Size * 0.5f;
+        // Center + optional X offset
+        Position = new Vector2(
+            localSpawnPosition.X - Size.X * 0.5f,
+            localSpawnPosition.Y - Size.Y * 0.5f
+        );
 
         StartDeleteTimer();
     }
 
-    private void ApplySize()
+    public float GetCenterGlobalY()
     {
-        if (Refs.Instance == null)
+        return GlobalPosition.Y + Size.Y * 0.5f;
+    }
+
+    private void ApplySizeFromLane()
+    {
+        // Prefer the lane control as size reference.
+        // NoteContainer (parent) is usually the lane or a lane-relative container.
+        Control sizeRef = GetParent() as Control;
+
+        if (sizeRef == null)
             return;
 
-        float s = Refs.Instance.MinimumNoteSize;
+        float laneWidth = sizeRef.Size.X;
+        if (laneWidth <= 1f)
+            return;
+
+        float s = laneWidth * SizeRatioFromLane;
+
         CustomMinimumSize = new Vector2(s, s);
         Size = new Vector2(s, s);
     }
@@ -84,7 +104,7 @@ public partial class NoteController : TextureRect
 
         DeleteTimer.Stop();
 
-        float remaining = ThresholdY - GlobalPosition.Y;
+        float remaining = _missThresholdCenterGlobalY - GetCenterGlobalY();
         float seconds = remaining / Mathf.Max(1f, _speed);
 
         DeleteTimer.WaitTime = Mathf.Max(0.01f, seconds);
@@ -110,6 +130,7 @@ public partial class NoteController : TextureRect
 
     public void _on_delete_timer_timeout()
     {
+        hasPassed = true;
         ReturnToPool();
     }
 

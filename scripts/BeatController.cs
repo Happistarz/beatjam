@@ -12,20 +12,12 @@ public partial class BeatController : Node
         public int Sixteenth;
     }
 
-    [Export]
-    public AudioStreamPlayer MusicPlayer;
+    [Export] public AudioStreamPlayer MusicPlayer;
+    [Export] public AudioStreamPlayer MetronomeClickPlayer;
+    [Export] public Timer BeatTimer;
+    [Export] public Timer DelayStartTimer;
 
-    [Export]
-    public AudioStreamPlayer MetronomeClickPlayer;
-
-    [Export]
-    public Timer BeatTimer;
-
-    [Export]
-    public Timer DelayStartTimer;
-
-    [Export]
-    public TrackSet TrackSet;
+    [Export] public TrackSet TrackSet;
 
     private int measureCounter = 0;
     private int beatCounter = 0;
@@ -60,16 +52,27 @@ public partial class BeatController : Node
     public void CalculateLeadOffset()
     {
         float noteSpeed = Refs.Instance.NoteSpeed;
-        float noteDistance = 800f;
+        float noteDistance = 800f; // Fallback
 
-        var hitzone = TrackSet.TrackControllers.FirstOrDefault()?.HitZones.FirstOrDefault();
+        // Try to compute distance from spawn point to hit line using the first available hitzone
+        var track = TrackSet?.TrackControllers?.FirstOrDefault();
+        var hitzone = track?.HitZones?.FirstOrDefault();
+
         if (hitzone != null)
         {
-            // Distance du spawn (StartY négatif vers le haut) jusqu’au centre visuel de frappe
-            noteDistance = Math.Abs(hitzone.StartY) + (hitzone.Size.Y * 0.5f);
+            // Spawn point is expected to be assigned in HitZoneController (Control)
+            // Hit line is the center of the hitzone rectangle
+            var spawnCtrl = hitzone.SpawnPoint; // Control
+            if (spawnCtrl != null)
+            {
+                float spawnCenterY = spawnCtrl.GlobalPosition.Y + spawnCtrl.Size.Y * 0.5f;
+                float hitLineY = hitzone.GlobalPosition.Y + hitzone.Size.Y * 0.5f;
+
+                noteDistance = Mathf.Abs(hitLineY - spawnCenterY);
+            }
         }
 
-        leadOffset = noteDistance / noteSpeed;
+        leadOffset = noteDistance / Mathf.Max(1f, noteSpeed);
     }
 
     private void PrepareUpcomingNotes()
@@ -91,9 +94,8 @@ public partial class BeatController : Node
                 };
 
                 if (!scheduledNotes.ContainsKey(timing))
-                {
                     scheduledNotes[timing] = new List<MusicData.Note>();
-                }
+
                 scheduledNotes[timing].Add(note);
             }
         }
@@ -181,7 +183,6 @@ public partial class BeatController : Node
     private void OnMetronomeClick()
     {
         MetronomeClickPlayer.PitchScale = (metronomeBeatsElapsed % 2 == 0) ? 1.2f : 1.0f;
-
         MetronomeClickPlayer.Play();
 
         int beatsInThisMeasure = (metronomeMeasuresElapsed == 1) ? 8 : 4;

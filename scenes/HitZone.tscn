@@ -10,4 +10,3 @@ offset_bottom = 64.0
 pivot_offset = Vector2(32, 32)
 expand_mode = 1
 script = ExtResource("2_m8joy")
-StartY = -600.0
