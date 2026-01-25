@@ -114,7 +114,7 @@ public partial class TrackSet : Control
                     continue;
 
                 hitZone.NoteContainer = TracksNoteContainer;
-                hitZone.Initialize();
+                hitZone.Initialize(role);
             }
         }
 

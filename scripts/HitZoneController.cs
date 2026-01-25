@@ -26,15 +26,17 @@ public partial class HitZoneController : TextureRect
 		CustomMinimumSize = new Vector2(Refs.Instance.MinimumNoteSize, Refs.Instance.MinimumNoteSize);
 	}
 
-	public void Initialize()
-	{
-		if (Track == null)
-			return;
+    public void Initialize(MusicData.PlayerRole? roleOverride = null)
+    {
+        if (Track == null)
+        {
+            GD.PushError($"HitZoneController {Name}: Track is null during Initialize!");
+            return;
+        }
 
-		inputAction = Refs.GetInputAction(Track.Role, NoteType);
-
-		GD.Print($"HitZone Init: TrackRole={Track?.Role} NoteType={NoteType} Action={inputAction} Path={GetPath()}");
-	}
+        var effectiveRole = roleOverride ?? Track.Role;
+        inputAction = Refs.GetInputAction(effectiveRole, NoteType);
+    }
 
 	private void InitializePool()
 	{
@@ -57,8 +59,11 @@ public partial class HitZoneController : TextureRect
 		{
 			Scale = new Vector2(ScaleOnHit, ScaleOnHit);
 
-			if (NoteContainer == null || NoteContainer.GetChildren().Count < 1)
-				return;
+            if (BeatController.Instance != null && BeatController.Instance.InMetronomeMode)
+                return;
+
+            if (NoteContainer == null || NoteContainer.GetChildren().Count < 1)
+                return;
 
 			var note = GetClosestNote();
 			if (note == null)
