@@ -4,127 +4,130 @@ using Godot;
 
 public partial class HitZoneController : TextureRect
 {
-    [Export] public Control NoteContainer;
-    [Export] public Control SpawnPoint;
+	[Export] public Control NoteContainer;
+	[Export] public Control SpawnPoint;
 
-    [Export] public TrackController Track;
-    [Export] public Refs.NoteType NoteType;
+	[Export] public TrackController Track;
+	[Export] public Refs.NoteType NoteType;
 
-    [Export] public float MissOutFactor = 0.5f;
+	[Export] public float MissOutFactor = 0.5f;
 
-    [Export] public float ScaleOnHit = 1.15f;
-    private const float ScaleReturnSpeed = 20f;
+	[Export] public float ScaleOnHit = 1.15f;
+	private const float ScaleReturnSpeed = 20f;
 
-    [Signal] public delegate void NoteHitEventHandler(int noteType, int accuracy);
+	[Signal] public delegate void NoteHitEventHandler(int noteType, int accuracy);
 
-    private ObjectPool<NoteController> _notePool;
-    private string inputAction;
+	private ObjectPool<NoteController> _notePool;
+	private string inputAction;
 
-    public override void _Ready()
-    {
-        InitializePool();
-        CustomMinimumSize = new Vector2(Refs.Instance.MinimumNoteSize, Refs.Instance.MinimumNoteSize);
-    }
+	public override void _Ready()
+	{
+		InitializePool();
+		CustomMinimumSize = new Vector2(Refs.Instance.MinimumNoteSize, Refs.Instance.MinimumNoteSize);
+	}
 
-    public void Initialize()
-    {
-        if (Track == null)
-            return;
+	public void Initialize()
+	{
+		if (Track == null)
+			return;
 
-        inputAction = Refs.GetInputAction(Track.Role, NoteType);
-    }
+		inputAction = Refs.GetInputAction(Track.Role, NoteType);
 
-    private void InitializePool()
-    {
-        if (_notePool != null)
-            return;
+		GD.Print($"HitZone Init: TrackRole={Track?.Role} NoteType={NoteType} Action={inputAction} Path={GetPath()}");
+	}
 
-        _notePool = new ObjectPool<NoteController>();
-        AddChild(_notePool);
-        _notePool.Initialize(Refs.Instance.NoteScene, initialSize: 10, maxSize: 50);
-    }
+	private void InitializePool()
+	{
+		if (_notePool != null)
+			return;
 
-    public override void _Process(double delta)
-    {
-        Scale = new Vector2(
-            Mathf.Lerp(Scale.X, 1f, ScaleReturnSpeed * (float)delta),
-            Mathf.Lerp(Scale.Y, 1f, ScaleReturnSpeed * (float)delta)
-        );
+		_notePool = new ObjectPool<NoteController>();
+		AddChild(_notePool);
+		_notePool.Initialize(Refs.Instance.NoteScene, initialSize: 10, maxSize: 50);
+	}
 
-        if (Input.IsActionJustPressed(inputAction))
-        {
-            Scale = new Vector2(ScaleOnHit, ScaleOnHit);
+	public override void _Process(double delta)
+	{
+		Scale = new Vector2(
+			Mathf.Lerp(Scale.X, 1f, ScaleReturnSpeed * (float)delta),
+			Mathf.Lerp(Scale.Y, 1f, ScaleReturnSpeed * (float)delta)
+		);
 
-            if (NoteContainer == null || NoteContainer.GetChildren().Count < 1)
-                return;
+		if (Input.IsActionJustPressed(inputAction))
+		{
+			Scale = new Vector2(ScaleOnHit, ScaleOnHit);
 
-            var note = GetClosestNote();
-            if (note == null)
-                return;
+			if (NoteContainer == null || NoteContainer.GetChildren().Count < 1)
+				return;
 
-            var hitLineY = GetHitLineGlobalY();
-            var distance = Math.Abs(note.GetCenterGlobalY() - hitLineY);
-            var accuracy = Refs.Instance.GetNoteAccuracy(distance);
+			var note = GetClosestNote();
+			if (note == null)
+				return;
 
-            EmitSignal(SignalName.NoteHit, (int)NoteType, (int)accuracy);
+			var hitLineY = GetHitLineGlobalY();
+			var distance = Math.Abs(note.GetCenterGlobalY() - hitLineY);
+			var accuracy = Refs.Instance.GetNoteAccuracy(distance);
 
-            // Mark as pushed to show feedback and prevent re-hits, then return to pool after a short delay
-            note.MarkPushed();
-        }
-    }
+			EmitSignal(SignalName.NoteHit, (int)NoteType, (int)accuracy);
 
-    private NoteController GetClosestNote()
-    {
-        var hitLineY = GetHitLineGlobalY();
+			// Mark as pushed to show feedback and prevent re-hits, then return to pool after a short delay
+			note.MarkPushed();
+		}
+	}
 
-        return NoteContainer
-            .GetChildren()
-            .OfType<NoteController>()
-            .Where(n =>
-                n.NoteType == NoteType &&
-                !n.HasPassed &&
-                n.IsTouchable
-            )
-            .OrderBy(n => Math.Abs(n.GetCenterGlobalY() - hitLineY))
-            .FirstOrDefault();
-    }
+	private NoteController GetClosestNote()
+	{
+		var hitLineY = GetHitLineGlobalY();
 
-    public void SpawnNote(float speed = -1f)
-    {
-        if (NoteContainer == null)
-        {
-            GD.PushError("HitZoneController: NoteContainer not assigned.");
-            return;
-        }
+		return NoteContainer
+			.GetChildren()
+			.OfType<NoteController>()
+			.Where(n =>
+				n.NoteType == NoteType &&
+				n.PlayerRole == Track.Role &&
+				!n.HasPassed &&
+				n.IsTouchable
+			)
+			.OrderBy(n => Math.Abs(n.GetCenterGlobalY() - hitLineY))
+			.FirstOrDefault();
+	}
 
-        if (SpawnPoint == null)
-        {
-            GD.PushError("HitZoneController: SpawnPoint not assigned.");
-            return;
-        }
+	public void SpawnNote(float speed = -1f)
+	{
+		if (NoteContainer == null)
+		{
+			GD.PushError("HitZoneController: NoteContainer not assigned.");
+			return;
+		}
 
-        if (speed < 0f)
-            speed = Refs.Instance.NoteSpeed;
+		if (SpawnPoint == null)
+		{
+			GD.PushError("HitZoneController: SpawnPoint not assigned.");
+			return;
+		}
 
-        var note = _notePool.Get();
-        NoteContainer.AddChild(note);
+		if (speed < 0f)
+			speed = Refs.Instance.NoteSpeed;
 
-        Vector2 spawnGlobal = SpawnPoint.GlobalPosition + SpawnPoint.Size * 0.5f;
-        Vector2 spawnLocal = spawnGlobal - NoteContainer.GlobalPosition;
+		var note = _notePool.Get();
+		NoteContainer.AddChild(note);
 
-        float hitzoneBottomY = GlobalPosition.Y + Size.Y;
-        float missThresholdCenterY = hitzoneBottomY + (Size.Y * MissOutFactor);
+		Vector2 spawnGlobal = SpawnPoint.GlobalPosition + SpawnPoint.Size * 0.5f;
+		Vector2 spawnLocal = spawnGlobal - NoteContainer.GlobalPosition;
 
-        note.Initialize(NoteType, Track.Role, spawnLocal, speed, _notePool, missThresholdCenterY);
-    }
+		float hitzoneBottomY = GlobalPosition.Y + Size.Y;
+		float missThresholdCenterY = hitzoneBottomY + (Size.Y * MissOutFactor);
 
-    private float GetHitLineGlobalY()
-    {
-        return GlobalPosition.Y + Size.Y * 0.5f;
-    }
+		note.Initialize(NoteType, Track.Role, spawnLocal, speed, _notePool, missThresholdCenterY);
+	}
 
-    public override void _ExitTree()
-    {
-        _notePool?.ReturnAll();
-    }
+	private float GetHitLineGlobalY()
+	{
+		return GlobalPosition.Y + Size.Y * 0.5f;
+	}
+
+	public override void _ExitTree()
+	{
+		_notePool?.ReturnAll();
+	}
 }
