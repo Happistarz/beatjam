@@ -21,6 +21,7 @@ config/icon="res://icon.svg"
 Refs="*res://scenes/Refs.tscn"
 TracksLoader="*res://scripts/TracksLoader.cs"
 GameManager="*res://scripts/GameManager.cs"
+AudioManager="*res://scenes/AudioManager.tscn"
 
 [display]
 
