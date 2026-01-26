@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using Godot;
 
 public partial class CharacterAnimation : TextureRect
 {
-    
     public enum CharacterState
     {
         Idle,
@@ -16,14 +14,30 @@ public partial class CharacterAnimation : TextureRect
 
     [Export] public string BaseDir = "res://assets/sprites/Characters/Cat/";
     [Export] public string FilePrefix = "T_Cat_";
-    [Export] public float FrameIntervalSeconds = 0.2f;
+
+    // Streak thresholds
+    [Export] public int PerfectStreakForHyped = 3;
+    [Export] public int MissStreakForAngry = 2;
+
+    // Return to Idle after some time without inputs
+    [Export] public float IdleTimeoutSeconds = 1.2f;
+
+    // Enable verbose logs for debugging animation decisions
+    [Export] public bool DebugLogs = false;
 
     private MusicData.PlayerRole _role;
     private CharacterState _state = CharacterState.Idle;
-    private readonly List<Texture2D> _frames = new();
-    private int _frameIndex = 0;
 
-    private double _acc = 0.0;
+    private int _perfectStreak = 0;
+    private int _missStreak = 0;
+
+    // 1 or 2, toggled once per successful judgement (Great/Perfect)
+    private int _stepIndex = 1;
+
+    private readonly Dictionary<string, Texture2D> _cache = new();
+
+    private bool _idleTimerActive = false;
+    private double _idleRemaining = 0.0;
 
     public override void _Ready()
     {
@@ -43,104 +57,147 @@ public partial class CharacterAnimation : TextureRect
         var dir = Refs.Instance.GetCharacterDirectoryForRole(role);
         var prefix = Refs.Instance.GetCharacterFilePrefixForRole(role);
 
-        SetCharacter(dir, prefix);
-    }
+        BaseDir = dir;
+        FilePrefix = prefix;
 
-    public void SetCharacter(string baseDir, string filePrefix)
-    {
-        BaseDir = baseDir;
-        FilePrefix = filePrefix;
-        SetState(_state);
-    }
+        _cache.Clear();
 
-    public void SetState(CharacterState state)
-    {
-        _state = state;
-        LoadFramesForState(state);
-        _frameIndex = 0;
-        ApplyCurrentFrame();
+        _perfectStreak = 0;
+        _missStreak = 0;
+        // Keep _stepIndex as-is so left/right continues naturally
+
+        DebugPrint($"SetRole role={role} baseDir={BaseDir} prefix={FilePrefix} stepIndex={_stepIndex}");
+
+        SetState(CharacterState.Idle);
     }
 
     public override void _Process(double delta)
     {
-        if (_frames.Count <= 1)
+        if (!_idleTimerActive)
             return;
 
-        _acc += delta;
-        if (_acc < FrameIntervalSeconds)
-            return;
-
-        _acc = 0.0;
-        _frameIndex = (_frameIndex + 1) % _frames.Count;
-        ApplyCurrentFrame();
+        _idleRemaining -= delta;
+        if (_idleRemaining <= 0.0)
+        {
+            _idleTimerActive = false;
+            DebugPrint("Idle timeout -> Idle");
+            SetState(CharacterState.Idle);
+        }
     }
 
-    private void LoadFramesForState(CharacterState state)
+    // Call this once per judged input (Perfect/Great/Miss)
+    public void OnJudgement(Refs.Accuracy accuracy)
     {
-        _frames.Clear();
+        RestartIdleTimeout();
 
-        // Naming convention:
-        // Idle -> T_Cat_Idle.png
-        // Grooving -> T_Cat_Grooving1.png, T_Cat_Grooving2.png (if present)
-        // Hyped -> T_Cat_Hyped1.png, T_Cat_Hyped2.png (if present)
-        // Shameful -> T_Cat_Shameful.png
-        // Angry -> T_Cat_Angry.png
+        DebugPrint(
+            $"OnJudgement accuracy={accuracy} before state={_state} stepIndex={_stepIndex} perfectStreak={_perfectStreak} missStreak={_missStreak}"
+        );
 
-        switch (state)
+        switch (accuracy)
         {
-            case CharacterState.Idle:
-                TryAddSingle("Idle");
+            case Refs.Accuracy.Perfect:
+                _perfectStreak++;
+                _missStreak = 0;
+
+                ToggleStepIndex();
+
+                if (_perfectStreak >= PerfectStreakForHyped)
+                {
+                    SetState(CharacterState.Hyped);
+                    ApplyStepSprite("Hyped");
+                }
+                else
+                {
+                    SetState(CharacterState.Grooving);
+                    ApplyStepSprite("Grooving");
+                }
                 break;
 
-            case CharacterState.Grooving:
-                TryAddNumbered("Grooving", 1, 8);
+            case Refs.Accuracy.Great:
+                // Great continues grooving chain but does not increase perfect streak
+                _perfectStreak = 0;
+                _missStreak = 0;
+
+                ToggleStepIndex();
+
+                SetState(CharacterState.Grooving);
+                ApplyStepSprite("Grooving");
                 break;
 
-            case CharacterState.Hyped:
-                TryAddNumbered("Hyped", 1, 8);
-                break;
+            case Refs.Accuracy.Miss:
+                _missStreak++;
+                _perfectStreak = 0;
 
-            case CharacterState.Shameful:
-                TryAddSingle("Shameful");
-                break;
-
-            case CharacterState.Angry:
-                TryAddSingle("Angry");
+                if (_missStreak >= MissStreakForAngry)
+                {
+                    SetState(CharacterState.Angry);
+                    SetSprite("Angry", null);
+                }
+                else
+                {
+                    SetState(CharacterState.Shameful);
+                    SetSprite("Shameful", null);
+                }
                 break;
         }
 
-        // Fallback safety
-        if (_frames.Count == 0)
-            TryAddSingle("Idle");
+        DebugPrint(
+            $"After state={_state} stepIndex={_stepIndex} perfectStreak={_perfectStreak} missStreak={_missStreak}"
+        );
     }
 
-    private void TryAddSingle(string suffix)
+    private void RestartIdleTimeout()
     {
-        var path = BuildPath(suffix, null);
-        var tex = LoadTexture(path);
-        if (tex != null)
-            _frames.Add(tex);
-        else
+        if (IdleTimeoutSeconds <= 0f)
+        {
+            _idleTimerActive = false;
+            return;
+        }
+
+        _idleTimerActive = true;
+        _idleRemaining = IdleTimeoutSeconds;
+    }
+
+    private void SetState(CharacterState state)
+    {
+        _state = state;
+
+        if (state == CharacterState.Idle)
+            SetSprite("Idle", null);
+    }
+
+    private void ToggleStepIndex()
+    {
+        // Toggle 1 <-> 2
+        _stepIndex = 3 - _stepIndex;
+        DebugPrint($"ToggleStepIndex -> {_stepIndex}");
+    }
+
+    private void ApplyStepSprite(string suffix)
+    {
+        DebugPrint($"ApplyStepSprite suffix={suffix} idx={_stepIndex}");
+        SetSprite(suffix, _stepIndex);
+    }
+
+    private void SetSprite(string suffix, int? number)
+    {
+        var path = BuildPath(suffix, number);
+
+        if (DebugLogs)
+        {
+            var numStr = number.HasValue ? number.Value.ToString() : "";
+            GD.Print($"[CharacterAnimation:{Name}] SetSprite {suffix}{numStr} path={path}");
+        }
+
+        var tex = LoadTextureCached(path);
+        if (tex == null)
+        {
             GD.PushWarning($"CharacterAnimation: Missing texture at {path}");
-    }
-
-    private void TryAddNumbered(string suffix, int start, int max)
-    {
-        for (int i = start; i <= max; i++)
-        {
-            var path = BuildPath(suffix, i);
-            var tex = LoadTexture(path);
-            if (tex == null)
-            {
-                // Stop at first missing to allow variable frame counts (1..N)
-                break;
-            }
-            _frames.Add(tex);
+            return;
         }
 
-        // If no numbered frames exist, try non-numbered fallback (optional)
-        if (_frames.Count == 0)
-            TryAddSingle(suffix);
+        Texture = tex;
     }
 
     private string BuildPath(string suffix, int? number)
@@ -152,19 +209,24 @@ public partial class CharacterAnimation : TextureRect
         return $"{BaseDir.TrimEnd('/')}/{file}";
     }
 
-    private static Texture2D LoadTexture(string path)
+    private Texture2D LoadTextureCached(string path)
     {
+        if (_cache.TryGetValue(path, out var tex))
+            return tex;
+
         if (!ResourceLoader.Exists(path))
             return null;
 
-        return ResourceLoader.Load<Texture2D>(path);
+        tex = ResourceLoader.Load<Texture2D>(path);
+        _cache[path] = tex;
+        return tex;
     }
 
-    private void ApplyCurrentFrame()
+    private void DebugPrint(string msg)
     {
-        if (_frames.Count == 0)
+        if (!DebugLogs)
             return;
 
-        Texture = _frames[_frameIndex];
+        GD.Print($"[CharacterAnimation:{Name}] {msg}");
     }
 }

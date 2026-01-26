@@ -76,8 +76,9 @@ public partial class HitZoneController : TextureRect
 			// Visual feedback at the note position
 			SpawnAccuracyFeedbackOnNote(note, accuracy);
 
-			// Optional: print for now
-			GD.Print($"Hit: role={Track.Role} lane={NoteType} accuracy={accuracy}");
+			// Trigger Character Animation
+			var pt = GetPlayerTrack();
+			pt?.CharacterAnimation?.OnJudgement(accuracy);
 
 			EmitSignal(SignalName.NoteHit, (int)NoteType, (int)accuracy);
 
@@ -169,6 +170,19 @@ public partial class HitZoneController : TextureRect
 		// Final position
 		feedback.Position = noteCenterLocal - size * 0.5f + offset;
 	}
+
+	private PlayerTrack GetPlayerTrack()
+	{
+		Node current = this;
+		while (current != null)
+		{
+			if (current is PlayerTrack pt)
+				return pt;
+			current = current.GetParent();
+		}
+		return null;
+	}
+
 
 	private float GetHitLineGlobalY()
 	{
