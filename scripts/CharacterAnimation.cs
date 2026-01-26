@@ -16,7 +16,6 @@ public partial class CharacterAnimation : TextureRect
 
     [Export] public string BaseDir = "res://assets/sprites/Characters/Cat/";
     [Export] public string FilePrefix = "T_Cat_";
-
     [Export] public float FrameIntervalSeconds = 0.2f;
 
     private MusicData.PlayerRole _role;

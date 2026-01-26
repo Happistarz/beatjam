@@ -54,6 +54,11 @@ public partial class Refs : Node
     [Export] public PackedScene HitZoneLayerScene;
     [Export] public PackedScene NoteScene;
 
+    [ExportGroup("Feedback")]
+    [Export] public PackedScene PerfectFeedbackScene;
+    [Export] public PackedScene GreatFeedbackScene;
+    [Export] public PackedScene MissFeedbackScene;
+
     [ExportGroup("Textures")]
     [Export] public Texture2D DefaultCoverImage;
 
@@ -137,6 +142,17 @@ public partial class Refs : Node
         if (distance <= greatThreshold)
             return Accuracy.Great;
         return Accuracy.Miss;
+    }
+
+    public PackedScene GetFeedbackScene(Accuracy accuracy)
+    {
+        return accuracy switch
+        {
+            Accuracy.Perfect => PerfectFeedbackScene,
+            Accuracy.Great => GreatFeedbackScene,
+            Accuracy.Miss => MissFeedbackScene,
+            _ => null
+        };
     }
 
     public override void _Ready()

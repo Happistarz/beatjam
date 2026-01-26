@@ -73,6 +73,12 @@ public partial class HitZoneController : TextureRect
 			var distance = Math.Abs(note.GetCenterGlobalY() - hitLineY);
 			var accuracy = Refs.Instance.GetNoteAccuracy(distance);
 
+			// Visual feedback at the note position
+			SpawnAccuracyFeedbackOnNote(note, accuracy);
+
+			// Optional: print for now
+			GD.Print($"Hit: role={Track.Role} lane={NoteType} accuracy={accuracy}");
+
 			EmitSignal(SignalName.NoteHit, (int)NoteType, (int)accuracy);
 
 			// Mark as pushed to show feedback and prevent re-hits, then return to pool after a short delay
@@ -124,6 +130,44 @@ public partial class HitZoneController : TextureRect
 		float missThresholdCenterY = hitzoneBottomY + (Size.Y * MissOutFactor);
 
 		note.Initialize(NoteType, Track.Role, spawnLocal, speed, _notePool, missThresholdCenterY);
+	}
+
+	private void SpawnAccuracyFeedbackOnNote(NoteController note, Refs.Accuracy accuracy)
+	{
+		if (Refs.Instance == null)
+			return;
+
+		var scene = Refs.Instance.GetFeedbackScene(accuracy);
+		if (scene == null)
+			return;
+
+		if (NoteContainer == null)
+			return;
+
+		// Instantiate feedback
+		var feedback = scene.Instantiate<Control>();
+		NoteContainer.AddChild(feedback);
+
+		// Ensure it draws above notes
+		feedback.ZAsRelative = false;
+		feedback.ZIndex = 1000;
+
+		// Determine feedback size (Controls may have Size = 0 on first frame)
+		Vector2 size = feedback.Size;
+		if (size.X <= 0.1f || size.Y <= 0.1f)
+			size = feedback.CustomMinimumSize;
+
+		// Get note center in NoteContainer local space
+		var noteCenterGlobal = note.GlobalPosition + note.Size * 0.5f;
+		var noteCenterLocal = noteCenterGlobal - NoteContainer.GlobalPosition;
+
+		// Read optional offset from AccuracyFeedback script
+		Vector2 offset = Vector2.Zero;
+		if (feedback is AccuracyFeedback accuracyFeedback)
+			offset = accuracyFeedback.PositionOffset;
+
+		// Final position
+		feedback.Position = noteCenterLocal - size * 0.5f + offset;
 	}
 
 	private float GetHitLineGlobalY()

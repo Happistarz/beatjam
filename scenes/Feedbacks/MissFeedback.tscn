@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://0kwgm0tqu83j"]
+
+[ext_resource type="Script" path="res://scripts/AccuracyFeedback.cs" id="1_14f0l"]
+
+[node name="MissFeedback" type="TextureRect"]
+custom_minimum_size = Vector2(128, 128)
+script = ExtResource("1_14f0l")
