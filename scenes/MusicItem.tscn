@@ -2,7 +2,7 @@
 
 [ext_resource type="Theme" uid="uid://cegplvu7wf4yn" path="res://assets/themes/MusicItem.tres" id="1_bn07e"]
 [ext_resource type="Script" path="res://scripts/MusicItem.cs" id="2_vvige"]
-[ext_resource type="Texture2D" uid="uid://clbkegdmiiwqd" path="res://icon.svg" id="3_u8yar"]
+[ext_resource type="Texture2D" path="res://assets/sprites/UI/T_TrackSleeve1.png" id="3_6tdov"]
 [ext_resource type="FontFile" uid="uid://c6o17tyd6p8eg" path="res://assets/fonts/kindergarten.ttf" id="4_acs75"]
 
 [node name="MusicItem" type="Button" node_paths=PackedStringArray("CoverImage", "TitleLabel", "PlayersLabel", "BPMLabel", "TrackLengthLabel")]
@@ -34,7 +34,7 @@ grow_vertical = 2
 [node name="Icon" type="TextureRect" parent="HBoxContainer"]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
-texture = ExtResource("3_u8yar")
+texture = ExtResource("3_6tdov")
 expand_mode = 1
 stretch_mode = 5
 

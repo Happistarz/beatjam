@@ -1,11 +1,10 @@
 [gd_scene load_steps=3 format=3 uid="uid://datnm75x6nr8u"]
 
-[ext_resource type="Texture2D" uid="uid://cw4cfrup5fra5" path="res://assets/sprites/Effects/T_NoteFeedback_Star.png" id="1_bcchm"]
+[ext_resource type="Texture2D" uid="uid://b137gihncrxf6" path="res://assets/sprites/Effects/T_NoteFeedback_Nice.png" id="1_m602p"]
 [ext_resource type="Script" path="res://scripts/AccuracyFeedback.cs" id="2_c3cit"]
 
 [node name="PerfectFeedback" type="TextureRect"]
 offset_right = 128.0
 offset_bottom = 128.0
-texture = ExtResource("1_bcchm")
+texture = ExtResource("1_m602p")
 script = ExtResource("2_c3cit")
-PositionOffset = Vector2(-70, -50)

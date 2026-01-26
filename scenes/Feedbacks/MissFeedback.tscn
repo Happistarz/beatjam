@@ -1,7 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://0kwgm0tqu83j"]
+[gd_scene load_steps=3 format=3 uid="uid://0kwgm0tqu83j"]
 
+[ext_resource type="Texture2D" uid="uid://p3d84ldk65ji" path="res://assets/sprites/Effects/T_NoteFeedback_Miss.png" id="1_3eb8w"]
 [ext_resource type="Script" path="res://scripts/AccuracyFeedback.cs" id="1_14f0l"]
 
 [node name="MissFeedback" type="TextureRect"]
 custom_minimum_size = Vector2(128, 128)
+texture = ExtResource("1_3eb8w")
 script = ExtResource("1_14f0l")

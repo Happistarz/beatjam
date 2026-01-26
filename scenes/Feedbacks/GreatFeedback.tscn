@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://c6737whdf3k2c"]
+[gd_scene load_steps=3 format=3 uid="uid://c6737whdf3k2c"]
 
 [ext_resource type="Script" path="res://scripts/AccuracyFeedback.cs" id="1_qcud3"]
+[ext_resource type="Texture2D" uid="uid://bn1ywh26ye6h0" path="res://assets/sprites/Effects/T_NoteFeedback_Ok.png" id="1_wl44t"]
 
 [node name="GreatFeedback" type="TextureRect"]
 offset_right = 128.0
 offset_bottom = 128.0
+texture = ExtResource("1_wl44t")
 script = ExtResource("1_qcud3")
