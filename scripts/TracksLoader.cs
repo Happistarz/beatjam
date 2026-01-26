@@ -1,356 +1,328 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Godot;
 
 public partial class TracksLoader : Node
 {
-	public static TracksLoader Instance;
+    public static TracksLoader Instance;
 
-	public override void _Ready()
-	{
-		if (Instance == null)
-		{
-			Instance = this;
-			GD.Print("TracksLoader initialized.");
-		}
-		else
-		{
-			QueueFree();
-		}
-	}
+    private static readonly string[] AudioExts = { ".wav", ".ogg", ".mp3" };
 
-	public List<MusicData> LoadAllTracks()
-	{
-		var dir = DirAccess.Open(Refs.Instance.TracksDirectory);
-		if (dir == null)
-		{
-			GD.PrintErr("Failed to open tracks directory: " + Refs.Instance.TracksDirectory);
-			return new List<MusicData>();
-		}
+    public override void _Ready()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            QueueFree();
+        }
+    }
 
-		string[] files = dir.GetFiles();
-		if (files.Length == 0)
-		{
-			GD.Print("No tracks found in directory: " + Refs.Instance.TracksDirectory);
-			return new List<MusicData>();
-		}
+    public List<MusicData> LoadAllTracks()
+    {
+        var tracksDir = NormalizeResDir(Refs.Instance.TracksDirectory);
+        var result = new List<MusicData>();
 
-		var beats = new List<MusicData>();
-		foreach (var file in files)
-		{
-			if (file.EndsWith(".beat"))
-			{
-				GD.Print("Loading track: " + Path.Combine(Refs.Instance.TracksDirectory, file));
-				var track = LoadTrack(Path.Combine(Refs.Instance.TracksDirectory, file));
-				if (track != null)
-				{
-					beats.Add(track);
-				}
-			}
-		}
+        var dir = DirAccess.Open(tracksDir);
+        if (dir == null)
+        {
+            GD.PrintErr("Failed to open tracks directory: " + tracksDir);
+            return result;
+        }
 
-		return beats;
-	}
+        var files = dir.GetFiles();
+        foreach (var fileName in files)
+        {
+            if (!fileName.EndsWith(".beat", StringComparison.OrdinalIgnoreCase))
+                continue;
 
-	public static MusicData LoadTrack(string path)
-	{
-		var track = new MusicData();
+            var fullPath = CombineResPath(tracksDir, fileName);
+            var track = LoadTrack(fullPath);
+            if (track != null)
+                result.Add(track);
+        }
 
-		var file = Godot.FileAccess.Open(path, Godot.FileAccess.ModeFlags.Read);
-		if (file == null)
-		{
-			GD.PrintErr("Failed to open track file: " + path);
-			return null;
-		}
+        return result;
+    }
 
-		string line;
-		while (!file.EofReached())
-		{
-			line = file.GetLine();
+    public static MusicData LoadTrack(string path)
+    {
+        if (!FileAccess.FileExists(path))
+        {
+            GD.PrintErr("Beat file does not exist: " + path);
+            return null;
+        }
 
-			if (line == null)
-				break;
+        var track = new MusicData();
+        var file = FileAccess.Open(path, FileAccess.ModeFlags.Read);
+        if (file == null)
+        {
+            GD.PrintErr("Failed to open beat file: " + path);
+            return null;
+        }
 
-			// skip comments
-			if (line.StartsWith(";") || string.IsNullOrWhiteSpace(line))
-				continue;
+        try
+        {
+            while (!file.EofReached())
+            {
+                var line = file.GetLine();
+                if (line == null)
+                    break;
 
-			// parse Players section
-			if (line.StartsWith("Players"))
-			{
-				var numPlayers = int.Parse(line.Split(' ')[1]);
-				track.Players = ParsePlayers(file, numPlayers);
-				continue;
-			}
+                line = line.Trim();
+                if (line.Length == 0 || line.StartsWith(";"))
+                    continue;
 
-			// parse Beats section
-			if (line.StartsWith("Beats"))
-			{
-				var numBeats = int.Parse(line.Split(' ')[1]);
-				track.Notes = ParseBeats(file, track.Players, numBeats);
-				continue;
-			}
+                if (line.StartsWith("Players", StringComparison.OrdinalIgnoreCase))
+                {
+                    var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length >= 2 && int.TryParse(parts[1], out var numPlayers))
+                        track.Players = ParsePlayers(file, numPlayers);
+                    else
+                        GD.PrintErr("Invalid Players line: " + line);
 
-			// parse key=value
-			var parts = line.Split('=');
-			if (parts.Length != 2)
-			{
-				GD.PrintErr("Invalid line in track file: " + line);
-				continue;
-			}
+                    continue;
+                }
 
-			var key = parts[0].Trim();
-			var value = parts[1].Trim();
-			if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(value))
-			{
-				GD.PrintErr("Invalid key or value in track file: " + line);
-				continue;
-			}
+                if (line.StartsWith("Beats", StringComparison.OrdinalIgnoreCase))
+                {
+                    track.Notes = ParseBeats(file, track.Players);
+                    continue;
+                }
 
-			var property = track.GetType().GetProperty(key);
-			if (property != null && property.CanWrite)
-			{
-				try
-				{
-					object convertedValue;
-					if (property.PropertyType.IsEnum)
-					{
-						convertedValue = Enum.Parse(property.PropertyType, value, ignoreCase: true);
-					}
-					else
-					{
-						convertedValue = Convert.ChangeType(value, property.PropertyType);
-					}
-					property.SetValue(track, convertedValue);
-					continue;
-				}
-				catch (Exception ex)
-				{
-					GD.PrintErr(
-						"Failed to set property " + key + " with value " + value + ": " + ex.Message
-					);
-					continue;
-				}
-			}
-		}
+                var kv = line.Split('=', 2, StringSplitOptions.TrimEntries);
+                if (kv.Length != 2)
+                {
+                    GD.PrintErr("Invalid header line: " + line);
+                    continue;
+                }
 
-		if (string.IsNullOrEmpty(track.Id))
-		{
-			GD.PrintErr("Track ID is not set, cannot load associated music and cover files.");
-			return null;
-		}
+                var property = track.GetType().GetProperty(kv[0]);
+                if (property == null || !property.CanWrite)
+                {
+                    GD.PrintErr("Unknown property: " + kv[0]);
+                    continue;
+                }
 
-		// load music resource
-		var musicPath = Path.Combine(Refs.Instance.AudioDirectory, track.Id + ".wav");
-		if (Godot.FileAccess.FileExists(musicPath))
-		{
-			track.MusicStream = GD.Load<AudioStreamWav>(musicPath);
-			if (track.MusicStream == null)
-				GD.PrintErr("Failed to load music stream: " + musicPath);
-		}
+                try
+                {
+                    object value =
+                        property.PropertyType.IsEnum
+                            ? Enum.Parse(property.PropertyType, kv[1], true)
+                            : Convert.ChangeType(kv[1], property.PropertyType);
 
-		// load cover image
-		var coverPath = Path.Combine(Refs.Instance.CoverDirectory, track.Id + ".png");
-		if (Godot.FileAccess.FileExists(coverPath))
-		{
-			track.CoverImage = GD.Load<Texture2D>(coverPath);
-			if (track.CoverImage == null)
-				GD.PrintErr("Failed to load cover image: " + coverPath);
-		}
+                    property.SetValue(track, value);
+                }
+                catch (Exception ex)
+                {
+                    GD.PrintErr("Failed to set property " + kv[0] + ": " + ex.Message);
+                }
+            }
+        }
+        finally
+        {
+            file.Close();
+        }
 
-		file.Close();
-		return track;
-	}
+        if (string.IsNullOrEmpty(track.Id))
+        {
+            GD.PrintErr("Track Id is missing");
+            return null;
+        }
 
-	private static List<MusicData.Player> ParsePlayers(Godot.FileAccess file, int numPlayers = -1)
-	{
-		var players = new List<MusicData.Player>();
+        var audioDir = NormalizeResDir(Refs.Instance.AudioDirectory);
+        var coverDir = NormalizeResDir(Refs.Instance.CoverDirectory);
 
-		string playerLine;
-		int playersRead = 0;
+        track.MusicStream = TryLoadAudio(audioDir, track.Id);
+        track.CoverImage = TryLoadTexture(coverDir, track.Id + ".png");
 
-		while (playersRead < numPlayers && !file.EofReached())
-		{
-			var currentPos = file.GetPosition();
+        return track;
+    }
 
-			playerLine = file.GetLine();
+    private static List<MusicData.Player> ParsePlayers(FileAccess file, int numPlayers)
+    {
+        var players = new List<MusicData.Player>();
+        int read = 0;
 
-			if (playerLine == null)
-				break;
+        while (read < numPlayers && !file.EofReached())
+        {
+            var pos = file.GetPosition();
+            var line = file.GetLine();
+            if (line == null)
+                break;
 
-			if (playerLine.StartsWith(";") || string.IsNullOrWhiteSpace(playerLine))
-				continue;
+            line = line.Trim();
+            if (line.Length == 0 || line.StartsWith(";"))
+                continue;
 
-			// stop if we reach a non player line
-			if (!playerLine.StartsWith("-"))
-			{
-				file.Seek(currentPos);
-				break;
-			}
+            if (!line.StartsWith("-"))
+            {
+                file.Seek(pos);
+                break;
+            }
 
-			// parse player line
-			var playerParts = playerLine[1..].Split(':');
-			if (playerParts.Length != 3)
-			{
-				GD.PrintErr("Invalid player line: " + playerLine);
-				continue;
-			}
+            var parts = line[1..].Split(':');
+            if (parts.Length != 3)
+            {
+                GD.PrintErr("Invalid player line: " + line);
+                continue;
+            }
 
-			var playerId = playerParts[0];
-			var playerName = playerParts[1];
-			var instrument = playerParts[2];
-			if (!Enum.TryParse<MusicData.PlayerRole>(instrument, out var role))
-			{
-				GD.PrintErr("Unknown instrument in player line: " + playerLine);
-				continue;
-			}
+            if (!Enum.TryParse(parts[2].Trim(), true, out MusicData.PlayerRole role))
+            {
+                GD.PrintErr("Invalid player role: " + line);
+                continue;
+            }
 
-			players.Add(
-				new MusicData.Player
-				{
-					Id = playerId,
-					Name = playerName,
-					Role = role,
-				}
-			);
+            players.Add(new MusicData.Player
+            {
+                Id = parts[0].Trim(),
+                Name = parts[1].Trim(),
+                Role = role
+            });
 
-			playersRead++;
-		}
+            read++;
+        }
 
-		return players;
-	}
+        return players;
+    }
 
-	private static Dictionary<MusicData.PlayerRole, List<MusicData.Note>> ParseBeats(
-		Godot.FileAccess file,
-		List<MusicData.Player> players,
-		int numBeats = -1
-	)
-	{
-		var beats = new Dictionary<MusicData.PlayerRole, List<MusicData.Note>>();
+    private static Dictionary<MusicData.PlayerRole, List<MusicData.Note>> ParseBeats(
+        FileAccess file,
+        List<MusicData.Player> players
+    )
+    {
+        var beats = new Dictionary<MusicData.PlayerRole, List<MusicData.Note>>();
 
-		string beatLine;
-		int beatsRead = 0;
+        while (!file.EofReached())
+        {
+            var pos = file.GetPosition();
+            var line = file.GetLine();
+            if (line == null)
+                break;
 
-		while (beatsRead < numBeats && !file.EofReached())
-		{
-			var currentPos = file.GetPosition();
+            line = line.Trim();
+            if (line.Length == 0 || line.StartsWith(";"))
+                continue;
 
-			beatLine = file.GetLine();
+            if (!line.StartsWith("-"))
+            {
+                file.Seek(pos);
+                break;
+            }
 
-			if (beatLine == null)
-				break;
+            var parts = line[1..].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length < 4)
+            {
+                GD.PrintErr("Invalid beat line: " + line);
+                continue;
+            }
 
-			if (beatLine.StartsWith(";") || string.IsNullOrWhiteSpace(beatLine))
-				continue;
+            if (!int.TryParse(parts[0], out var measure) ||
+                !int.TryParse(parts[1], out var beat) ||
+                !int.TryParse(parts[2], out var sixteenth))
+            {
+                GD.PrintErr("Invalid timing in beat line: " + line);
+                continue;
+            }
 
-			// stop if we reach a non beat line
-			if (!beatLine.StartsWith("-"))
-			{
-				file.Seek(currentPos);
-				break;
-			}
+            var playersNotes = parts[3].Split(',', StringSplitOptions.RemoveEmptyEntries);
+            foreach (var pn in playersNotes)
+            {
+                var pnParts = pn.Split(':', 2);
+                if (pnParts.Length != 2)
+                {
+                    GD.PrintErr("Invalid player notes: " + line);
+                    continue;
+                }
 
-			// parse beat line
-			var instrumentParts = beatLine[1..].Split(' ');
-			if (instrumentParts.Length < 4)
-			{
-				GD.PrintErr("Invalid beat line: " + beatLine);
-				continue;
-			}
+                if (!int.TryParse(pnParts[0], out var playerIndex) ||
+                    playerIndex < 0 || playerIndex >= players.Count)
+                {
+                    GD.PrintErr("Invalid player index: " + line);
+                    continue;
+                }
 
-			var measure = int.Parse(instrumentParts[0]);
-			var beat = int.Parse(instrumentParts[1]);
-			var sixteenth = int.Parse(instrumentParts[2]);
-			var playersNotes = instrumentParts[3].Split(',');
+                var role = players[playerIndex].Role;
+                if (!beats.ContainsKey(role))
+                    beats[role] = new List<MusicData.Note>();
 
-			foreach (var playerNotes in playersNotes)
-			{
-				var pnParts = playerNotes.Split(':');
-				if (pnParts.Length != 2)
-				{
-					GD.PrintErr("Invalid player notes in beat line: " + beatLine);
-					continue;
-				}
+                beats[role].AddRange(
+                    ParseNotes(pnParts[1], (short)measure, (short)beat, (short)sixteenth)
+                );
+            }
+        }
 
-				var playerIndex = int.Parse(pnParts[0]);
-				var notesStr = pnParts[1];
+        return beats;
+    }
 
-				if (playerIndex < 0 || playerIndex >= players.Count)
-				{
-					GD.PrintErr("Player index out of range in beat line: " + beatLine);
-					continue;
-				}
+    private static List<MusicData.Note> ParseNotes(
+        string notesStr,
+        short measure,
+        short beat,
+        short sixteenth
+    )
+    {
+        var notes = new List<MusicData.Note>();
 
-				var playerRole = players[playerIndex].Role;
+        foreach (var c in notesStr)
+        {
+            switch (c)
+            {
+                case 'H':
+                    notes.Add(new MusicData.Note { Type = Refs.NoteType.High, Measure = measure, Beat = beat, Sixteenth = sixteenth });
+                    break;
+                case 'M':
+                    notes.Add(new MusicData.Note { Type = Refs.NoteType.Medium, Measure = measure, Beat = beat, Sixteenth = sixteenth });
+                    break;
+                case 'L':
+                    notes.Add(new MusicData.Note { Type = Refs.NoteType.Low, Measure = measure, Beat = beat, Sixteenth = sixteenth });
+                    break;
+                default:
+                    GD.PrintErr("Unknown note char: " + c);
+                    break;
+            }
+        }
 
-				if (!beats.ContainsKey(playerRole))
-				{
-					beats[playerRole] = new List<MusicData.Note>();
-				}
+        return notes;
+    }
 
-				var notes = ParseNotes(notesStr, (short)measure, (short)beat, (short)sixteenth);
-				beats[playerRole].AddRange(notes);
-			}
+    private static AudioStream TryLoadAudio(string audioDir, string id)
+    {
+        foreach (var ext in AudioExts)
+        {
+            var p = CombineResPath(audioDir, id + ext);
+            if (ResourceLoader.Exists(p))
+                return GD.Load<AudioStream>(p);
+        }
 
-			beatsRead++;
-		}
+        GD.PrintErr("No audio resource found for track id=" + id);
+        return null;
+    }
 
-		return beats;
-	}
+    private static Texture2D TryLoadTexture(string dir, string fileName)
+    {
+        var p = CombineResPath(dir, fileName);
+        if (!ResourceLoader.Exists(p))
+            return null;
 
-	private static List<MusicData.Note> ParseNotes(
-		string notesStr,
-		short measure,
-		short beat,
-		short sixteenth
-	)
-	{
-		var notes = new List<MusicData.Note>();
+        return GD.Load<Texture2D>(p);
+    }
 
-		foreach (var noteChar in notesStr)
-		{
-			switch (noteChar)
-			{
-				case 'H':
-					notes.Add(
-						new MusicData.Note
-						{
-							Type = Refs.NoteType.High,
-							Measure = measure,
-							Beat = beat,
-							Sixteenth = sixteenth,
-						}
-					);
-					break;
-				case 'M':
-					notes.Add(
-						new MusicData.Note
-						{
-							Type = Refs.NoteType.Medium,
-							Measure = measure,
-							Beat = beat,
-							Sixteenth = sixteenth,
-						}
-					);
-					break;
-				case 'L':
-					notes.Add(
-						new MusicData.Note
-						{
-							Type = Refs.NoteType.Low,
-							Measure = measure,
-							Beat = beat,
-							Sixteenth = sixteenth,
-						}
-					);
-					break;
-				default:
-					GD.PrintErr("Unknown note type: " + noteChar);
-					break;
-			}
-		}
+    private static string NormalizeResDir(string dir)
+    {
+        dir = (dir ?? string.Empty).Trim();
+        while (dir.EndsWith("/"))
+            dir = dir[..^1];
+        return dir;
+    }
 
-		return notes;
-	}
+    private static string CombineResPath(string dir, string file)
+    {
+        dir = NormalizeResDir(dir);
+        file = (file ?? string.Empty).TrimStart('/');
+        return $"{dir}/{file}";
+    }
 }
