@@ -31,3 +31,4 @@ export_presets.cfg
 
 # User settings
 .config/
+__pycache__/
