@@ -12,6 +12,12 @@ public partial class CharacterAnimation : TextureRect
         Angry,
     }
 
+    // Godot signals must use Variant-compatible types (int, float, string, Vector2, ...)
+    [Signal]
+    public delegate void StateChangedEventHandler(int newState);
+
+    public CharacterState CurrentState => _state;
+
     [Export] public string BaseDir = "res://assets/sprites/Characters/Cat/";
     [Export] public string FilePrefix = "T_Cat_";
 
@@ -44,7 +50,7 @@ public partial class CharacterAnimation : TextureRect
         SetState(CharacterState.Idle);
     }
 
-    public void SetRole(MusicData.PlayerRole role)
+   public void SetRole(MusicData.PlayerRole role)
     {
         _role = role;
 
@@ -54,21 +60,16 @@ public partial class CharacterAnimation : TextureRect
             return;
         }
 
-        var dir = Refs.Instance.GetCharacterDirectoryForRole(role);
-        var prefix = Refs.Instance.GetCharacterFilePrefixForRole(role);
-
-        BaseDir = dir;
-        FilePrefix = prefix;
+        BaseDir = Refs.Instance.GetCharacterDirectoryForRole(role);
+        FilePrefix = Refs.Instance.GetCharacterFilePrefixForRole(role);
 
         _cache.Clear();
 
         _perfectStreak = 0;
         _missStreak = 0;
-        // Keep _stepIndex as-is so left/right continues naturally
 
-        DebugPrint($"SetRole role={role} baseDir={BaseDir} prefix={FilePrefix} stepIndex={_stepIndex}");
-
-        SetState(CharacterState.Idle);
+        // Force apply Idle sprite immediately (important at startup)
+        SetState(CharacterState.Idle, force: true);
     }
 
     public override void _Process(double delta)
@@ -159,9 +160,13 @@ public partial class CharacterAnimation : TextureRect
         _idleRemaining = IdleTimeoutSeconds;
     }
 
-    private void SetState(CharacterState state)
+    private void SetState(CharacterState state, bool force = false)
     {
+        if (!force && _state == state)
+            return;
+
         _state = state;
+        EmitSignal(SignalName.StateChanged, (int)_state);
 
         if (state == CharacterState.Idle)
             SetSprite("Idle", null);
@@ -184,16 +189,11 @@ public partial class CharacterAnimation : TextureRect
     {
         var path = BuildPath(suffix, number);
 
-        if (DebugLogs)
-        {
-            var numStr = number.HasValue ? number.Value.ToString() : "";
-            GD.Print($"[CharacterAnimation:{Name}] SetSprite {suffix}{numStr} path={path}");
-        }
-
         var tex = LoadTextureCached(path);
         if (tex == null)
         {
             GD.PushWarning($"CharacterAnimation: Missing texture at {path}");
+            Texture = null; // Important: do not keep previous character texture
             return;
         }
 
@@ -215,7 +215,10 @@ public partial class CharacterAnimation : TextureRect
             return tex;
 
         if (!ResourceLoader.Exists(path))
+        {
+            GD.PushWarning($"CharacterAnimation: Texture not found: {path}");
             return null;
+        }
 
         tex = ResourceLoader.Load<Texture2D>(path);
         _cache[path] = tex;

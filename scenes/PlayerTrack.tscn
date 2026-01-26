@@ -1,11 +1,24 @@
-[gd_scene load_steps=5 format=3 uid="uid://bw7dihkehcs4k"]
+[gd_scene load_steps=18 format=3 uid="uid://bw7dihkehcs4k"]
 
 [ext_resource type="PackedScene" uid="uid://bav1l5rl8w1r6" path="res://scenes/TrackUI.tscn" id="1_jxbbf"]
 [ext_resource type="Script" path="res://scripts/PlayerTrack.cs" id="1_o8pkt"]
-[ext_resource type="Texture2D" uid="uid://bbvibx8se5thn" path="res://assets/sprites/Characters/Elephant/T_Elephant_Idle.png" id="2_2brhv"]
+[ext_resource type="Texture2D" uid="uid://13vxwbhdnxks" path="res://assets/sprites/Characters/Cat/T_Cat_Idle.png" id="3_71p27"]
 [ext_resource type="Script" path="res://scripts/CharacterAnimation.cs" id="4_o8gei"]
+[ext_resource type="Texture2D" uid="uid://ccj3nyjosbwj8" path="res://assets/sprites/Effects/T_Notes1.png" id="5_eljcb"]
+[ext_resource type="Texture2D" uid="uid://da6cmx4gwgpg8" path="res://assets/sprites/Effects/T_Surprise1.png" id="6_a1t0h"]
+[ext_resource type="Script" path="res://scripts/NotesEffect.cs" id="6_gh7yq"]
+[ext_resource type="Texture2D" uid="uid://damsgf0widrlp" path="res://assets/sprites/Effects/T_Star1.png" id="6_kmus0"]
+[ext_resource type="Texture2D" uid="uid://da68uvlbx2a64" path="res://assets/sprites/Effects/T_Notes2.png" id="7_3lvpp"]
+[ext_resource type="Script" path="res://scripts/ReactionEffect.cs" id="8_8tbmt"]
+[ext_resource type="Texture2D" uid="uid://vmq2jd334fnc" path="res://assets/sprites/Effects/T_Notes3.png" id="8_fqsco"]
+[ext_resource type="Texture2D" uid="uid://b7ro4im3jhng1" path="res://assets/sprites/Effects/T_Star2.png" id="10_42sl5"]
+[ext_resource type="Texture2D" uid="uid://ctxi54rk6n34y" path="res://assets/sprites/Effects/T_LittleStar1.png" id="11_dfpje"]
+[ext_resource type="Texture2D" uid="uid://dmw87ffqmx678" path="res://assets/sprites/Effects/T_LittleStar2.png" id="12_hb0a7"]
+[ext_resource type="Texture2D" uid="uid://bgn3ov6rl2pci" path="res://assets/sprites/Effects/T_Surprise2.png" id="13_77ylr"]
+[ext_resource type="Texture2D" uid="uid://c440udsg0q3nc" path="res://assets/sprites/Effects/T_Scribble1.png" id="14_a4j3t"]
+[ext_resource type="Texture2D" uid="uid://dr1ay2ij2qk3w" path="res://assets/sprites/Effects/T_Scribble2.png" id="15_87i6c"]
 
-[node name="PlayerTrack" type="Control" node_paths=PackedStringArray("TrackUI", "CharacterAnimation")]
+[node name="PlayerTrack" type="Control" node_paths=PackedStringArray("TrackUI", "CharacterAnimation", "Notes", "Reaction")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 550.0
@@ -13,8 +26,11 @@ offset_bottom = 930.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_o8pkt")
+Role = 1
 TrackUI = NodePath("TrackUI")
 CharacterAnimation = NodePath("CharacterAnimation")
+Notes = NodePath("Notes")
+Reaction = NodePath("Reaction")
 
 [node name="TrackUI" parent="." instance=ExtResource("1_jxbbf")]
 layout_mode = 1
@@ -33,6 +49,51 @@ offset_top = -315.0
 offset_right = 350.0
 offset_bottom = 35.0
 grow_vertical = 0
-texture = ExtResource("2_2brhv")
+texture = ExtResource("3_71p27")
 expand_mode = 1
 script = ExtResource("4_o8gei")
+
+[node name="Notes" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 75.0
+offset_top = -230.0
+offset_right = 331.0
+offset_bottom = 26.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("5_eljcb")
+script = ExtResource("6_gh7yq")
+Frame1 = ExtResource("5_eljcb")
+Frame2 = ExtResource("7_3lvpp")
+Frame3 = ExtResource("8_fqsco")
+
+[node name="Reaction" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -48.0
+offset_top = -345.0
+offset_right = 208.0
+offset_bottom = -89.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("6_a1t0h")
+script = ExtResource("8_8tbmt")
+Hyped1 = ExtResource("6_kmus0")
+Hyped2 = ExtResource("10_42sl5")
+Grooving1 = ExtResource("11_dfpje")
+Grooving2 = ExtResource("12_hb0a7")
+Shameful1 = ExtResource("6_a1t0h")
+Shameful2 = ExtResource("13_77ylr")
+Angry1 = ExtResource("14_a4j3t")
+Angry2 = ExtResource("15_87i6c")
