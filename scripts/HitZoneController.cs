@@ -72,7 +72,12 @@ public partial class HitZoneController : TextureRect
             var hitLineY = GetHitLineGlobalY();
             var distance = Math.Abs(note.GetCenterGlobalY() - hitLineY);
             var accuracy = Refs.Instance.GetNoteAccuracy(distance);
-            ScoreController.Instance.AddScore(Refs.GetScoreForAccuracy(accuracy));
+
+            if (Track != null)
+            {
+                var playerRole = Track.Role;
+                ScoreController.Instance.AddPlayerScore(playerRole, Refs.GetScoreForAccuracy(accuracy));
+            }
 
             SpawnAccuracyFeedbackOnNote(note, accuracy);
 

@@ -1,21 +1,28 @@
 using Godot;
+using System.Collections.Generic;
+using System.Linq;
 
 public partial class ScoreController : Node
 { 
+    
+    public struct ScoreData {
+        public int score;
+        public int score_visible;
+        public int score_combo;
+        public int combo;
+    }
+
     public static ScoreController Instance { get; private set; }
     [Export] public Label ScoreLabel;
     [Export] public Label ComboLabel;
-    private int _score = 0;
-    private int _score_visible = 0;
-    private int _score_combo = 0;
-    private int _combo = 0;
+    private Dictionary<MusicData.PlayerRole, ScoreData> _playerScores = new();
 
-    public void ResetScore()
+    public void ResetPlayerScores()
     {
-        _score = 0;
-        _score_visible = 0;
-        _score_combo = 0;
-        _combo = 0;
+        foreach (var playerRole in _playerScores.Keys.ToList())
+        {
+            _playerScores[playerRole] = new ScoreData();
+        }
         UpdateLabels();
     }
     
@@ -26,30 +33,38 @@ public partial class ScoreController : Node
         UpdateLabels();
     }
 
-    public void AddScore(int points)
+    public void AddPlayerScore(MusicData.PlayerRole playerRole, int points)
     {
+        if (!_playerScores.ContainsKey(playerRole))
+        {
+            _playerScores[playerRole] = new ScoreData();
+        }
+
+        var scoreData = _playerScores[playerRole];
+
         if (points == 0)
         {
-            _score += _score_combo * _combo;
-            _score_visible = _score;
-            _score_combo = 0;
-            _combo = 0;
+            scoreData.score += scoreData.score_combo * scoreData.combo;
+            scoreData.score_visible = scoreData.score;
+            scoreData.score_combo = 0;
+            scoreData.combo = 0;
         }
         else
         {
-            _score_combo += points;
-            _score_visible += points;
-            _combo += 1;
+            scoreData.score_combo += points;
+            scoreData.score_visible += points;
+            scoreData.combo += 1;
         }
+
+        _playerScores[playerRole] = scoreData;
         UpdateLabels();
 
-        GD.Print($"Score: {_score} (Visible: {_score_visible}), Combo: {_combo}, Combo Score: {_score_combo}");
-
+        GD.Print($"Player {playerRole} - Score: {scoreData.score} (Visible: {scoreData.score_visible}), Combo: {scoreData.combo}, Combo Score: {scoreData.score_combo}");
     }
 
     private void UpdateLabels()
     {
-        ScoreLabel.Text = $"Score: {_score_visible}";
-        ComboLabel.Text = $"Combo: {_combo}";
+        ScoreLabel.Text = string.Join("\n", _playerScores.Select(kvp => $"{kvp.Key}: {kvp.Value.score_visible}"));
+        ComboLabel.Text = string.Join("\n", _playerScores.Select(kvp => $"x{kvp.Value.combo}"));
     }
 }
