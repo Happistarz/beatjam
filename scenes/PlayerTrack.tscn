@@ -1,3 +1,4 @@
+[gd_scene load_steps=5 format=3 uid="uid://bw7dihkehcs4k"]
 [gd_scene load_steps=18 format=3 uid="uid://bw7dihkehcs4k"]
 
 [ext_resource type="PackedScene" uid="uid://bav1l5rl8w1r6" path="res://scenes/TrackUI.tscn" id="1_jxbbf"]
