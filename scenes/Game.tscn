@@ -1,11 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://dshp37wir2ocd"]
+[gd_scene load_steps=7 format=3 uid="uid://dshp37wir2ocd"]
 
 [ext_resource type="Script" path="res://scripts/Background.cs" id="1_t8q8t"]
 [ext_resource type="PackedScene" uid="uid://bdcpnpk451uuy" path="res://scenes/TrackSet.tscn" id="3_jg4e7"]
 [ext_resource type="Script" path="res://scripts/BeatController.cs" id="4_ndt71"]
 [ext_resource type="AudioStream" uid="uid://dqhnvufhnpfes" path="res://assets/sounds/metronome.wav" id="5_61aba"]
 [ext_resource type="Texture2D" uid="uid://b2dn3lirhirbs" path="res://assets/sprites/UI/T_UpSection.png" id="5_e2u5f"]
-[ext_resource type="AudioStream" uid="uid://df5g00o2vwyjm" path="res://assets/musics/track1.wav" id="5_xtjal"]
 
 [sub_resource type="ImageTexture" id="ImageTexture_rn71e"]
 
@@ -23,7 +22,6 @@ anchor_mode = 0
 
 [node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
 unique_name_in_owner = true
-stream = ExtResource("5_xtjal")
 
 [node name="MetronomeClick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_61aba")

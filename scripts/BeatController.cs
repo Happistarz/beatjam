@@ -159,6 +159,8 @@ public partial class BeatController : Node
 
         BeatTimer.WaitTime = sixteenthDuration;
         BeatTimer.Start();
+
+        MusicPlayer.Stream = GameManager.Instance.CurrentTrack.MusicStream;
         MusicPlayer.Play();
     }
 

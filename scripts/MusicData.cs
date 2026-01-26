@@ -53,6 +53,12 @@ public class MusicData
         {
             notesStr += $"{role}: [{string.Join(", ", Notes[role])}]\n";
         }
+        
+        if (notesStr.Length > 100)
+        {
+            notesStr = notesStr.Substring(0, 100) + "...";
+        }
+
         var musicStr = MusicStream != null ? MusicStream.GetPath() : "null";
         var coverStr = CoverImage != null ? CoverImage.GetPath() : "null";
         return $"MusicData(Id={Id}, Title={Title}, BPM={BPM}, Length={Length}, Players=[{playersStr}], Notes={{\n{notesStr}}}, Music={musicStr}, Cover={coverStr})";

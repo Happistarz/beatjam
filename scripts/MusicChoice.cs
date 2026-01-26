@@ -70,6 +70,10 @@ public partial class MusicChoice : CanvasLayer
                 return;
 
             GD.Print($"Selected: {_musicItems[_selectedIndex].TitleLabel.Text}");
+
+            // Set the current track in GameManager so the Game scene knows what to play
+            GameManager.Instance.CurrentTrack = GameManager.LoadedTracks[_selectedIndex];
+
             GetTree().ChangeSceneToPacked(Refs.Instance.GameScene);
         }
     }
