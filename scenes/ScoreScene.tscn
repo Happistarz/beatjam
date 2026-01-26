@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://u5y6t4bv1bye"]
+[gd_scene load_steps=2 format=3 uid="uid://u5y6t4bv1bye"]
+
+[ext_resource type="Script" path="res://scripts/ScoreController.cs" id="1_msyea"]
 
 [node name="Score" type="Control"]
 layout_mode = 3
@@ -15,3 +17,6 @@ offset_left = 894.0
 offset_top = 132.0
 offset_right = 1366.0
 offset_bottom = 381.0
+
+[node name="Node2D" type="Node2D" parent="."]
+script = ExtResource("1_msyea")

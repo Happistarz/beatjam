@@ -57,6 +57,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Menu" type="TextureRect" parent="UI/UIRoot"]
 layout_mode = 0
@@ -163,39 +165,96 @@ layout_mode = 2
 layout_mode = 1
 BeatController = NodePath("../../../../../BeatController")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/UIRoot"]
+[node name="Container" type="MarginContainer" parent="UI/UIRoot"]
+visible = false
 layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 138.0
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -859.0
+offset_right = 860.0
+offset_bottom = -952.0
 grow_horizontal = 2
-theme_override_constants/separation = 235
+grow_vertical = 2
+theme_override_constants/margin_top = 25
+
+[node name="HBoxContainerHead" type="HBoxContainer" parent="UI/UIRoot/Container"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 2
+theme_override_constants/separation = 150
 alignment = 1
 
-[node name="ScoreLabel" type="Label" parent="UI/UIRoot/HBoxContainer"]
-unique_name_in_owner = true
+[node name="HBoxContainer2" type="HBoxContainer" parent="UI/UIRoot/Container/HBoxContainerHead"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 101
-text = "uij,ij,d"
-horizontal_alignment = 1
-vertical_alignment = 1
+size_flags_vertical = 8
+theme_override_constants/separation = -15
 
-[node name="ComboLabel" type="Label" parent="UI/UIRoot/HBoxContainer"]
-unique_name_in_owner = true
+[node name="ScoreLabel" type="Label" parent="UI/UIRoot/Container/HBoxContainerHead/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 75
+text = "J1 : 99999"
+
+[node name="ComboLabel" type="Label" parent="UI/UIRoot/Container/HBoxContainerHead/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.737255, 0.678431, 0, 1)
+theme_override_fonts/font = ExtResource("7_m55of")
+theme_override_font_sizes/font_size = 45
+text = "X999"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="UI/UIRoot/Container/HBoxContainerHead"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 101
-text = "bullshit"
-horizontal_alignment = 1
-vertical_alignment = 1
+theme_override_constants/separation = -15
 
-[node name="ScoreController" type="Node2D" parent="." node_paths=PackedStringArray("ScoreLabel", "ComboLabel")]
-script = ExtResource("7_mwub6")
-ScoreLabel = NodePath("../UI/UIRoot/HBoxContainer/ScoreLabel")
-ComboLabel = NodePath("../UI/UIRoot/HBoxContainer/ComboLabel")
+[node name="ScoreLabel" type="Label" parent="UI/UIRoot/Container/HBoxContainerHead/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 75
+text = "J1 : 99999"
+
+[node name="ComboLabel" type="Label" parent="UI/UIRoot/Container/HBoxContainerHead/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.737255, 0.678431, 0, 1)
+theme_override_fonts/font = ExtResource("7_m55of")
+theme_override_font_sizes/font_size = 45
+text = "X999"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="UI/UIRoot/Container/HBoxContainerHead"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = -15
+
+[node name="ScoreLabel" type="Label" parent="UI/UIRoot/Container/HBoxContainerHead/HBoxContainer5"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 75
+text = "J1 : 99999"
+
+[node name="ComboLabel" type="Label" parent="UI/UIRoot/Container/HBoxContainerHead/HBoxContainer5"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.737255, 0.678431, 0, 1)
+theme_override_fonts/font = ExtResource("7_m55of")
+theme_override_font_sizes/font_size = 45
+text = "X999"
+horizontal_alignment = 2
+vertical_alignment = 2
 
 [connection signal="finished" from="MusicPlayer" to="BeatController" method="_on_MusicPlayer_finished"]
 [connection signal="timeout" from="BeatController/BeatTimer" to="BeatController" method="_on_BeatTimer_timeout"]
