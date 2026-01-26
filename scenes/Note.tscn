@@ -11,6 +11,7 @@ texture = ExtResource("1_dfvwq")
 script = ExtResource("2_yslok")
 DeleteTimer = NodePath("DeleteTimer")
 HitTexture = ExtResource("3_iexo6")
+HitFeedbackSeconds = 0.1
 
 [node name="DeleteTimer" type="Timer" parent="."]
 one_shot = true
