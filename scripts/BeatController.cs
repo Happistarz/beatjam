@@ -25,6 +25,9 @@ public partial class BeatController : Node
     [ExportGroup("References")]
     [Export] public TrackSet TrackSet;
 
+    [ExportGroup("UI")]
+    [Export] public BeatLightsController BeatLights;
+
     public static BeatController Instance { get; private set; }
     public bool InMetronomeMode { get; private set; } = false;
 
@@ -39,6 +42,7 @@ public partial class BeatController : Node
     private int metronomeBeatsElapsed;
     private ulong metronomeStartTime;
     private int totalMetronomeClicks;
+    private int metronomeBeatVisual = 0;
 
     // Note scheduling
     private readonly Dictionary<TimingInfo, List<MusicData.Note>> scheduledNotes = new();
@@ -64,6 +68,12 @@ public partial class BeatController : Node
         if (currentMusicTime > float.MinValue)
         {
             CheckAndSpawnNotesForTime(currentMusicTime);
+
+            // Update lights only during real music playback
+            if (!InMetronomeMode && BeatLights != null)
+            {
+                BeatLights.UpdateFromMusicTime(currentMusicTime, beatDuration);
+            }
         }
     }
 
@@ -149,6 +159,12 @@ public partial class BeatController : Node
         metronomeStartTime = Time.GetTicksMsec();
         lastSpawnedSixteenth = -1;
 
+        // Ensure no visual feedback during metronome count-in
+        if (BeatLights != null)
+        {
+            BeatLights.SetAllOff();
+        }
+
         BeatTimer.WaitTime = beatDuration;
         BeatTimer.Start();
     }
@@ -156,6 +172,12 @@ public partial class BeatController : Node
     public void StartTrack()
     {
         InMetronomeMode = false;
+
+        // Reset lights exactly at music start
+        if (BeatLights != null)
+        {
+            BeatLights.SetAllOff();
+        }
 
         BeatTimer.WaitTime = sixteenthDuration;
         BeatTimer.Start();
@@ -170,6 +192,11 @@ public partial class BeatController : Node
         BeatTimer.Stop();
         metronomeMeasuresElapsed = 0;
         metronomeBeatsElapsed = 0;
+
+        if (BeatLights != null)
+        {
+            BeatLights.SetAllOff();
+        }
     }
 
     public void _on_DelayStartTimer_timeout()
@@ -189,7 +216,9 @@ public partial class BeatController : Node
     private void OnMetronomeClick()
     {
         totalMetronomeClicks++;
-        MetronomeClickPlayer.PitchScale = (metronomeBeatsElapsed % 2 == 0) ? 1.2f : 1.0f;
+
+        MetronomeClickPlayer.PitchScale =
+            (metronomeBeatsElapsed % 2 == 0) ? 1.2f : 1.0f;
         MetronomeClickPlayer.Play();
 
         int beatsInMeasure = (metronomeMeasuresElapsed == 1) ? 8 : 4;
@@ -204,35 +233,25 @@ public partial class BeatController : Node
             {
                 BeatTimer.Stop();
                 MetronomeClickPlayer.Stop();
-                
-                // Calculer le délai exact pour démarrer la musique à t=0
+
                 float totalDuration = GetMetronomeTotalDuration();
-                float currentElapsed = (Time.GetTicksMsec() - metronomeStartTime) / 1000f;
+                float currentElapsed =
+                    (Time.GetTicksMsec() - metronomeStartTime) / 1000f;
                 float remainingTime = totalDuration - currentElapsed;
-                
+
                 if (remainingTime > 0.001f)
-                {
                     GetTree().CreateTimer(remainingTime).Timeout += StartTrack;
-                }
                 else
-                {
                     StartTrack();
-                }
+
                 return;
             }
 
             int nextBeats = (metronomeMeasuresElapsed == 1) ? 8 : 4;
-            float nextWaitTime = (nextBeats == 8) ? beatDuration / 2f : beatDuration;
-            
-            if (Mathf.Abs(BeatTimer.WaitTime - nextWaitTime) > 0.001f)
-            {
-                BeatTimer.WaitTime = nextWaitTime;
-                BeatTimer.Start();
-            }
-            else
-            {
-                BeatTimer.WaitTime = nextWaitTime;
-            }
+            float nextWaitTime =
+                (nextBeats == 8) ? beatDuration / 2f : beatDuration;
+
+            BeatTimer.WaitTime = nextWaitTime;
         }
     }
 
