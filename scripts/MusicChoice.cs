@@ -42,6 +42,8 @@ public partial class MusicChoice : CanvasLayer
         if (_musicItems.Length == 0)
         {
             backButton?.GrabFocus();
+
+            ScoreController.Instance?.ResetPlayerScores();
             return;
         }
 
