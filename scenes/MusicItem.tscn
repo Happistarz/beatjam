@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://gpyoqg66ke7t"]
+[gd_scene load_steps=7 format=3 uid="uid://gpyoqg66ke7t"]
 
 [ext_resource type="Theme" uid="uid://cegplvu7wf4yn" path="res://assets/themes/MusicItem.tres" id="1_bn07e"]
 [ext_resource type="Script" path="res://scripts/MusicItem.cs" id="2_vvige"]
 [ext_resource type="Texture2D" uid="uid://dt41qhf08j88b" path="res://assets/covers/track1.png" id="3_6tdov"]
+[ext_resource type="AudioStream" uid="uid://cfrxosqogaw5w" path="res://assets/sounds/FlipPage.mp3" id="3_duo0q"]
 [ext_resource type="FontFile" uid="uid://c6o17tyd6p8eg" path="res://assets/fonts/kindergarten.ttf" id="4_acs75"]
+[ext_resource type="AudioStream" uid="uid://bjab8o6wpl40c" path="res://assets/sounds/PushButton.mp3" id="4_xfhkj"]
 
 [node name="MusicItem" type="Button" node_paths=PackedStringArray("CoverImage", "TitleLabel", "PlayersLabel", "BPMLabel", "TrackLengthLabel")]
 custom_minimum_size = Vector2(600, 400)
@@ -18,6 +20,8 @@ TitleLabel = NodePath("HBoxContainer/Icon/VBoxContainer/Title")
 PlayersLabel = NodePath("HBoxContainer/Icon/VBoxContainer/Players")
 BPMLabel = NodePath("HBoxContainer/Icon/VBoxContainer/BPM")
 TrackLengthLabel = NodePath("HBoxContainer/Icon/VBoxContainer/TrackLength")
+SonFocusSpecifique = ExtResource("3_duo0q")
+SonClickSpecifique = ExtResource("4_xfhkj")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1

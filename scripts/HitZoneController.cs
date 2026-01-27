@@ -81,6 +81,30 @@ public partial class HitZoneController : TextureRect
             EmitSignal(SignalName.NoteHit, (int)NoteType, (int)accuracy);
 
             note.MarkPushed();
+            HandleStackedNotes(note);
+        }
+    }
+
+    private void HandleStackedNotes(NoteController primaryNote)
+    {
+        float stackThreshold = 20f;
+        var primaryY = primaryNote.GetCenterGlobalY();
+
+        var stackedNotes = NoteContainer
+            .GetChildren()
+            .OfType<NoteController>()
+            .Where(n =>
+                n != primaryNote &&
+                n.NoteType == NoteType &&
+                n.PlayerRole == Track.Role &&
+                !n.HasPassed &&
+                n.IsTouchable &&
+                Math.Abs(n.GetCenterGlobalY() - primaryY) <= stackThreshold
+            );
+
+        foreach (var stacked in stackedNotes)
+        {
+            stacked.MarkPushed();
         }
     }
 
@@ -97,7 +121,7 @@ public partial class HitZoneController : TextureRect
                 !n.HasPassed &&
                 n.IsTouchable
             )
-            .OrderBy(n => Math.Abs(n.GetCenterGlobalY() - hitLineY))
+            .OrderByDescending(n => n.GetCenterGlobalY())
             .FirstOrDefault();
     }
 
