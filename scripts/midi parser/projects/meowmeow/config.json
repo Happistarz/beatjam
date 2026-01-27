@@ -41,10 +41,10 @@
             "role": "Keyboard",
             "timeline": [
                 {
-                    "track_name_contains": "MEOW_SYNTH",
+                    "track_name_contains": "CAT_SFX",
                     "start_measure": 5,
                     "end_measure": 32,
-                    "mapping": { "low": "C4", "high": "C6" }
+                    "mapping": { "low": "G5", "high": "A6" }
                 }
             ]
         }
