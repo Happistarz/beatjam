@@ -1,14 +1,14 @@
 using Godot;
 
-public partial class MusicItem : Button
+public partial class MusicItem : ButtonAudio
 {
-    [ExportGroup("UI Elements")]
-    [Export] public TextureRect CoverImage;
+	[ExportGroup("UI Elements")]
+	[Export] public TextureRect CoverImage;
 
-    [Export] public Label TitleLabel;
-    [Export] public Label PlayersLabel;
-    [Export] public Label BPMLabel;
-    [Export] public Label TrackLengthLabel;
+	[Export] public Label TitleLabel;
+	[Export] public Label PlayersLabel;
+	[Export] public Label BPMLabel;
+	[Export] public Label TrackLengthLabel;
 
     public string Title => TitleLabel?.Text ?? string.Empty;
 

@@ -1,0 +1,118 @@
+{
+    "input_file": "chillcosy.mid",
+    "output_file": "./output_beats.txt",
+    "scan_only": false,
+    "players": [
+        {
+            "index": 0,
+            "name": "DrumGod",
+            "role": "Drums",
+            "timeline": [
+                {
+                    "track_name_contains": "KICK BREAK",
+                    "start_measure": 1,
+                    "end_measure": 10,
+                    "mapping": {
+                        "low": "D5",
+                        "high": "C6"
+                    }
+                },
+                {
+                    "track_name_contains": "RIM BREAK",
+                    "start_measure": 1,
+                    "end_measure": 10,
+                    "mapping": {
+                        "low": "A4",
+                        "high": "B4"
+                    }
+                },
+                {
+                    "track_name_contains": "RIM MAIN",
+                    "start_measure": 9,
+                    "end_measure": 25,
+                    "mapping": {
+                        "low": "A4",
+                        "high": "B4"
+                    }
+                },
+                {
+                    "track_name_contains": "KICK MAIN",
+                    "start_measure": 9,
+                    "end_measure": 25,
+                    "mapping": {
+                        "low": "D5",
+                        "high": "C6"
+                    }
+                },
+                {
+                    "track_name_contains": "KICK BREAK",
+                    "start_measure": 21,
+                    "end_measure": 25,
+                    "mapping": {
+                        "low": "D5",
+                        "high": "C6"
+                    }
+                },
+                {
+                    "track_name_contains": "RIM BREAK",
+                    "start_measure": 21,
+                    "end_measure": 25,
+                    "mapping": {
+                        "low": "A4",
+                        "high": "B4"
+                    }
+                }
+            ]
+        },
+        {
+            "index": 1,
+            "name": "GuitarHero",
+            "role": "Guitar",
+            "timeline": [
+                {
+                    "track_name_contains": "BELL",
+                    "start_measure": 5,
+                    "end_measure": 9,
+                    "mapping": {
+                        "low": "A#5",
+                        "high": "C#6"
+                    }
+                },
+                {
+                    "track_name_contains": "MUTED LEAD",
+                    "start_measure": 9,
+                    "end_measure": 21,
+                    "mapping": {
+                        "low": "C#5",
+                        "high": "F5"
+                    }
+                },
+                {
+                    "track_name_contains": "BELL",
+                    "start_measure": 21,
+                    "end_measure": 25,
+                    "mapping": {
+                        "low": "A#5",
+                        "high": "C#6"
+                    }
+                }
+            ]
+        },
+        {
+            "index": 2,
+            "name": "BassMaster",
+            "role": "Keyboard",
+            "timeline": [
+                {
+                    "track_name_contains": "BASS 1",
+                    "start_measure": 9,
+                    "end_measure": 21,
+                    "mapping": {
+                        "low": "D#4",
+                        "high": "F#4"
+                    }
+                }
+            ]
+        }
+    ]
+}
