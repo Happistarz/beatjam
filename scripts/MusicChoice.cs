@@ -37,6 +37,8 @@ public partial class MusicChoice : CanvasLayer
             CallDeferred(nameof(SetInitialSelection));
         else
             backButton?.GrabFocus();
+
+        ScoreController.Instance?.ResetPlayerScores();
     }
 
     private void SetInitialSelection()
