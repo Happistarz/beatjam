@@ -9,15 +9,6 @@
             "role": "Drums",
             "timeline": [
                 {
-                    "track_name_contains": "KICK BREAK",
-                    "start_measure": 1,
-                    "end_measure": 10,
-                    "mapping": {
-                        "low": "D5",
-                        "high": "C6"
-                    }
-                },
-                {
                     "track_name_contains": "RIM BREAK",
                     "start_measure": 1,
                     "end_measure": 10,
@@ -38,15 +29,6 @@
                 {
                     "track_name_contains": "KICK MAIN",
                     "start_measure": 9,
-                    "end_measure": 25,
-                    "mapping": {
-                        "low": "D5",
-                        "high": "C6"
-                    }
-                },
-                {
-                    "track_name_contains": "KICK BREAK",
-                    "start_measure": 21,
                     "end_measure": 25,
                     "mapping": {
                         "low": "D5",
@@ -79,13 +61,9 @@
                     }
                 },
                 {
-                    "track_name_contains": "MUTED LEAD",
+                    "pattern": "M.M.M...M...M...M.M.M...M...M...L.L.L...L...L...H.H.H...H...H...",
                     "start_measure": 9,
-                    "end_measure": 21,
-                    "mapping": {
-                        "low": "C#5",
-                        "high": "F5"
-                    }
+                    "end_measure": 21
                 },
                 {
                     "track_name_contains": "BELL",
@@ -104,12 +82,30 @@
             "role": "Keyboard",
             "timeline": [
                 {
+                    "track_name_contains": "KICK BREAK",
+                    "start_measure": 1,
+                    "end_measure": 9,
+                    "mapping": {
+                        "low": "B4",
+                        "high": "D5"
+                    }
+                },
+                {
                     "track_name_contains": "BASS 1",
                     "start_measure": 9,
                     "end_measure": 21,
                     "mapping": {
-                        "low": "D#4",
-                        "high": "F#4"
+                        "low": "E4",
+                        "high": "G4"
+                    }
+                },
+                {
+                    "track_name_contains": "KICK BREAK",
+                    "start_measure": 21,
+                    "end_measure": 25,
+                    "mapping": {
+                        "low": "B4",
+                        "high": "D5"
                     }
                 }
             ]
