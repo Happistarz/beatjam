@@ -28,10 +28,11 @@ public class MusicData
         public short Measure;
         public short Beat;
         public short Sixteenth;
+        public PlayerRole PlayerRole;
 
         public override readonly string ToString()
         {
-            return $"{Type} @ {Measure}:{Beat}:{Sixteenth}";
+            return $"{Type} @ {Measure}:{Beat}:{Sixteenth} ({PlayerRole})";
         }
     }
 

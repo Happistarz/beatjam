@@ -250,7 +250,7 @@ public partial class TracksLoader : Node
                     beats[role] = new List<MusicData.Note>();
 
                 beats[role].AddRange(
-                    ParseNotes(pnParts[1], (short)measure, (short)beat, (short)sixteenth)
+                    ParseNotes(pnParts[1], role, (short)measure, (short)beat, (short)sixteenth)
                 );
             }
         }
@@ -260,6 +260,7 @@ public partial class TracksLoader : Node
 
     private static List<MusicData.Note> ParseNotes(
         string notesStr,
+        MusicData.PlayerRole role,
         short measure,
         short beat,
         short sixteenth
@@ -272,13 +273,13 @@ public partial class TracksLoader : Node
             switch (c)
             {
                 case 'H':
-                    notes.Add(new MusicData.Note { Type = Refs.NoteType.High, Measure = measure, Beat = beat, Sixteenth = sixteenth });
+                    notes.Add(new MusicData.Note { Type = Refs.NoteType.High, Measure = measure, Beat = beat, Sixteenth = sixteenth, PlayerRole = role });
                     break;
                 case 'M':
-                    notes.Add(new MusicData.Note { Type = Refs.NoteType.Medium, Measure = measure, Beat = beat, Sixteenth = sixteenth });
+                    notes.Add(new MusicData.Note { Type = Refs.NoteType.Medium, Measure = measure, Beat = beat, Sixteenth = sixteenth, PlayerRole = role });
                     break;
                 case 'L':
-                    notes.Add(new MusicData.Note { Type = Refs.NoteType.Low, Measure = measure, Beat = beat, Sixteenth = sixteenth });
+                    notes.Add(new MusicData.Note { Type = Refs.NoteType.Low, Measure = measure, Beat = beat, Sixteenth = sixteenth, PlayerRole = role });
                     break;
                 default:
                     GD.PrintErr("Unknown note char: " + c);

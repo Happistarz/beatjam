@@ -126,7 +126,7 @@ public partial class TrackSet : Control
         if (TrackControllers == null || TrackControllers.Count == 0)
             return;
 
-        var targetRole = GetPlayerRoleFromNote(note);
+        var targetRole = note.PlayerRole;
 
         foreach (var trackController in TrackControllers)
         {
@@ -139,23 +139,5 @@ public partial class TrackSet : Control
             trackController.SpawnNoteAtTiming(note);
             break;
         }
-    }
-
-    private static MusicData.PlayerRole GetPlayerRoleFromNote(MusicData.Note note)
-    {
-        // Defensive defaults
-        if (GameManager.Instance == null || GameManager.Instance.CurrentTrack == null)
-            return MusicData.PlayerRole.Guitar;
-
-        if (GameManager.Instance.CurrentTrack.Notes == null)
-            return MusicData.PlayerRole.Guitar;
-
-        foreach (var playerNotes in GameManager.Instance.CurrentTrack.Notes)
-        {
-            if (playerNotes.Value != null && playerNotes.Value.Contains(note))
-                return playerNotes.Key;
-        }
-
-        return MusicData.PlayerRole.Guitar;
     }
 }
