@@ -8,11 +8,11 @@ from mido import MidiFile
 
 # Import local utils
 try:
-    from midi_utils import note_name_to_number
+    from midi_utils import note_name_to_number, number_to_note_name
 except ImportError:
     # Fallback si lancé depuis un autre dossier sans package
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-    from midi_utils import note_name_to_number
+    from midi_utils import note_name_to_number, number_to_note_name
 
 DEFAULT_CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
 
@@ -66,18 +66,29 @@ def scan_tracks(mid):
                 max_note = max(max_note, msg.note)
         
         if note_count > 0:
-            print(f"[{i}] '{track_name}': {note_count} notes (Range: {min_note}-{max_note})")
+            min_str = number_to_note_name(min_note)
+            max_str = number_to_note_name(max_note)
+            print(f"[{i}] '{track_name}': {note_count} notes (Range: {min_note}-{max_note} | FL: {min_str}-{max_str})")
         else:
             print(f"[{i}] '{track_name}': (Vide ou Meta)")
     print("-------------------------------\n")
 
 def process_track(track, track_name, beat_data, mapping_rules, mid_ticks_per_beat):
     """Traite une piste MIDI unique et remplit beat_data."""
+    # Normalisation pour la comparaison (ignore les espaces multiples)
+    # ex: "KICK  BREAK" devient "KICK BREAK"
+    normalized_track_name = " ".join(track_name.split()).lower()
+
     # Trouver TOUTES les règles qui correspondent à ce nom de piste
     applicable_rules = []
     for rule in mapping_rules:
-        keyword = rule.get("track_name_contains", "").lower()
-        if keyword and keyword in track_name.lower():
+        keyword = rule.get("track_name_contains", "")
+        if not keyword: continue
+        
+        # Normalisation mot clé
+        norm_keyword = " ".join(keyword.split()).lower()
+        
+        if norm_keyword in normalized_track_name:
             applicable_rules.append(rule)
             
     if not applicable_rules:
@@ -128,6 +139,44 @@ def process_track(track, track_name, beat_data, mapping_rules, mid_ticks_per_bea
                 total_sixteenths = round(current_ticks / ticks_per_sixteenth)
                 
                 beat_data[total_sixteenths][p_idx].add(note_type) 
+
+def process_pattern_rules(beat_data, rules):
+    """Génère des notes basées sur des patterns manuels."""
+    if not rules:
+        return
+        
+    print(f"  -> Traitement de {len(rules)} patterns manuels...")
+    
+    for rule in rules:
+        pattern = rule.get("pattern", "")
+        if not pattern:
+            continue
+            
+        start_m = rule.get("start_measure", 1)
+        end_m = rule.get("end_measure", 2) # Default 1 mesure de durée
+        p_idx = rule.get("player_index", 0)
+        
+        # Convert to 0-based
+        start_m_idx = start_m - 1
+        end_m_idx = end_m - 1
+        
+        # Duration in sixteenths
+        duration_measures = end_m_idx - start_m_idx
+        if duration_measures <= 0: continue
+        
+        total_steps = duration_measures * 16
+        start_step = start_m_idx * 16
+        
+        pat_len = len(pattern)
+        
+        for i in range(total_steps):
+            char = pattern[i % pat_len].upper()
+
+            
+            # On accepte L, M, H
+            if char in ['L', 'M', 'H']:
+                 current_abs_step = start_step + i
+                 beat_data[current_abs_step][p_idx].add(char)
 
 def generate_output_content(beat_data, players_config):
     lines = []
@@ -219,10 +268,12 @@ def main():
     beat_data = defaultdict(lambda: defaultdict(set))
     
     # Extraction des règles depuis la config
-    all_rules = []
+    midi_rules = []
+    pattern_rules = []
+
     # 1. Ancien format (rétro-compatibilité)
     if "mappings" in config and isinstance(config["mappings"], list):
-        all_rules.extend(config["mappings"])
+        midi_rules.extend(config["mappings"])
     
     # 2. Nouveau format: Players -> Timeline
     if "players" in config:
@@ -240,27 +291,36 @@ def main():
                     # Si la règle n'a pas son propre min_velocity, on prend celui du player
                     if "min_velocity" not in r:
                         r["min_velocity"] = min_vel
-                    all_rules.append(r)
+                    
+                    if "pattern" in r:
+                        pattern_rules.append(r)
+                    else:
+                        midi_rules.append(r)
 
-    if not all_rules:
-         print("Aucune règle trouvée (ni 'mappings', ni 'players.timeline').")
+    if not midi_rules and not pattern_rules:
+         print("Aucune règle trouvée (ni 'mappings', ni 'players.timeline' ni patterns).")
          return
     
-    for track in mid.tracks:
-        # Récup nom
-        t_name = ""
-        for msg in track:
-            if msg.type == 'track_name':
-                t_name = msg.name
-                break
-        
-        process_track(
-            track, 
-            t_name, 
-            beat_data, 
-            all_rules, 
-            mid.ticks_per_beat
-        )
+    # Traitement des patterns manuels
+    process_pattern_rules(beat_data, pattern_rules)
+
+    # Traitement MIDI
+    if midi_rules:
+        for track in mid.tracks:
+            # Récup nom
+            t_name = ""
+            for msg in track:
+                if msg.type == 'track_name':
+                    t_name = msg.name
+                    break
+            
+            process_track(
+                track, 
+                t_name, 
+                beat_data, 
+                midi_rules, 
+                mid.ticks_per_beat
+            )
 
     if not beat_data:
         print("Aucune donnée générée. Vérifiez vos mappings dans config.json.")
