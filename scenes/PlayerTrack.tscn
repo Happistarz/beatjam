@@ -18,7 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://c440udsg0q3nc" path="res://assets/sprites/Effects/T_Scribble1.png" id="14_a4j3t"]
 [ext_resource type="Texture2D" uid="uid://dr1ay2ij2qk3w" path="res://assets/sprites/Effects/T_Scribble2.png" id="15_87i6c"]
 
-[node name="PlayerTrack" type="Control" node_paths=PackedStringArray("TrackUI", "CharacterAnimation", "Notes", "Reaction")]
+[node name="PlayerTrack" type="Control" node_paths=PackedStringArray("TrackUI", "CharacterAnimation")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 550.0
@@ -29,8 +29,6 @@ script = ExtResource("1_o8pkt")
 Role = 1
 TrackUI = NodePath("TrackUI")
 CharacterAnimation = NodePath("CharacterAnimation")
-Notes = NodePath("Notes")
-Reaction = NodePath("Reaction")
 
 [node name="TrackUI" parent="." instance=ExtResource("1_jxbbf")]
 layout_mode = 1

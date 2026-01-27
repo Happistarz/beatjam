@@ -9,7 +9,7 @@
 
 [node name="Control" type="CanvasLayer" node_paths=PackedStringArray("musicList", "backButton")]
 script = ExtResource("1_3gu7p")
-musicList = NodePath("Margin/VBoxContainer/VBox")
+musicList = NodePath("Margin/VBoxContainer/HBox")
 backButton = NodePath("Margin/VBoxContainer/Back")
 
 [node name="Background" type="ColorRect" parent="."]
@@ -50,9 +50,9 @@ script = ExtResource("4_8wncd")
 SonFocusSpecifique = ExtResource("5_gvwi1")
 SonClickSpecifique = ExtResource("6_lf17o")
 
-[node name="VBox" type="VBoxContainer" parent="Margin/VBoxContainer"]
+[node name="HBox" type="HBoxContainer" parent="Margin/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 4
 theme_override_constants/separation = 40
 
 [connection signal="pressed" from="Margin/VBoxContainer/Back" to="." method="_on_back_pressed"]

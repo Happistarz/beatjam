@@ -32,14 +32,13 @@ unique_name_in_owner = true
 stream = ExtResource("5_61aba")
 volume_db = -6.604
 
-[node name="BeatController" type="Node" parent="." node_paths=PackedStringArray("MusicPlayer", "MetronomeClickPlayer", "BeatTimer", "DelayStartTimer", "TrackSet", "BeatLights")]
+[node name="BeatController" type="Node" parent="." node_paths=PackedStringArray("MusicPlayer", "MetronomeClickPlayer", "BeatTimer", "DelayStartTimer", "TrackSet")]
 script = ExtResource("4_ndt71")
 MusicPlayer = NodePath("../MusicPlayer")
 MetronomeClickPlayer = NodePath("../MetronomeClick")
 BeatTimer = NodePath("BeatTimer")
 DelayStartTimer = NodePath("DelayStartTimer")
 TrackSet = NodePath("../UI/UIRoot/ScreenMargin/Control/TrackSet")
-BeatLights = NodePath("../UI/UIRoot/Menu/BeatLights")
 
 [node name="BeatTimer" type="Timer" parent="BeatController"]
 unique_name_in_owner = true
