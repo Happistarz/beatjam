@@ -1,38 +1,40 @@
 using Godot;
-using System;
+using System.Threading.Tasks;
 
-public partial class ButtonAudio : Button 
+public partial class ButtonAudio : Button
 {
-	protected AudioManager _audioManager;
-	
-	private bool _peutFaireDuSon = false; 
+    protected AudioManager _audioManager;
 
-	[Export] public AudioStream SonFocusSpecifique { get; set; }
-	[Export] public AudioStream SonClickSpecifique { get; set; }
+    private bool _peutFaireDuSon = false;
 
-	public override async void _Ready() // <--- Ajoute 'async' ici
-	{
-		_audioManager = GetNode<AudioManager>("/root/AudioManager");
+    [Export] public AudioStream SonFocusSpecifique { get; set; }
+    [Export] public AudioStream SonClickSpecifique { get; set; }
 
-		FocusEntered += OnFocusEntered;
-		MouseEntered += OnFocusEntered;
-		Pressed += OnButtonPressed;
+    public override void _Ready()
+    {
+        _audioManager = GetNode<AudioManager>("/root/AudioManager");
 
-		await ToSignal(GetTree().CreateTimer(0.15f), SceneTreeTimer.SignalName.Timeout);
-		
-		_peutFaireDuSon = true; 
-	}
+        FocusEntered += OnFocusEntered;
+        MouseEntered += OnFocusEntered;
+        Pressed += OnButtonPressed;
 
-	private void OnFocusEntered()
-	{
-		if (_peutFaireDuSon) 
-		{
-			_audioManager.JouerSonFocus(SonFocusSpecifique);
-		}
-	}
+        _ = EnableSoundAfterDelay();
+    }
 
-	protected virtual void OnButtonPressed()
-	{
-		_audioManager.JouerSonClick(SonClickSpecifique);
-	}
+    private async Task EnableSoundAfterDelay()
+    {
+        await ToSignal(GetTree().CreateTimer(0.15f), SceneTreeTimer.SignalName.Timeout);
+        _peutFaireDuSon = true;
+    }
+
+    private void OnFocusEntered()
+    {
+        if (_peutFaireDuSon)
+            _audioManager.JouerSonFocus(SonFocusSpecifique);
+    }
+
+    protected virtual void OnButtonPressed()
+    {
+        _audioManager.JouerSonClick(SonClickSpecifique);
+    }
 }
