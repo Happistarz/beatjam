@@ -12,6 +12,8 @@ public partial class GameManager : Node
 
     public override void _Ready()
     {
+        Input.MouseMode = Input.MouseModeEnum.Hidden;
+
         if (Instance != null)
         {
             QueueFree();
