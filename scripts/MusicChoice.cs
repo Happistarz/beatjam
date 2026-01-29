@@ -5,12 +5,8 @@ public partial class MusicChoice : CanvasLayer
     [Export] private BoxContainer musicList;
     [Export] private Button backButton;
 
-    private bool _isOnBackButton = false;
     private int _selectedIndex = 0;
     private MusicItem[] _musicItems = System.Array.Empty<MusicItem>();
-
-    private double _lastMoveTime = 0;
-    private const double MoveDelay = 0.2;
 
     public override void _Ready()
     {
@@ -66,85 +62,50 @@ public partial class MusicChoice : CanvasLayer
             item.SetFocusNeighbor(Side.Left, item.GetPathTo(_musicItems[left]));
             item.SetFocusNeighbor(Side.Right, item.GetPathTo(_musicItems[right]));
 
-            // Up from item goes to Back
-            item.SetFocusNeighbor(Side.Top, item.GetPathTo(backButton));
+            // DOWN from item goes to Back
+            item.SetFocusNeighbor(Side.Bottom, item.GetPathTo(backButton));
+
+            // Optional: disable Up navigation by clearing Top neighbor
+            item.SetFocusNeighbor(Side.Top, new NodePath());
 
             // Keep index synced with actual focus (mouse, keyboard, pad)
             int index = i;
             item.FocusEntered += () =>
             {
                 _selectedIndex = index;
-                _isOnBackButton = false;
 
-                // Down from Back returns to current selected item
+                // DOWN from Back returns to current selected item
                 backButton.SetFocusNeighbor(Side.Bottom, backButton.GetPathTo(_musicItems[_selectedIndex]));
             };
         }
 
-        // Down from Back returns to selected item
+        // DOWN from Back returns to selected item
         backButton.SetFocusNeighbor(Side.Bottom, backButton.GetPathTo(_musicItems[_selectedIndex]));
 
+        // Optional: disable Up navigation from Back too
+        backButton.SetFocusNeighbor(Side.Top, new NodePath());
+
         // Initial focus
-        _isOnBackButton = false;
         _selectedIndex = 0;
         _musicItems[_selectedIndex].GrabFocus();
     }
 
     public override void _Process(double delta)
     {
-        double now = Time.GetTicksMsec() / 1000.0;
-
-        // Left/Right handled by Godot via focus neighbors
-        if (now - _lastMoveTime > MoveDelay)
-        {
-            if (Input.IsActionPressed("ui_up"))
-            {
-                HandleUp();
-                _lastMoveTime = now;
-            }
-            else if (Input.IsActionPressed("ui_down"))
-            {
-                HandleDown();
-                _lastMoveTime = now;
-            }
-        }
-
+        // Let Godot handle focus navigation via neighbors (Left/Right/Down).
+        // Only handle Accept here.
         if (Input.IsActionJustPressed("ui_accept"))
         {
-            if (_isOnBackButton || (backButton != null && backButton.HasFocus()))
+            if (_musicItems.Length == 0)
                 return;
 
-            if (_musicItems.Length == 0)
+            // If Back has focus, do nothing here (button's pressed signal handles it)
+            if (backButton != null && backButton.HasFocus())
                 return;
 
             GameManager.Instance.CurrentTrack = GameManager.LoadedTracks[_selectedIndex];
             GetTree().ChangeSceneToPacked(Refs.Instance.GameScene);
         }
-    }
-
-    private void HandleUp()
-    {
-        if (_musicItems.Length == 0 || backButton == null)
-            return;
-
-        if (_isOnBackButton)
-            return;
-
-        _isOnBackButton = true;
-        backButton.GrabFocus();
-    }
-
-    private void HandleDown()
-    {
-        if (_musicItems.Length == 0)
-            return;
-
-        if (!_isOnBackButton)
-            return;
-
-        _isOnBackButton = false;
-        _selectedIndex = Mathf.Clamp(_selectedIndex, 0, _musicItems.Length - 1);
-        _musicItems[_selectedIndex].GrabFocus();
     }
 
     public void _on_back_pressed()
