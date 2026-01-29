@@ -56,7 +56,10 @@ public partial class PlayerTrack : Control
     public void ApplyRole()
     {
         if (TrackUI != null)
+        {
             TrackUI.Role = Role;
+            TrackUI.ApplyLaneColors();
+        }
 
         if (CharacterAnimation != null)
             CharacterAnimation.SetRole(Role);

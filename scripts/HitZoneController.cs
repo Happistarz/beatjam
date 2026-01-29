@@ -6,9 +6,14 @@ public partial class HitZoneController : TextureRect
 {
     [Export] public Control NoteContainer;
     [Export] public Control SpawnPoint;
+    [Export] public CanvasItem LaneColorDot;
 
     [Export] public TrackController Track;
     [Export] public Refs.NoteType NoteType;
+
+    // Debug: set in inspector per lane (0 left, 1 middle, 2 right)
+    [Export(PropertyHint.Range, "0,2,1")]
+    public int LaneIndex = 0;
 
     [Export] public float MissOutFactor = 0.5f;
 
@@ -24,18 +29,26 @@ public partial class HitZoneController : TextureRect
     {
         InitializePool();
         CustomMinimumSize = new Vector2(Refs.Instance.MinimumNoteSize, Refs.Instance.MinimumNoteSize);
+
+        if (LaneColorDot == null)
+            LaneColorDot = GetNodeOrNull<CanvasItem>("ColorDot");
     }
+
 
     public void Initialize(MusicData.PlayerRole? roleOverride = null)
     {
         if (Track == null)
         {
-            GD.PushError($"HitZoneController {Name}: Track is null during Initialize!");
+            GD.PushError($"[HitZone] Initialize FAIL name={Name}: Track is null");
             return;
         }
 
         var effectiveRole = roleOverride ?? Track.Role;
+
         inputAction = Refs.GetInputAction(effectiveRole, NoteType);
+
+        var color = GetLaneColorFor(effectiveRole);
+        SetLaneColor(color);
     }
 
     private void InitializePool()
@@ -46,6 +59,31 @@ public partial class HitZoneController : TextureRect
         _notePool = new ObjectPool<NoteController>();
         AddChild(_notePool);
         _notePool.Initialize(Refs.Instance.NoteScene, initialSize: 10, maxSize: 50);
+    }
+
+    public void SetLaneColor(Color color)
+    {
+        if (LaneColorDot == null)
+            return;
+
+        LaneColorDot.Visible = true;
+
+        // Ensure it draws on top
+        LaneColorDot.ZAsRelative = false;
+        LaneColorDot.ZIndex = 9999;
+
+        LaneColorDot.Modulate = color;
+    }
+
+
+
+    private Color GetLaneColorFor(MusicData.PlayerRole role)
+    {
+        var palette = LanePalettes.ForRole(role);
+        int lane = Mathf.Clamp(LaneIndex, 0, palette.Length - 1);
+        var color = palette[lane];
+
+        return color;
     }
 
     public override void _Process(double delta)
@@ -122,8 +160,6 @@ public partial class HitZoneController : TextureRect
 
     private NoteController GetClosestNote()
     {
-        var hitLineY = GetHitLineGlobalY();
-
         return NoteContainer
             .GetChildren()
             .OfType<NoteController>()
@@ -141,13 +177,13 @@ public partial class HitZoneController : TextureRect
     {
         if (NoteContainer == null)
         {
-            GD.PushError("HitZoneController: NoteContainer not assigned.");
+            GD.PushError("[HitZone] SpawnNote: NoteContainer not assigned.");
             return;
         }
 
         if (SpawnPoint == null)
         {
-            GD.PushError("HitZoneController: SpawnPoint not assigned.");
+            GD.PushError("[HitZone] SpawnNote: SpawnPoint not assigned.");
             return;
         }
 
@@ -179,16 +215,13 @@ public partial class HitZoneController : TextureRect
         var nt = (Refs.NoteType)noteType;
         var pr = (MusicData.PlayerRole)playerRole;
 
-        // Only react for this lane + this track
         if (nt != NoteType || pr != Track.Role)
             return;
 
-        // Visual feedback at the miss position
         SpawnAccuracyFeedbackAtGlobal(centerGlobal, Refs.Accuracy.Miss);
 
         ScoreController.Instance.AddPlayerScore(pr, 0);
 
-        // Trigger character reaction
         var pt = GetPlayerTrack();
         pt?.OnJudgement(Refs.Accuracy.Miss);
     }
