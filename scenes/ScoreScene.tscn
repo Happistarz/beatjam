@@ -1,8 +1,25 @@
-[gd_scene format=3 uid="uid://u5y6t4bv1bye"]
+[gd_scene load_steps=9 format=3 uid="uid://u5y6t4bv1bye"]
 
-[node name="Score" type="Control"]
+[ext_resource type="Theme" uid="uid://b3mx5wnjix7mj" path="res://assets/themes/MenuButton.tres" id="1_1qn8y"]
+[ext_resource type="Script" path="res://scripts/ScoreScene.cs" id="1_ku1l6"]
+[ext_resource type="FontFile" uid="uid://c6o17tyd6p8eg" path="res://assets/fonts/kindergarten.ttf" id="2_t4euk"]
+[ext_resource type="FontFile" uid="uid://bhkft1s251r8u" path="res://assets/fonts/Holidays Homework.ttf" id="2_xy8v7"]
+[ext_resource type="Texture2D" uid="uid://dfibyg7sfmv4q" path="res://assets/covers/track2.png" id="3_tbno0"]
+[ext_resource type="Script" path="res://scripts/ButtonAudio.cs" id="3_y7jak"]
+[ext_resource type="AudioStream" uid="uid://csob10jds8p7d" path="res://assets/sounds/Plic.mp3" id="4_c05cb"]
+[ext_resource type="AudioStream" uid="uid://bjab8o6wpl40c" path="res://assets/sounds/PushButton.mp3" id="5_7logt"]
+
+[node name="Score" type="Control" node_paths=PackedStringArray("PlayerScoresContainer", "ScoreLabel", "TrackCoverRect")]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ku1l6")
+PlayerScoresContainer = NodePath("MarginContainer/Container/Container")
+ScoreLabel = NodePath("MarginContainer/Container/TitleContainer/VBoxContainer/ScoreLabel")
+TrackCoverRect = NodePath("MarginContainer/Container/TitleContainer/TextureRect")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 0
@@ -15,3 +32,81 @@ offset_left = 894.0
 offset_top = 132.0
 offset_right = 1366.0
 offset_bottom = 381.0
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="Container" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 110
+alignment = 1
+
+[node name="TitleContainer" type="HBoxContainer" parent="MarginContainer/Container"]
+layout_mode = 2
+size_flags_stretch_ratio = 2.0
+theme_override_constants/separation = 140
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/Container/TitleContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="Title" type="Label" parent="MarginContainer/Container/TitleContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_xy8v7")
+theme_override_font_sizes/font_size = 110
+text = "SCORE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScoreLabel" type="Label" parent="MarginContainer/Container/TitleContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_t4euk")
+theme_override_font_sizes/font_size = 80
+text = "344354"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/Container/TitleContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 8
+texture = ExtResource("3_tbno0")
+
+[node name="Container" type="HBoxContainer" parent="MarginContainer/Container"]
+layout_mode = 2
+size_flags_stretch_ratio = 5.0
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="Menu" type="Button" parent="."]
+custom_minimum_size = Vector2(452, 147)
+layout_mode = 2
+offset_left = 734.0
+offset_top = 877.0
+offset_right = 1186.0
+offset_bottom = 1024.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = ExtResource("1_1qn8y")
+theme_override_fonts/font = ExtResource("2_t4euk")
+theme_override_font_sizes/font_size = 60
+text = "MENU"
+script = ExtResource("3_y7jak")
+SonFocusSpecifique = ExtResource("4_c05cb")
+SonClickSpecifique = ExtResource("5_7logt")
+
+[connection signal="pressed" from="Menu" to="." method="_on_MenuButton_pressed"]

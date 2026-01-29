@@ -82,7 +82,7 @@ public partial class HitZoneController : TextureRect
             SpawnAccuracyFeedbackOnNote(note, accuracy);
 
             var pt = GetPlayerTrack();
-			pt?.OnJudgement(accuracy);
+            pt?.OnJudgement(accuracy);
 
             EmitSignal(SignalName.NoteHit, (int)NoteType, (int)accuracy);
 
@@ -179,6 +179,8 @@ public partial class HitZoneController : TextureRect
 
         // Visual feedback at the miss position
         SpawnAccuracyFeedbackAtGlobal(centerGlobal, Refs.Accuracy.Miss);
+
+        ScoreController.Instance.AddPlayerScore(pr, 0);
 
         // Trigger character reaction
         var pt = GetPlayerTrack();

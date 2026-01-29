@@ -36,6 +36,10 @@ public partial class GameManager : Node
         }
     }
 
+    public string? GetPlayerName(MusicData.PlayerRole role)
+    {
+        return CurrentTrack?.Players.Find(p => p.Role == role).Name;
+    }
 
     public override void _ExitTree()
     {

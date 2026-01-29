@@ -25,8 +25,7 @@ public partial class BeatController : Node
     [ExportGroup("References")]
     [Export] public TrackSet TrackSet;
 
-    [ExportGroup("UI")]
-    [Export] public BeatLightsController BeatLights;
+    public List<BeatLightsController> BeatLights = new();
 
     public static BeatController Instance { get; private set; }
     public bool InMetronomeMode { get; private set; } = false;
@@ -70,9 +69,9 @@ public partial class BeatController : Node
             CheckAndSpawnNotesForTime(currentMusicTime);
 
             // Update lights only during real music playback
-            if (!InMetronomeMode && BeatLights != null)
+            if (!InMetronomeMode)
             {
-                BeatLights.UpdateFromMusicTime(currentMusicTime, beatDuration);
+                BeatLights.ForEach(bl => bl.UpdateFromMusicTime(currentMusicTime, beatDuration));
             }
         }
     }
@@ -159,11 +158,7 @@ public partial class BeatController : Node
         metronomeStartTime = Time.GetTicksMsec();
         lastSpawnedSixteenth = -1;
 
-        // Ensure no visual feedback during metronome count-in
-        if (BeatLights != null)
-        {
-            BeatLights.SetAllOff();
-        }
+        BeatLights.ForEach(bl => bl.SetAllOff());
 
         BeatTimer.WaitTime = beatDuration;
         BeatTimer.Start();
@@ -173,11 +168,7 @@ public partial class BeatController : Node
     {
         InMetronomeMode = false;
 
-        // Reset lights exactly at music start
-        if (BeatLights != null)
-        {
-            BeatLights.SetAllOff();
-        }
+        BeatLights.ForEach(bl => bl.SetAllOff());
 
         BeatTimer.WaitTime = sixteenthDuration;
         BeatTimer.Start();
@@ -193,10 +184,7 @@ public partial class BeatController : Node
         metronomeMeasuresElapsed = 0;
         metronomeBeatsElapsed = 0;
 
-        if (BeatLights != null)
-        {
-            BeatLights.SetAllOff();
-        }
+        BeatLights.ForEach(bl => bl.SetAllOff());
     }
 
     public void _on_DelayStartTimer_timeout()
@@ -211,7 +199,16 @@ public partial class BeatController : Node
             OnMetronomeClick();
     }
 
-    private void _on_MusicPlayer_finished() => StopTrack();
+    private void _on_MusicPlayer_finished()
+    {
+        ScoreController.Instance?.FinaliseScores();
+        GetTree().CreateTimer(2f).Timeout += () =>
+        {
+            GetTree().ChangeSceneToPacked(Refs.Instance.ScoreScene);
+            StopTrack();
+        };
+    }
+
 
     private void OnMetronomeClick()
     {

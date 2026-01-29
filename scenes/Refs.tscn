@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dorvsiv0bud18"]
+[gd_scene load_steps=15 format=3 uid="uid://dorvsiv0bud18"]
 
 [ext_resource type="Script" path="res://scripts/Refs.cs" id="1_oiltj"]
 [ext_resource type="PackedScene" uid="uid://gpyoqg66ke7t" path="res://scenes/MusicItem.tscn" id="2_skj1c"]
@@ -10,6 +10,8 @@
 [ext_resource type="PackedScene" uid="uid://bw7dihkehcs4k" path="res://scenes/PlayerTrack.tscn" id="6_cmqo0"]
 [ext_resource type="PackedScene" uid="uid://bav1l5rl8w1r6" path="res://scenes/TrackUI.tscn" id="7_jg7o4"]
 [ext_resource type="PackedScene" uid="uid://datnm75x6nr8u" path="res://scenes/Feedbacks/PerfectFeedback.tscn" id="9_e81cp"]
+[ext_resource type="PackedScene" uid="uid://u5y6t4bv1bye" path="res://scenes/ScoreScene.tscn" id="9_x6o8e"]
+[ext_resource type="PackedScene" uid="uid://c20gmy6cghpti" path="res://scenes/PlayerScore.tscn" id="10_3pj3g"]
 [ext_resource type="PackedScene" uid="uid://c6737whdf3k2c" path="res://scenes/Feedbacks/GreatFeedback.tscn" id="10_qcgap"]
 [ext_resource type="PackedScene" uid="uid://0kwgm0tqu83j" path="res://scenes/Feedbacks/MissFeedback.tscn" id="11_dbjgx"]
 
@@ -22,6 +24,8 @@ GameScene = ExtResource("5_brt5e")
 TrackScene = ExtResource("6_cmqo0")
 HitZoneLayerScene = ExtResource("7_jg7o4")
 NoteScene = ExtResource("6_0djph")
+ScoreScene = ExtResource("9_x6o8e")
+PlayerScoreScene = ExtResource("10_3pj3g")
 PerfectFeedbackScene = ExtResource("9_e81cp")
 GreatFeedbackScene = ExtResource("10_qcgap")
 MissFeedbackScene = ExtResource("11_dbjgx")

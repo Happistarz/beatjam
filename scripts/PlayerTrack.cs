@@ -35,15 +35,13 @@ public partial class PlayerTrack : Control
         if (CharacterAnimation != null)
             OnCharacterStateChanged((int)CharacterAnimation.CurrentState);
 
-        Label scoreLabel = null;
-        Label comboLabel = null;
+        RegisterScoreController();
+    }
 
-        var scoreContainer = FindChild("ScoreContainer", true, false) as TextureRect;
-        if (scoreContainer != null)
-        {
-            scoreLabel = scoreContainer.FindChild("ScoreLabel", true, false) as Label;
-            comboLabel = scoreContainer.FindChild("ComboLabel", true, false) as Label;
-        }
+    private void RegisterScoreController()
+    {
+        Label scoreLabel = FindChild("ScoreLabel", true, false) as Label;
+        Label comboLabel = FindChild("ComboLabel", true, false) as Label;
 
         if (scoreLabel == null)
             GD.PrintErr($"PlayerTrack: ScoreLabel not found for role {Role}");
@@ -51,14 +49,9 @@ public partial class PlayerTrack : Control
         if (comboLabel == null)
             GD.PrintErr($"PlayerTrack: ComboLabel not found for role {Role}");
 
-        GD.Print($"Listing children for PlayerTrack with role {Role}:");
-        foreach (Node child in GetChildren())
-        {
-            GD.Print($"Child: {child.Name}, Type: {child.GetType()}");
-        }
-
-        ScoreController.Instance?.RegisterTrack(Role, scoreLabel, comboLabel);
+        ScoreController.Instance?.RegisterTrack(Role, scoreLabel, comboLabel, GameManager.Instance.GetPlayerName(Role));
     }
+
 
     public void ApplyRole()
     {

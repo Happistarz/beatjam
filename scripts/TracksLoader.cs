@@ -303,7 +303,7 @@ public partial class TracksLoader : Node
         return null;
     }
 
-    private static Texture2D TryLoadTexture(string dir, string fileName)
+    public static Texture2D TryLoadTexture(string dir, string fileName)
     {
         var p = CombineResPath(dir, fileName);
         if (!ResourceLoader.Exists(p))

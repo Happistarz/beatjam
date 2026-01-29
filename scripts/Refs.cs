@@ -53,6 +53,8 @@ public partial class Refs : Node
     [Export] public PackedScene TrackScene;
     [Export] public PackedScene HitZoneLayerScene;
     [Export] public PackedScene NoteScene;
+    [Export] public PackedScene ScoreScene;
+    [Export] public PackedScene PlayerScoreScene;
 
     [ExportGroup("Feedback")]
     [Export] public PackedScene PerfectFeedbackScene;
@@ -154,7 +156,7 @@ public partial class Refs : Node
             _ => null
         };
     }
-    
+
     public static int GetScoreForAccuracy(Accuracy accuracy)
     {
         return accuracy switch

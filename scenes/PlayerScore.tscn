@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://c20gmy6cghpti"]
+
+[ext_resource type="Script" path="res://scripts/PlayerScoreUI.cs" id="1_48aym"]
+[ext_resource type="FontFile" uid="uid://c6o17tyd6p8eg" path="res://assets/fonts/kindergarten.ttf" id="1_k6ara"]
+[ext_resource type="Texture2D" uid="uid://13vxwbhdnxks" path="res://assets/sprites/Characters/Cat/T_Cat_Idle.png" id="2_lve5h"]
+[ext_resource type="Script" path="res://scripts/CharacterAnimation.cs" id="4_ch57q"]
+
+[node name="PlayerScore" type="VBoxContainer" node_paths=PackedStringArray("ScoreLabel", "CharacterAnimation")]
+theme_override_constants/separation = -80
+alignment = 1
+script = ExtResource("1_48aym")
+ScoreLabel = NodePath("Label")
+CharacterAnimation = NodePath("TextureRect")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_k6ara")
+theme_override_font_sizes/font_size = 65
+text = "16538"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 2
+size_flags_vertical = 8
+texture = ExtResource("2_lve5h")
+script = ExtResource("4_ch57q")

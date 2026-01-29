@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://bw7dihkehcs4k"]
+[gd_scene load_steps=24 format=3 uid="uid://bw7dihkehcs4k"]
 
 [ext_resource type="PackedScene" uid="uid://bav1l5rl8w1r6" path="res://scenes/TrackUI.tscn" id="1_jxbbf"]
 [ext_resource type="Script" path="res://scripts/PlayerTrack.cs" id="1_o8pkt"]
@@ -17,10 +17,12 @@
 [ext_resource type="Texture2D" uid="uid://bgn3ov6rl2pci" path="res://assets/sprites/Effects/T_Surprise2.png" id="13_77ylr"]
 [ext_resource type="Texture2D" uid="uid://c440udsg0q3nc" path="res://assets/sprites/Effects/T_Scribble1.png" id="14_a4j3t"]
 [ext_resource type="Texture2D" uid="uid://dr1ay2ij2qk3w" path="res://assets/sprites/Effects/T_Scribble2.png" id="15_87i6c"]
-[ext_resource type="Script" path="res://scripts/ScoreController.cs" id="18_uxvtq"]
 [ext_resource type="Texture2D" uid="uid://sul4e87l7wk4" path="res://assets/sprites/UI/T_Panel3.png" id="19_hmsx2"]
 [ext_resource type="FontFile" uid="uid://c6o17tyd6p8eg" path="res://assets/fonts/kindergarten.ttf" id="19_j8jpf"]
 [ext_resource type="FontFile" uid="uid://bhkft1s251r8u" path="res://assets/fonts/Holidays Homework.ttf" id="20_npnqd"]
+[ext_resource type="Script" path="res://scripts/BeatLightsController.cs" id="21_7h6b7"]
+[ext_resource type="Texture2D" uid="uid://c38hbhml4vx4i" path="res://assets/sprites/UI/T_LightBlack.png" id="22_qyhr7"]
+[ext_resource type="Texture2D" uid="uid://c74esq7oj3qsf" path="res://assets/sprites/UI/T_LightRed.png" id="23_m3eku"]
 
 [node name="PlayerTrack" type="Control" node_paths=PackedStringArray("TrackUI", "CharacterAnimation")]
 layout_mode = 3
@@ -62,10 +64,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = 75.0
-offset_top = -230.0
-offset_right = 331.0
-offset_bottom = 26.0
+offset_left = 45.0
+offset_top = -210.0
+offset_right = 301.0
+offset_bottom = 46.0
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(0.7, 0.7)
@@ -99,9 +101,6 @@ Shameful1 = ExtResource("6_a1t0h")
 Shameful2 = ExtResource("13_77ylr")
 Angry1 = ExtResource("14_a4j3t")
 Angry2 = ExtResource("15_87i6c")
-
-[node name="ScoreController" type="Node2D" parent="."]
-script = ExtResource("18_uxvtq")
 
 [node name="ScoreContainer" type="TextureRect" parent="."]
 layout_mode = 1
@@ -138,7 +137,7 @@ size_flags_horizontal = 0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0.099986, 0.099986, 0.099986, 1)
 theme_override_fonts/font = ExtResource("19_j8jpf")
-theme_override_font_sizes/font_size = 80
+theme_override_font_sizes/font_size = 75
 text = "J1: 99999"
 
 [node name="ComboLabel" type="Label" parent="ScoreContainer/HBoxContainer"]
@@ -148,5 +147,41 @@ size_flags_vertical = 8
 theme_override_colors/font_color = Color(0.69, 0.62284, 0.1863, 1)
 theme_override_colors/font_shadow_color = Color(0.690196, 0.623529, 0.188235, 1)
 theme_override_fonts/font = ExtResource("20_npnqd")
-theme_override_font_sizes/font_size = 45
+theme_override_font_sizes/font_size = 40
 text = "X999"
+
+[node name="BeatLights" type="HBoxContainer" parent="." node_paths=PackedStringArray("Light1", "Light2", "Light3", "Light4") groups=["BeatLight"]]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 30.0
+offset_top = 215.0
+offset_right = 298.0
+offset_bottom = 305.0
+grow_vertical = 2
+rotation = 1.5708
+scale = Vector2(0.6, 0.6)
+script = ExtResource("21_7h6b7")
+OffTexture = ExtResource("22_qyhr7")
+OnTexture = ExtResource("23_m3eku")
+Light1 = NodePath("Light1")
+Light2 = NodePath("Light2")
+Light3 = NodePath("Light3")
+Light4 = NodePath("Light4")
+
+[node name="Light1" type="TextureRect" parent="BeatLights"]
+layout_mode = 2
+texture = ExtResource("22_qyhr7")
+
+[node name="Light2" type="TextureRect" parent="BeatLights"]
+layout_mode = 2
+texture = ExtResource("22_qyhr7")
+
+[node name="Light3" type="TextureRect" parent="BeatLights"]
+layout_mode = 2
+texture = ExtResource("23_m3eku")
+
+[node name="Light4" type="TextureRect" parent="BeatLights"]
+layout_mode = 2
+texture = ExtResource("22_qyhr7")

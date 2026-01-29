@@ -1,15 +1,10 @@
-[gd_scene load_steps=12 format=3 uid="uid://dshp37wir2ocd"]
+[gd_scene load_steps=7 format=3 uid="uid://dshp37wir2ocd"]
 
 [ext_resource type="Script" path="res://scripts/Background.cs" id="1_t8q8t"]
 [ext_resource type="PackedScene" uid="uid://bdcpnpk451uuy" path="res://scenes/TrackSet.tscn" id="3_jg4e7"]
 [ext_resource type="Script" path="res://scripts/BeatController.cs" id="4_ndt71"]
-[ext_resource type="Texture2D" uid="uid://c38hbhml4vx4i" path="res://assets/sprites/UI/T_LightBlack.png" id="5_0dxl0"]
 [ext_resource type="AudioStream" uid="uid://dqhnvufhnpfes" path="res://assets/sounds/metronome.wav" id="5_61aba"]
 [ext_resource type="Texture2D" uid="uid://b2dn3lirhirbs" path="res://assets/sprites/UI/T_UpSection.png" id="5_e2u5f"]
-[ext_resource type="Script" path="res://scripts/BeatLightsController.cs" id="5_fv66h"]
-[ext_resource type="Texture2D" uid="uid://sul4e87l7wk4" path="res://assets/sprites/UI/T_Panel3.png" id="5_kr745"]
-[ext_resource type="Texture2D" uid="uid://c74esq7oj3qsf" path="res://assets/sprites/UI/T_LightRed.png" id="6_4lu42"]
-[ext_resource type="FontFile" uid="uid://c6o17tyd6p8eg" path="res://assets/fonts/kindergarten.ttf" id="6_8sxd6"]
 
 [sub_resource type="ImageTexture" id="ImageTexture_rn71e"]
 
@@ -64,86 +59,6 @@ layout_mode = 0
 offset_right = 1920.0
 offset_bottom = 168.0
 texture = ExtResource("5_e2u5f")
-
-[node name="BeatLights" type="HBoxContainer" parent="UI/UIRoot/Menu" node_paths=PackedStringArray("Light1", "Light2", "Light3", "Light4")]
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 410.0
-offset_top = -54.0
-offset_right = 678.0
-offset_bottom = 36.0
-grow_vertical = 2
-scale = Vector2(0.9, 0.9)
-script = ExtResource("5_fv66h")
-OffTexture = ExtResource("5_0dxl0")
-OnTexture = ExtResource("6_4lu42")
-Light1 = NodePath("Light1")
-Light2 = NodePath("Light2")
-Light3 = NodePath("Light3")
-Light4 = NodePath("Light4")
-
-[node name="Light1" type="TextureRect" parent="UI/UIRoot/Menu/BeatLights"]
-layout_mode = 2
-texture = ExtResource("5_0dxl0")
-
-[node name="Light2" type="TextureRect" parent="UI/UIRoot/Menu/BeatLights"]
-layout_mode = 2
-texture = ExtResource("5_0dxl0")
-
-[node name="Light3" type="TextureRect" parent="UI/UIRoot/Menu/BeatLights"]
-layout_mode = 2
-texture = ExtResource("6_4lu42")
-
-[node name="Light4" type="TextureRect" parent="UI/UIRoot/Menu/BeatLights"]
-layout_mode = 2
-texture = ExtResource("5_0dxl0")
-
-[node name="ScoreContainer" type="TextureRect" parent="UI/UIRoot/Menu"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -225.0
-offset_right = 604.0
-offset_bottom = 260.0
-grow_horizontal = 2
-scale = Vector2(0.55, 0.55)
-texture = ExtResource("5_kr745")
-
-[node name="ScoreLabel" type="Label" parent="UI/UIRoot/Menu/ScoreContainer"]
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 100.0
-offset_top = -40.0
-offset_right = 319.0
-offset_bottom = 40.0
-grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("6_8sxd6")
-theme_override_font_sizes/font_size = 80
-text = "Score:"
-
-[node name="Score" type="Label" parent="UI/UIRoot/Menu/ScoreContainer"]
-layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -449.0
-offset_top = -40.0
-offset_right = -92.0
-offset_bottom = 40.0
-grow_horizontal = 0
-grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("6_8sxd6")
-theme_override_font_sizes/font_size = 80
-text = "10000 pts"
 
 [node name="ScreenMargin" type="MarginContainer" parent="UI/UIRoot"]
 layout_mode = 1

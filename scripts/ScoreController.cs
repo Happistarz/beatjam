@@ -4,8 +4,9 @@ using Godot;
 
 public partial class ScoreController : Node
 {
-    public struct ScoreData
+    public class ScoreData
     {
+        public string playerName;
         public int score;
         public int score_visible;
         public int score_combo;
@@ -13,15 +14,21 @@ public partial class ScoreController : Node
 
         public Label ScoreLabel;
         public Label ComboLabel;
+
+        public override string ToString()
+        {
+            return $"Player name: {playerName}, Score: {score}, Visible: {score_visible}, Combo: {combo}, Combo Score: {score_combo}, ScoreLabel: {ScoreLabel}, ComboLabel: {ComboLabel}";
+        }
     }
 
     public static ScoreController Instance { get; private set; }
     private Dictionary<MusicData.PlayerRole, ScoreData> _playerScores = new();
 
-    public void RegisterTrack(MusicData.PlayerRole role, Label scoreLabel, Label comboLabel)
+    public void RegisterTrack(MusicData.PlayerRole role, Label scoreLabel, Label comboLabel, string playerName = "")
     {
         ScoreData data = new()
         {
+            playerName = playerName,
             score = 0,
             score_visible = 0,
             score_combo = 0,
@@ -30,77 +37,27 @@ public partial class ScoreController : Node
             ComboLabel = comboLabel
         };
         _playerScores[role] = data;
+        UpdateLabelForPlayer(role);
     }
 
     public void ResetPlayerScores()
     {
-        // Destroy scoreData for all players
+        GD.Print("ScoreController: Resetting player scores.");
         _playerScores.Clear();
-        UpdateLabels();
     }
 
-    private void AssignLabels()
+    public Dictionary<MusicData.PlayerRole, ScoreData> GetAllScores()
     {
-        foreach (var kvp in _playerScores)
-        {
-            var playerRole = kvp.Key;
-            var scoreData = kvp.Value;
-
-            // Recherchez les labels dans la hiérarchie par nom
-            var scoreLabel = FindChild($"{playerRole}_ScoreLabel", true, false) as Label;
-            var comboLabel = FindChild($"{playerRole}_ComboLabel", true, false) as Label;
-
-            if (scoreLabel == null || comboLabel == null)
-            {
-                GD.PrintErr($"ScoreController: Could not find labels for player role {playerRole}");
-                continue;
-            }
-
-            // Assignez les labels trouvés
-            scoreData.ScoreLabel = scoreLabel;
-            scoreData.ComboLabel = comboLabel;
-        }
+        return _playerScores;
     }
 
     public override void _Ready()
     {
         Instance = this;
-
-        // Initialisation des scores pour tous les rôles
-        foreach (MusicData.PlayerRole role in Enum.GetValues(typeof(MusicData.PlayerRole)))
-        {
-            if (!_playerScores.ContainsKey(role))
-            {
-                _playerScores[role] = new ScoreData
-                {
-                    score = 0,
-                    combo = 0,
-                    score_visible = 0,
-                    score_combo = 0,
-                    ScoreLabel = null,
-                    ComboLabel = null
-                };
-            }
-        }
-
-        GD.Print("Current player scores:");
-        foreach (var kvp in _playerScores)
-        {
-            GD.Print($"Role: {kvp.Key}, Score: {kvp.Value.score}, Combo: {kvp.Value.combo}");
-        }
-
-        // Assignez les labels dynamiquement
-        AssignLabels();
-
-        UpdateLabels();
     }
 
     public void AddPlayerScore(MusicData.PlayerRole playerRole, int points)
     {
-        foreach (var kvp in _playerScores)
-        {
-            GD.Print($"PlayerRole: {kvp.Key}, Score: {kvp.Value.score}, Combo: {kvp.Value.combo}");
-        }
         if (!_playerScores.ContainsKey(playerRole))
         {
             GD.PrintErr($"ScoreController: No score data found for player role {playerRole}");
@@ -108,6 +65,7 @@ public partial class ScoreController : Node
         }
 
         var scoreData = _playerScores[playerRole];
+
         if (points == 0)
         {
             scoreData.score += scoreData.score_combo * scoreData.combo;
@@ -121,9 +79,25 @@ public partial class ScoreController : Node
             scoreData.score_visible += points;
             scoreData.combo += 1;
         }
-        UpdateLabels();
 
-        GD.Print($"Player {playerRole} - Score: {scoreData.score} (Visible: {scoreData.score_visible}), Combo: {scoreData.combo}, Combo Score: {scoreData.score_combo}");
+        UpdateLabels();
+    }
+
+    public void FinaliseScores()
+    {
+        foreach (var kvp in _playerScores)
+        {
+            var scoreData = kvp.Value;
+            if (scoreData.combo == 0)
+                continue;
+
+            scoreData.score += scoreData.score_combo * scoreData.combo;
+            scoreData.score_visible = scoreData.score;
+            scoreData.score_combo = 0;
+            scoreData.combo = 0;
+        }
+
+        UpdateLabels();
     }
 
     private void UpdateLabels()
@@ -144,13 +118,13 @@ public partial class ScoreController : Node
 
         var scoreData = _playerScores[playerRole];
 
-        if (scoreData.ScoreLabel == null || scoreData.ComboLabel == null)
+        if (IsInstanceValid(scoreData.ScoreLabel))
         {
-            GD.PrintErr($"ScoreController: Labels are not assigned for player role {playerRole}");
-            return;
+            scoreData.ScoreLabel.Text = $"{scoreData.playerName}: {scoreData.score_visible}";
         }
-
-        scoreData.ScoreLabel.Text = scoreData.score_visible.ToString();
-        scoreData.ComboLabel.Text = $"X{scoreData.combo}";
+        if (IsInstanceValid(scoreData.ComboLabel))
+        {
+            scoreData.ComboLabel.Text = $"X{scoreData.combo}";
+        }
     }
 }

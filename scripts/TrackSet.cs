@@ -38,9 +38,10 @@ public partial class TrackSet : Control
 
         TrackControllers = new List<TrackController>(Refs.Instance.MaxPlayers);
 
-        InitTrack(MusicData.PlayerRole.Drums);
-        InitTrack(MusicData.PlayerRole.Guitar);
-        InitTrack(MusicData.PlayerRole.Keyboard);
+        foreach (var player in GameManager.Instance.CurrentTrack.Players)
+        {
+            InitTrack(player.Role);
+        }
 
         BeatController.CalculateLeadOffset();
     }

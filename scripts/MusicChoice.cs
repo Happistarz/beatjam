@@ -14,6 +14,8 @@ public partial class MusicChoice : CanvasLayer
 
     public override void _Ready()
     {
+        ScoreController.Instance?.ResetPlayerScores();
+
         int count = GameManager.LoadedTracks.Count;
         _musicItems = new MusicItem[count];
 
@@ -42,10 +44,6 @@ public partial class MusicChoice : CanvasLayer
         if (_musicItems.Length == 0)
         {
             backButton?.GrabFocus();
-
-            ScoreController.Instance?.ResetPlayerScores();
-
-            ScoreController.Instance?.ResetPlayerScores();
             return;
         }
 

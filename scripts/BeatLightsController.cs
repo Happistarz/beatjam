@@ -19,6 +19,13 @@ public partial class BeatLightsController : Node
     {
         _lights = new[] { Light1, Light2, Light3, Light4 };
         SetAllOff();
+
+        BeatController.Instance.BeatLights.Add(this);
+    }
+
+    public override void _ExitTree()
+    {
+        BeatController.Instance?.BeatLights.Remove(this);
     }
 
     public void UpdateFromMusicTime(float musicTime, float beatDuration)
