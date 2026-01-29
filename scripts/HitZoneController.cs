@@ -60,7 +60,13 @@ public partial class HitZoneController : TextureRect
             Scale = new Vector2(ScaleOnHit, ScaleOnHit);
 
             if (BeatController.Instance != null && BeatController.Instance.InMetronomeMode)
-                return;
+            {
+                // Only allow input during metronome if we are very close to the start (within hit window)
+                // This allows hitting the first note which is at time 0.0
+                float timeToStart = BeatController.Instance.GetCurrentMusicTime();
+                if (timeToStart < -Refs.Instance.NoteHitWindow)
+                    return;
+            }
 
             if (NoteContainer == null || NoteContainer.GetChildren().Count < 1)
                 return;

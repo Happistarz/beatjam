@@ -76,7 +76,7 @@ public partial class BeatController : Node
         }
     }
 
-    private float GetCurrentMusicTime()
+    public float GetCurrentMusicTime()
     {
         if (InMetronomeMode)
         {
