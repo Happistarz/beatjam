@@ -9,6 +9,7 @@ public partial class ButtonAudio : Button
 
     [Export] public AudioStream SonFocusSpecifique { get; set; }
     [Export] public AudioStream SonClickSpecifique { get; set; }
+    [Export] public bool AutoFocus { get; set; } = false;
 
     public override void _Ready()
     {
@@ -19,6 +20,9 @@ public partial class ButtonAudio : Button
         Pressed += OnButtonPressed;
 
         _ = EnableSoundAfterDelay();
+
+        if (AutoFocus)
+            GrabFocus();
     }
 
     private async Task EnableSoundAfterDelay()

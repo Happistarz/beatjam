@@ -26,13 +26,6 @@ layout_mode = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
 
-[node name="Label" type="Label" parent="ColorRect"]
-layout_mode = 0
-offset_left = 894.0
-offset_top = 132.0
-offset_right = 1366.0
-offset_bottom = 381.0
-
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -108,5 +101,6 @@ text = "MENU"
 script = ExtResource("3_y7jak")
 SonFocusSpecifique = ExtResource("4_c05cb")
 SonClickSpecifique = ExtResource("5_7logt")
+AutoFocus = true
 
 [connection signal="pressed" from="Menu" to="." method="_on_MenuButton_pressed"]
