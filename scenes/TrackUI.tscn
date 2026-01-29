@@ -86,6 +86,8 @@ offset_right = 32.0
 offset_bottom = 287.0
 grow_horizontal = 2
 grow_vertical = 2
+rotation = 1.5708
+pivot_offset = Vector2(32, 32)
 texture = ExtResource("5_1xe6u")
 
 [node name="HitZoneH" parent="Frame/LanesMargin/LanesRow/LaneHigh" node_paths=PackedStringArray("NoteContainer", "SpawnPoint", "LaneColorDot", "Track") instance=ExtResource("4_l7y3c")]
@@ -148,6 +150,8 @@ offset_right = 32.0
 offset_bottom = 287.0
 grow_horizontal = 2
 grow_vertical = 2
+rotation = 1.5708
+pivot_offset = Vector2(32, 32)
 texture = ExtResource("5_1xe6u")
 
 [node name="HitZoneM" parent="Frame/LanesMargin/LanesRow/LaneMid" node_paths=PackedStringArray("NoteContainer", "SpawnPoint", "LaneColorDot", "Track") instance=ExtResource("4_l7y3c")]
@@ -211,6 +215,8 @@ offset_right = 32.0
 offset_bottom = 287.0
 grow_horizontal = 2
 grow_vertical = 2
+rotation = 1.5708
+pivot_offset = Vector2(32, 32)
 texture = ExtResource("5_1xe6u")
 
 [node name="HitZoneL" parent="Frame/LanesMargin/LanesRow/LaneLow" node_paths=PackedStringArray("NoteContainer", "SpawnPoint", "LaneColorDot", "Track") instance=ExtResource("4_l7y3c")]
